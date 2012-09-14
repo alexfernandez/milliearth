@@ -53,7 +53,7 @@ function connectedPlayer(id, connection)
 /**
  * A game object
  */
-function qGame(id)
+function meGame(id)
 {
 	// self-reference
 	var self = this;
@@ -289,7 +289,7 @@ var gameSelector = new function()
 	{
 		if (!(id in games))
 		{
-			games[id] = new qGame(id);
+			games[id] = new meGame(id);
 		}
 		return games[id];
 	}

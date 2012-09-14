@@ -60,6 +60,20 @@ var server = http.createServer(serve).listen(port, function() {
 });
 
 /**
+ * setInterval tests.
+var counter = 0;
+var seconds = 0;
+var short = 1;
+setInterval(function() {
+		counter ++;
+	}, short);
+setInterval(function() {
+		seconds ++;
+		log('Seconds: ' + seconds + ', counter: ' + counter + ', missed ' + (seconds * 1000 / short - counter));
+	}, 1000);
+ */
+
+/**
  * WebSocket server
  */
 var wsServer = new webSocketServer({
@@ -74,7 +88,7 @@ var wsServer = new webSocketServer({
 wsServer.on('request', function(request) {
 		var url = urlParser.parse(request.resource, true);
 		trace('Connection to ' + url.pathname);
-a		if (url.pathname != '/serve')
+		if (url.pathname != '/serve')
 		{
 			log('Invalid URL ' + url.pathname);
 			return;
