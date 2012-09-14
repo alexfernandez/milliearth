@@ -1,5 +1,5 @@
-brownstar
-=========
+milliearth
+==========
 
-BrownStar is a fast-paced fight game, with macros.
+MilliEarth is a fast-paced fight game, with macros.
 

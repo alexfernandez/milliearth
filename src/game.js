@@ -1,6 +1,6 @@
 'use strict';
 /**
- * BrownStar.
+ * MilliEarth.
  * Game logic.
  * (C) 2012 Alex Fernández
  */

@@ -1,12 +1,12 @@
-BrownScript
+MilliScript
 ===========
 
-BrownScript is a very simple script language for BrownStar.
+MilliScript is a very simple script language for MilliEarth.
 
 Syntax
 ======
 
-The syntax is also very simple, resembling natural language. The idea is to construct macros for your BrownStar spaceships.
+The syntax is also very simple, resembling natural language. The idea is to construct macros for your MilliEarth spaceships.
 
 Examples:
 
