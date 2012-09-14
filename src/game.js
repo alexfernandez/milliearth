@@ -16,6 +16,10 @@ var log = util.log;
 var trace = util.trace;
 // util.enableTrace();
 
+function massiveBody()
+{
+}
+
 /**
  * One of the players connected to a game.
  */
@@ -103,13 +107,14 @@ function qGame(id)
 
 	self.start = function()
 	{
-			var playerIds = [players[0].id, players[1].id];
-			self.broadcast({
-					type: 'start',
-					players: playerIds
-			});
-			active = true;
-			trace('Fight ' + self.id + ' started!');
+		var playerIds = [players[0].id, players[1].id];
+		self.broadcast({
+				type: 'start',
+				players: playerIds
+		});
+		active = true;
+		trace('Fight ' + self.id + ' started!');
+		setInterval(self.loop, 20);
 	}
 
 	/**
@@ -178,6 +183,13 @@ function qGame(id)
 		log('Player ' + player.id + ' disconnected; ' + rival.id + ' won by points');
 		rival.send(abandoned);
 		self.finish();
+	}
+
+	/**
+	 * Main loop: update object positions.
+	 */
+	self.loop = function()
+	{
 	}
 
 	/**
