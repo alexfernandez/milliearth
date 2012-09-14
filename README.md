@@ -1,5 +1,5 @@
 brownstar
 =========
 
-Brown star is a fast-paced fight game, with macros.
+BrownStar is a fast-paced fight game, with macros.
 
