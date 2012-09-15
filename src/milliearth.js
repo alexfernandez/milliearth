@@ -63,10 +63,15 @@ var server = http.createServer(serve).listen(port, function() {
  * setInterval tests.
 var counter = 0;
 var seconds = 0;
-var short = 1;
-setInterval(function() {
-		counter ++;
-	}, short);
+var short = 20;
+var start = new Date().getTime();
+function delayed()
+{
+	counter ++;
+	var diff = (new Date().getTime() - start) - counter * short;
+	setTimeout(delayed, 100 - diff);
+}
+setTimeout(delayed, short);
 setInterval(function() {
 		seconds ++;
 		log('Seconds: ' + seconds + ', counter: ' + counter + ', missed ' + (seconds * 1000 / short - counter));
