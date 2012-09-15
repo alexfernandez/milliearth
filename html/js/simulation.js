@@ -73,7 +73,7 @@ var clientPlayer = function()
 		 */
 		websocket.onmessage = function (message)
 		{
-			$('#message').html(message.data);
+			// $('#message').html(message.data);
 			// check it is valid JSON
 			try
 			{
