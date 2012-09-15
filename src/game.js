@@ -159,7 +159,7 @@ function timer(delay, callback)
 /**
  * The world where the game runs.
  */
-var world = new function()
+var gameWorld = function()
 {
 	// self-reference
 	var self = this;
@@ -190,9 +190,14 @@ var world = new function()
 		log('Player1: ' + distance1 + ', player2: ' + distance2);
 	}
 
-	// start timers
-	var shortTimer = new timer(shortDelay, shortLoop);
-	var longTimer = new timer(longDelay, longLoop);
+	/**
+	 * Start timers.
+	 */
+	self.start = function()
+	{
+		var shortTimer = new timer(shortDelay, shortLoop);
+		var longTimer = new timer(longDelay, longLoop);
+	};
 }
 
 
@@ -264,6 +269,7 @@ function meGame(id)
 	self.id = id;
 	var players = [];
 	var active = false;
+	var world = new gameWorld();
 
 	/**
 	 * Add a new player to the game.
@@ -324,17 +330,17 @@ function meGame(id)
 				players: playerIds
 		});
 		active = true;
-		trace('Fight ' + self.id + ' started!');
-		setInterval(self.loop, 20);
+		world.start();
+		trace('Game ' + self.id + ' started!');
 	}
 
 	/**
-	 * Start a game with two computer players.
+	 * Start a game with one computer player.
 	 */
 	self.autostart = function()
 	{
 		self.add(new autoPlayer('computer1'));
-		self.add(new autoPlayer('computer2'));
+		// self.add(new autoPlayer('computer2'));
 	}
 
 	/**
@@ -403,13 +409,6 @@ function meGame(id)
 		log('Player ' + player.id + ' disconnected; ' + rival.id + ' won by points');
 		rival.send(abandoned);
 		self.finish();
-	}
-
-	/**
-	 * Main loop: update object positions.
-	 */
-	self.loop = function()
-	{
 	}
 
 	/**
