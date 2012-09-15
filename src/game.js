@@ -480,7 +480,9 @@ function meGame(id)
 	 */
 	self.sendUpdate = function(player)
 	{
-		player.send(world.getUpdate());
+		var update = world.getUpdate();
+		update.type = 'update';
+		player.send(update);
 	}
 
 	/**

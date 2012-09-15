@@ -6,7 +6,7 @@
 /**
  * Player answer to server messages.
  */
-var clientPlayer = function(index)
+var clientPlayer = function()
 {
 	// self-reference
 	var self = this;
@@ -18,10 +18,7 @@ var clientPlayer = function(index)
 	// check server latency
 	var lastTime;
 
-	// player index: 0 or 1
-	self.index = index;
-
-	$('#status' + index).html('Press connect');
+	$('#status').html('Press connect');
 
 	/**
 	 * Click on the connect or disconnect button.
@@ -36,14 +33,14 @@ var clientPlayer = function(index)
 		disconnect();
 		websocket = null;
 	}
-	$('#connect' + index).click(self.click);
+	$('#connect').click(self.click);
 
 	/**
 	 * Connect using a websocket.
 	 */
 	function connect()
 	{
-		console.log('connecting player ' + index);
+		console.log('connecting player ');
 		var gameId = 'simulation';
 		var playerId = 'human';
 		// open websocket
@@ -52,7 +49,7 @@ var clientPlayer = function(index)
 
 		websocket.onopen = function ()
 		{
-			$('#status' + index).text('Connected to ' + wsUrl);
+			$('#status').text('Connected to ' + wsUrl);
 		};
 
 		/**
@@ -61,8 +58,8 @@ var clientPlayer = function(index)
 		websocket.onerror = function (error)
 		{
 			console.error(error);
-			$('#status' + index).text('Error');
-			$('#message' + index).text(error);
+			$('#status').text('Error');
+			$('#message').text(error);
 		};
 
 		/**
@@ -73,10 +70,11 @@ var clientPlayer = function(index)
 			var newTime = new Date().getTime();
 			if (lastTime)
 			{
-				$('#latency' + index).text(newTime - lastTime);
+				$('#latency').text(newTime - lastTime);
 				lastTime = null;
 			}
-			$('#message' + index).html(message.data);
+			$('#message').html(message.data);
+			console.log(message.data);
 			// check it is valid JSON
 			try
 			{
@@ -89,7 +87,8 @@ var clientPlayer = function(index)
 			}
 			if (!json.type || !self[json.type])
 			{
-				$('#status' + index).text('Invalid message type ' + json.type);
+				console.error(json);
+				$('#status').text('Invalid message type ' + json.type);
 				return;
 			}
 			self[json.type](json);
@@ -100,13 +99,13 @@ var clientPlayer = function(index)
 		 */
 		websocket.onclose = function(message)
 		{
-			$('#status' + index).text('Disconnected');
+			$('#status').text('Disconnected');
 			websocket = null;
-			$('#connect' + index).val('Connect');
+			$('#connect').val('Connect');
 		}
 
-		console.log('connected player ' + index);
-		$('#connect' + index).val('Disconnect');
+		console.log('connected player ');
+		$('#connect').val('Disconnect');
 	}
 
 	/**
@@ -115,7 +114,7 @@ var clientPlayer = function(index)
 	function disconnect()
 	{
 		websocket.close();
-		$('#connect' + index).val('Connect');
+		$('#connect').val('Connect');
 	}
 
 	/**
@@ -123,7 +122,7 @@ var clientPlayer = function(index)
 	 */
 	self.start = function()
 	{
-		$('#status' + index).text('Simulation started!');
+		$('#status').text('Simulation started!');
 		setInterval(self.requestUpdate, interval);
 	}
 
@@ -144,7 +143,7 @@ var clientPlayer = function(index)
 	 */
 	self.update = function(message)
 	{
-		$('#status' + index).text('Update just arrived!');
+		$('#status').text('Update just arrived!');
 		paint(message.milliearth);
 		paint(message.player1);
 		paint(message.player2);
@@ -155,7 +154,7 @@ var clientPlayer = function(index)
 	 */
 	self.abandoned = function(message)
 	{
-		$('#status' + index).text('Your opponent abandoned!');
+		$('#status').text('Your opponent abandoned!');
 	}
 
 	/**
@@ -163,7 +162,7 @@ var clientPlayer = function(index)
 	 */
 	self.error = function(message)
 	{
-		$('#status' + index).text('Server error: ' + message.message);
+		$('#status').text('Server error: ' + message.message);
 	}
 
 	/**
