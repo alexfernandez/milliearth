@@ -10,19 +10,18 @@ div.message { border: 1px solid #ccc; }
 </style>
 </head>
 <body>
-<h1>MilliEarth Simulation</h1>
-<p>
-Simulation for MilliEarth orbiters: bodies moving around an asteroid with 1/1000th of the Earth radius but approximately equal gravity.
+<p><b>MilliEarth Simulation</b>:
+A simulation for MilliEarth orbiters, bodies moving around an asteroid with 1/1000th of the Earth radius but approximately equal gravity.
 </p>
 <p>
+<input id="connect" type="button" value="Connect" />
 Status:
 <span id="status">not started</span>
 </p>
-<input id="connect" type="button" value="Connect" />
 <p>
 Latency: <span id="latency">n/a</span>
 </p>
-<canvas id="simulation" width="1000" height="600">
+<canvas id="simulation" width="800" height="500">
 </canvas>
 <div class="message">
 no messages at this time
