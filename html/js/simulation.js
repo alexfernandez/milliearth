@@ -19,6 +19,8 @@ var clientPlayer = function()
 	var websocket;
 	// check server latency
 	var lastTime;
+	// check if running
+	var running = false;
 	// number of updates per second
 	var updates = 0;
 	var latencies = 0;
@@ -63,7 +65,6 @@ var clientPlayer = function()
 		websocket.onerror = function (error)
 		{
 			console.error(error);
-			clearInterval(intervalId);
 			$('#status').text('Error');
 			$('#message').text(error);
 		};
@@ -73,7 +74,6 @@ var clientPlayer = function()
 		 */
 		websocket.onmessage = function (message)
 		{
-			// $('#message').html(message.data);
 			// check it is valid JSON
 			try
 			{
@@ -99,8 +99,7 @@ var clientPlayer = function()
 		websocket.onclose = function(message)
 		{
 			$('#status').text('Disconnected');
-			websocket = null;
-			$('#connect').val('Connect');
+			disconnect();
 		}
 
 		console.log('connected player ');
@@ -114,6 +113,15 @@ var clientPlayer = function()
 	{
 		websocket.close();
 		$('#connect').val('Connect');
+		websocket = null;
+		if (running)
+		{
+			clearInterval(intervalId);
+			// automatic reconnect
+			setTimeout(connect, 100);
+			running = false;
+		}
+		running = false;
 	}
 
 	/**
@@ -123,7 +131,7 @@ var clientPlayer = function()
 	{
 		$('#status').text('Simulation started!');
 		intervalId = setInterval(self.requestUpdate, interval);
-		setInterval(self.control, 1000);
+		running = true;
 	}
 
 	/**
@@ -143,7 +151,11 @@ var clientPlayer = function()
 	 */
 	self.update = function(message)
 	{
-		// $('#status').text('Update just arrived!');
+		if (!running)
+		{
+			console.error('Not running');
+			return;
+		}
 		$('#simulation').clearCanvas();
 		paint(message.milliEarth);
 		paint(message.player1);
@@ -161,13 +173,18 @@ var clientPlayer = function()
 	/**
 	 * Control heartbeat.
 	 */
-	self.control = function(message)
+	function control(message)
 	{
+		if (!running)
+		{
+			return;
+		}
 		$('#status').text(updates + ' updates per second');
 		$('#latency').text(Math.round(10 * latencies / updates) / 10);
 		updates = 0;
 		latencies = 0;
 	}
+	setInterval(control, 1000);
 
 	/**
 	 * The other part abandoned.
