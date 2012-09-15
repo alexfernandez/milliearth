@@ -1,0 +1,79 @@
+MilliEarth
+
+== Installation instructions ==
+
+node.js:
+  http://nodejs.org/download/ 
+  # wget http://nodejs.org/dist/v0.8.8/node-v0.8.8.tar.gz
+  # ./configure
+  # make
+  # make install
+Open node in port 80:
+  # apt-get install libcap2-bin
+  # setcap 'cap_net_bind_service=+ep' /usr/local/bin/node
+node modules:
+  # npm install supervisor -g
+  $ npm install websocket
+
+== Machine ==
+
+Machine IP 54.247.100.172, instance rightimage_debian_6.0.1_amd64_20110405.1_ebs (ami-0f01367b)
+Debian:
+  # apt-get remove exim4 exim4-base rightscale nfs-common portmap xfs subversion nfs-common emacs xauth
+    bind9-host exim4-config mercurial mutt alien
+  # apt-get install unattended-upgrades vim-scripts sudo make gcc
+  # vim /etc/vim/vimrc
+Amazon console:
+  https://console.aws.amazon.com/ec2/home?region=eu-west-1&#s=Instances
+SSH:
+  ssh -i milliearth.pem -p 17713 root@54.247.100.172
+locale:
+  # dpkg-reconfigure locales
+  [ select en_US UTF-8 ]
+git:
+  # adduser milliearth
+  # su milliearth
+  $ cd
+  $ mkdir git
+  $ cd git
+  $ mkdir milliearth.git
+  $ cd milliearth.git
+  $ git init --bare
+  [ add public keys, go to local machine ]
+  $ git clone milliearth.git
+startup:
+  # ln -s /home/milliearth/srv/milliearth/start-milliearth.sh /etc/init.d/milliearth.sh
+  # update-rc.d milliearth.sh defaults
+open files:
+  # vim /etc/security/limits.d/nofile.conf
+    root            hard    nofile          65000
+    *               hard    nofile          65000
+  # vim /etc/pam.d/common-session
+    session required pam_limits.so
+  # vim /etc/sysctl.conf
+    fs.file-max = 200000
+
+== Research ==
+
+Android: Autobahn
+  http://autobahn.ws/
+
+iOS: SocketRocket
+  https://github.com/square/SocketRocket
+
+Compatibility:
+  http://websocketstest.com/
+
+Further optimizations:
+  http://blog.caustik.com/2012/04/08/scaling-node-js-to-100k-concurrent-connections/
+
+== References ==
+
+http://sergiohinojosa.wordpress.com/2009/03/23/instalacion-y-configuracion-del-servidor-y-cliente-git-bajo-ssh/
+https://github.com/Worlize/WebSocket-Node/wiki/Documentation
+http://martinsikora.com/nodejs-and-websocket-simple-chat-tutorial
+http://nodejs.org/docs/v0.8.8/api/http.html#http_server_listen_path_callback
+http://www.w3.org/TR/websockets/
+http://stackoverflow.com/questions/5557776/websockets-over-a-3g-connection
+http://alancastro.org/2010/09/07/increase-the-number-of-opened-files-on-debian-linux.html
+
