@@ -7,8 +7,8 @@
  * Globals.
  */
 // projection values
-var startx = 400;
-var starty = 200;
+var startx = 0;
+var starty = 0;
 var startz = 6000;
 var scale = 200;
 
@@ -268,6 +268,8 @@ var clientPlayer = function()
 $(function () {
 
 		$('#status').html('Starting');
+		startx = $('#simulation').width() / 2;
+		starty = $('#simulation').height() / 2;
 
 		// player id sent to the server
 		var playerId = 'dddddd';
