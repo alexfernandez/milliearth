@@ -129,27 +129,28 @@ function vector(x, y, z)
 
 	self.toString = function()
 	{
-		return '(' + self.x + ',' + self.y + ',' + self.z + ')';
+		return '(' + Math.round(self.x) + ',' + Math.round(self.y) + ',' + Math.round(self.z) + ')';
 	}
 }
 
 /**
  * A massive body. Mass is given in kg.
  */
-function massiveBody(mass, position, speed)
+function massiveBody(mass, radius)
 {
 	// self-reference
 	var self = this;
 
 	// attributes
 	self.mass = mass;
-	self.position = position || new vector(0, 0, 0);
-	self.speed = speed || new vector(0, 0, 0);
+	self.radius = radius;
+	self.position = new vector(0, 0, 0);
+	self.speed = new vector(0, 0, 0);
 
 	/**
 	 * Place the object at the given position.
 	 */
-	self.place = function(x, y, z)
+	self.setPosition = function(x, y, z)
 	{
 		self.position = new vector(x, y, z);
 	}
@@ -169,7 +170,6 @@ function massiveBody(mass, position, speed)
 	{
 		var difference = attractor.position.difference(self.position);
 		var distance = difference.length();
-		// log(period + ', ' + distance + ': ' + (bigG * attractor.mass / (distance * distance)));
 		var factor = bigG * attractor.mass / Math.pow(distance, 3);
 		self.speed.addScaled(difference, factor * period);
 		self.position.addScaled(self.speed, period);
@@ -185,7 +185,7 @@ var gameWorld = function()
 	var self = this;
 
 	// attributes
-	var milliEarth = new massiveBody(meMass);
+	var milliEarth = new massiveBody(meMass, meRadius);
 	var bodies = [];
 	var seconds = 0;
 	var shortDelay = 20;
@@ -219,13 +219,18 @@ var gameWorld = function()
 	 */
 	self.add = function(player)
 	{
-		var body = new massiveBody(100, new vector(meRadius, 0, 0), new vector(0, 225, 0));
+		var body = new massiveBody(100, 2);
 		var index = bodies.push(body);
 		body.name = 'player' + index;
 		if (index % 2)
 		{
-			body.place(-meRadius, 0, 0);
+			body.setPosition(-meRadius, 0, 0);
 			body.setSpeed(0, 95, 0);
+		}
+		else
+		{
+			body.setPosition(meRadius, 0, 0);
+			body.setSpeed(0, 225, 0);
 		}
 	}
 
@@ -241,10 +246,10 @@ var gameWorld = function()
 
 	function longLoop()
 	{
-		var message = '';
+		var message = 'Distances: ';
 		iterate(function(body) {
-				var distance = meRadius - body.position.length();
-				message += body.name + ': ' + distance + ', ';
+				var distance = Math.round(meRadius - body.position.length());
+				message += body.name + ' ' + body.position + ': ' + distance + ', ';
 		});
 		log(message);
 	}
