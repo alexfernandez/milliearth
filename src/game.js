@@ -19,11 +19,12 @@ var trace = util.trace;
 /**
  * Globals.
  */
+var bigG = 6.67384e-11;
 
 /**
- * Three-dimensional coordinates, in meters.
+ * Three-dimensional vector, in meters.
  */
-function coordinates(x, y, z)
+function vector(x, y, z)
 {
 	// self-reference
 	var self = this;
@@ -31,6 +32,58 @@ function coordinates(x, y, z)
 	self.x = x;
 	self.y = y;
 	self.z = z;
+
+	/**
+	 * Add another vector to this one.
+	 */
+	self.add = function(point)
+	{
+		self.x += point.x;
+		self.y += point.y;
+		self.z += point.z;
+	}
+
+	self.addScaled = function(point, scale)
+	{
+		self.x += point.x * scale;
+		self.y += point.y * scale;
+		self.z += point.z * scale;
+	}
+
+	/**
+	 * Substract another point in space, return the difference as vector.
+	 */
+	self.difference = function(point)
+	{
+		return new vector(self.x - point.x, self.y - point.y, self.z - point.z);
+	}
+
+	/**
+	 * Multiply by a scalar.
+	 */
+	self.multiply = function(factor)
+	{
+		self.x *= factor;
+		self.y *= factor;
+		self.z *= factor;
+	}
+
+	/**
+	 * Return the length of the vector, squared.
+	 */
+	self.squaredLength = function()
+	{
+		return self.x * self.x + self.y * self.y + self.z * self.z;
+	}
+
+	/**
+	 * Return the length of the given vector.
+	 */
+	self.length = function()
+	{
+		var squared = self.squaredLength();
+		return Math.sqrt(squared);
+	}
 }
 
 /**
@@ -44,11 +97,96 @@ function massiveBody(mass, position, speed)
 	// attributes
 	self.mass = mass;
 	self.position = position;
-	self.speed = speed || new coordinates(0, 0, 0);
+	self.speed = speed || new vector(0, 0, 0);
 
+	/**
+	 * Compute gravitational attraction by another body in the given period (in seconds).
+	 */
+	self.computeAttraction = function(attractor, period)
+	{
+		var difference = attractor.position.difference(self.position);
+		var distance = difference.length();
+		var factor = Math.pow(bigG * attractor.mass / distance, 3);
+		difference.multiply(factor * period);
+		self.speed.add(difference);
+		self.position.addScaled(self.speed, period);
+	}
 }
 
-var milliEarth = new massiveBody(5.97219e21, new coordinates(0, 0, 0));
+/**
+ * A high resolution timer.
+ */
+function timer(delay, callback)
+{
+	// self-reference
+	var self = this;
+
+	// attributes
+	var counter = 0;
+	var start = new Date().getTime();
+
+	/**
+	 * Delayed running of the callback.
+	 */
+	function delayed()
+	{
+		callback();
+		counter ++;
+		var diff = (new Date().getTime() - start) - counter * delay;
+		setTimeout(delayed, delay - diff);
+	}
+
+	/**
+	 * Show the drift of the timer.
+	 */
+	self.traceDrift = function()
+	{
+		var diff = new Date().getTime() - start;
+		var drift = diff / delay - counter;
+		log('Seconds: ' + Math.round(diff / 1000) + ', counter: ' + counter + ', drift: ' + drift);
+	}
+
+	// start timer
+	setTimeout(delayed, delay);
+}
+
+/**
+ * The world where the game runs.
+ */
+var world = new function()
+{
+	// self-reference
+	var self = this;
+
+	// attributes
+	var radius = 6312.32;
+	var milliEarth = new massiveBody(5.97219e21, new vector(0, 0, 0));
+	var player1 = new massiveBody(100, new vector(radius, 0, 0));
+	var player2 = new massiveBody(100, new vector(-radius, 0, 0));
+	var seconds = 0;
+	var shortTimer = 20;
+	var longTimer = 1000;
+
+	/**
+	 * Run a short loop of the world.
+	 */
+	function shortLoop()
+	{
+		player1.computeAttraction(milliEarth, 1/shortTimer);
+		player2.computeAttraction(milliEarth, 1/shortTimer);
+	}
+
+	function longLoop()
+	{
+		shortTimer.traceDrift();
+		log('Player1: ' + player1.position.length() + ', player2: ' + player2.position.length());
+	}
+
+	// start timers
+	var shortTimer = new timer(shortTimer, shortLoop);
+	var longTimer = new timer(longTimer, longLoop);
+}
+
 
 /**
  * One of the players connected to a game.
