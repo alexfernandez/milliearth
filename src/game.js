@@ -20,6 +20,10 @@ var trace = util.trace;
  * Globals.
  */
 var bigG = 6.67384e-11;
+// 1 thousandth the radius of Earth
+var meRadius = 6312.32;
+// 1 millionth the mass of Earth
+var meMass = 5.97219e18;
 
 /**
  * A high resolution timer.
@@ -167,7 +171,7 @@ function massiveBody(mass, position, speed)
 		var distance = difference.length();
 		// log(period + ', ' + distance + ': ' + (bigG * attractor.mass / (distance * distance)));
 		var factor = bigG * attractor.mass / Math.pow(distance, 3);
-		self.speed.addScaled(difference, factor * period / 6.5);
+		self.speed.addScaled(difference, factor * period / 6.3);
 		self.position.addScaled(self.speed, period);
 	}
 }
@@ -181,8 +185,7 @@ var gameWorld = function()
 	var self = this;
 
 	// attributes
-	var radius = 6312.32;
-	var milliEarth = new massiveBody(5.97219e18, new vector(0, 0, 0));
+	var milliEarth = new massiveBody(meMass);
 	var bodies = [];
 	var seconds = 0;
 	var shortDelay = 20;
@@ -216,12 +219,12 @@ var gameWorld = function()
 	 */
 	self.add = function(player)
 	{
-		var body = new massiveBody(100, new vector(radius, 0, 0), new vector(0, 85, 0));
+		var body = new massiveBody(100, new vector(meRadius, 0, 0));
 		var index = bodies.push(body);
 		body.name = 'player' + index;
 		if (index % 2)
 		{
-			body.place(-radius, 0, 0);
+			body.place(-meRadius, 0, 0);
 			body.setSpeed(0, 95, 0);
 		}
 	}
@@ -240,7 +243,7 @@ var gameWorld = function()
 	{
 		var message = '';
 		iterate(function(body) {
-				var distance = radius - body.position.length();
+				var distance = meRadius - body.position.length();
 				message += body.name + ': ' + distance + ', ';
 		});
 		log(message);
