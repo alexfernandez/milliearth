@@ -101,8 +101,16 @@ function massiveBody(mass, position, speed)
 
 	// attributes
 	self.mass = mass;
-	self.position = position;
+	self.position = position || new vector(0, 0, 0);
 	self.speed = speed || new vector(0, 0, 0);
+
+	/**
+	 * Place the object at the given position.
+	 */
+	self.place = function(x, y, z)
+	{
+		self.position = new vector(x, y, z);
+	}
 
 	/**
 	 * Compute gravitational attraction by another body in the given period (in seconds).
@@ -167,28 +175,10 @@ var gameWorld = function()
 	// attributes
 	var radius = 6312.32;
 	var milliEarth = new massiveBody(5.97219e18, new vector(0, 0, 0));
-	var player1 = new massiveBody(100, new vector(radius, 0, 0), new vector(0, 55, 0));
-	var player2 = new massiveBody(100, new vector(-radius, 0, 0), new vector(0, 2, 0));
+	var bodies = [];
 	var seconds = 0;
 	var shortDelay = 20;
 	var longDelay = 1000;
-
-	/**
-	 * Run a short loop of the world.
-	 */
-	function shortLoop()
-	{
-		player1.computeAttraction(milliEarth, 1.0 / shortDelay);
-		player2.computeAttraction(milliEarth, 1.0 / shortDelay);
-	}
-
-	function longLoop()
-	{
-		// shortTimer.traceDrift();
-		var distance1 = radius - player1.position.length();
-		var distance2 = radius - player2.position.length();
-		log('Player1: ' + distance1 + ', player2: ' + distance2);
-	}
 
 	/**
 	 * Start timers.
@@ -204,11 +194,51 @@ var gameWorld = function()
 	 */
 	self.getUpdate = function()
 	{
-		return {
+		var update = {
 			milliEarth: milliEarth,
-			player1: player1,
-			player2: player2,
 		};
+		for (var index in bodies)
+		{
+			var body = bodies[index];
+			update['player' + (index + 1)] = body;
+		}
+		return update;
+	}
+
+	/**
+	 * Add the body for a new player.
+	 */
+	self.add = function(player)
+	{
+		var body = new massiveBody(100, new vector(radius, 0, 0), new vector(0, 65, 0));
+		var index = bodies.push(body);
+		if (index % 2)
+		{
+			body.place(-radius, 0, 0);
+		}
+	}
+
+	/**
+	 * Run a short loop of the world.
+	 */
+	function shortLoop()
+	{
+		for (var index in bodies)
+		{
+			bodies[index].computeAttraction(milliEarth, 1.0 / shortDelay);
+		}
+	}
+
+	function longLoop()
+	{
+		var message = '';
+		for (var index in bodies)
+		{
+			var body = bodies[index];
+			var distance = radius - body.position.length();
+			bodies += 'player ' + index + ': ' + distance;
+		}
+		log(message);
 	}
 }
 
@@ -289,6 +319,7 @@ function meGame(id)
 	self.add = function(player)
 	{
 		players.push(player);
+		world.add(player);
 		log('Player ' + player.id + ' connected to game ' + self.id + '; ' + players.length + ' connected');
 	}
 
