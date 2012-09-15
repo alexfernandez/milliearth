@@ -103,7 +103,7 @@ function vector(x, y, z)
 	/**
 	 * Multiply by a scalar.
 	 */
-	self.multiply = function(factor)
+	self.scale = function(factor)
 	{
 		self.x *= factor;
 		self.y *= factor;
@@ -171,7 +171,7 @@ function massiveBody(mass, position, speed)
 		var distance = difference.length();
 		// log(period + ', ' + distance + ': ' + (bigG * attractor.mass / (distance * distance)));
 		var factor = bigG * attractor.mass / Math.pow(distance, 3);
-		self.speed.addScaled(difference, factor * period / 6.3);
+		self.speed.addScaled(difference, factor * period);
 		self.position.addScaled(self.speed, period);
 	}
 }
@@ -235,7 +235,7 @@ var gameWorld = function()
 	function shortLoop()
 	{
 		iterate(function(body) {
-				body.computeAttraction(milliEarth, 1.0 / shortDelay);
+				body.computeAttraction(milliEarth, shortDelay / 1000);
 		});
 	}
 
