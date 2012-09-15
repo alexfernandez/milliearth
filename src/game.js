@@ -151,6 +151,14 @@ function massiveBody(mass, position, speed)
 	}
 
 	/**
+	 * Set the speed.
+	 */
+	self.setSpeed = function(x, y, z)
+	{
+		self.speed = new vector(x, y, z);
+	}
+
+	/**
 	 * Compute gravitational attraction by another body in the given period (in seconds).
 	 */
 	self.computeAttraction = function(attractor, period)
@@ -208,12 +216,13 @@ var gameWorld = function()
 	 */
 	self.add = function(player)
 	{
-		var body = new massiveBody(100, new vector(radius, 0, 0), new vector(0, 65, 0));
+		var body = new massiveBody(100, new vector(radius, 0, 0), new vector(0, 85, 0));
 		var index = bodies.push(body);
 		body.name = 'player' + index;
-		if (!index % 2)
+		if (index % 2)
 		{
 			body.place(-radius, 0, 0);
+			body.setSpeed(0, 95, 0);
 		}
 	}
 
