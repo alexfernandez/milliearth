@@ -13,6 +13,8 @@ var clientPlayer = function()
 
 	// interval between updates in milliseconds
 	var interval = 1000;
+	// id to clear interval
+	var intervalId;
 	// keep track of the websocket
 	var websocket;
 	// check server latency
@@ -58,6 +60,7 @@ var clientPlayer = function()
 		websocket.onerror = function (error)
 		{
 			console.error(error);
+			clearInterval(intervalId);
 			$('#status').text('Error');
 			$('#message').text(error);
 		};
@@ -123,7 +126,7 @@ var clientPlayer = function()
 	self.start = function()
 	{
 		$('#status').text('Simulation started!');
-		setInterval(self.requestUpdate, interval);
+		intervalId = setInterval(self.requestUpdate, interval);
 	}
 
 	/**
@@ -181,7 +184,7 @@ var clientPlayer = function()
 				fillStyle: 'black',
 				x: x,
 				y: y,
-				radius: 5
+				radius: 1
 		} );
 	}
 }
