@@ -4,6 +4,15 @@
  */
 
 /**
+ * Globals.
+ */
+// projection values
+var startx = 400;
+var starty = 200;
+var startz = 6000;
+var scale = 200;
+
+/**
  * Player answer to server messages.
  */
 var clientPlayer = function()
@@ -157,7 +166,7 @@ var clientPlayer = function()
 			return;
 		}
 		$('#simulation').clearCanvas();
-		paint(message.milliEarth);
+		paintMilliEarth(message.milliEarth);
 		paint(message.player1);
 		paint(message.player2);
 		updates ++;
@@ -203,22 +212,53 @@ var clientPlayer = function()
 	}
 
 	/**
+	 * Paint the milliEarth.
+	 */
+	function paintMilliEarth(body)
+	{
+		$('#simulation').drawArc( {
+				fillStyle: '#ccc',
+				x: projectX(body.position.x, body.position.z),
+				y: projectY(body.position.y, body.position.z),
+				radius: project(body.radius, body.position.z)
+		});
+	}
+
+	/**
 	 * Paint a celestial body.
 	 */
 	function paint(body)
 	{
-		var zstart = 6000;
-		var scale = 200;
-		var startx = 400;
-		var starty = 200;
-		var x = body.position.x / (body.position.z + 6000) * scale + startx;
-		var y = body.position.y / (body.position.z + 6000) * scale + starty;
 		$('#simulation').drawArc( {
-				fillStyle: 'black',
-				x: x,
-				y: y,
+				fillStyle: '#000',
+				x: projectX(body.position.x, body.position.z),
+				y: projectY(body.position.y, body.position.z),
 				radius: 1
-		} );
+		});
+	}
+
+	/**
+	 * Project a length on the z axis.
+	 */
+	function project(length, z)
+	{
+		return length / (z + startz) * scale;
+	}
+
+	/**
+	 * Project the x coordinate.
+	 */
+	function projectX(x, z)
+	{
+		return project(x, z) + startx;
+	}
+
+	/**
+	 * Project the y coordinate.
+	 */
+	function projectY(y, z)
+	{
+		return project(y, z) + starty;
 	}
 }
 
