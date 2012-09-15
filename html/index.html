@@ -1,9 +1,30 @@
 <!doctype html>
 <html lang="en">
 <head>
-<title>MilliEarthr</title>
+<title>MilliEarth</title>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script src="js/simulation.js"></script>
+<style>
+* { font-family:tahoma; }
+div.message { border: 1px solid #ccc; }
+</style>
 </head>
 <body>
 <h1>MilliEarth Simulation</h1>
+<p>
+Simulation for MilliEarth orbiters: bodies moving around an asteroid with 1/1000th of the Earth radius but approximately equal gravity.
+</p>
+<p>
+Status:
+<span id="status">not started</span>
+</p>
+<p>
+Latency: <span id="latency">n/a</span>
+</p>
+<canvas id="simulation" width="1000" height="600">
+</canvas>
+<div class="message">
+no messages at this time
+<div>
 </body>
 </html>
