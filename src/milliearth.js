@@ -78,6 +78,10 @@ setInterval(function() {
 	}, 1000);
  */
 
+// autostart
+var game = gameSelector.find('test');
+game.autostart();
+
 /**
  * WebSocket server
  */

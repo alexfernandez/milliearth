@@ -16,9 +16,39 @@ var log = util.log;
 var trace = util.trace;
 // util.enableTrace();
 
-function massiveBody()
+/**
+ * Globals.
+ */
+
+/**
+ * Three-dimensional coordinates, in meters.
+ */
+function coordinates(x, y, z)
 {
+	// self-reference
+	var self = this;
+
+	self.x = x;
+	self.y = y;
+	self.z = z;
 }
+
+/**
+ * A massive body. Mass is given in kg.
+ */
+function massiveBody(mass, position, speed)
+{
+	// self-reference
+	var self = this;
+
+	// attributes
+	self.mass = mass;
+	self.position = position;
+	self.speed = speed || new coordinates(0, 0, 0);
+
+}
+
+var milliEarth = new massiveBody(5.97219e21, new coordinates(0, 0, 0));
 
 /**
  * One of the players connected to a game.
@@ -51,6 +81,33 @@ function connectedPlayer(id, connection)
 }
 
 /**
+ * A computer player.
+ */
+function autoPlayer(id)
+{
+	// self-reference
+	var self = this;
+
+	self.id = id;
+	self.life = 100;
+
+	/**
+	 * Keep a message for the auto player.
+	 */
+	self.send = function(message)
+	{
+		trace('Auto: ' + parser.convert(message));
+	}
+
+	/**
+	 * Disconnect the player.
+	 */
+	self.disconnect = function()
+	{
+	}
+}
+
+/**
  * A game object
  */
 function meGame(id)
@@ -63,17 +120,25 @@ function meGame(id)
 	var active = false;
 
 	/**
+	 * Add a new player to the game.
+	 */
+	self.add = function(player)
+	{
+		var index = players.push(player) - 1;
+		log('Player ' + player.id + ' connected to game ' + self.id + '; ' + players.length + ' connected');
+		if (players.length == 2)
+		{
+			self.start();
+		}
+	}
+
+	/**
 	 * Connect a new player.
 	 */
 	self.connect = function(id, connection)
 	{
 		var player = new connectedPlayer(id, connection);
-		var index = players.push(player) - 1;
-		log('Player ' + id + ' connected to game ' + self.id + '; ' + players.length + ' connected');
-		if (players.length == 2)
-		{
-			self.start();
-		}
+		self.add(player);
 		connection.on('message', function(message) {
 				if (message.type != 'utf8')
 				{
@@ -115,6 +180,15 @@ function meGame(id)
 		active = true;
 		trace('Fight ' + self.id + ' started!');
 		setInterval(self.loop, 20);
+	}
+
+	/**
+	 * Start a game with two computer players.
+	 */
+	self.autostart = function()
+	{
+		self.add(new autoPlayer('computer1'));
+		self.add(new autoPlayer('computer2'));
 	}
 
 	/**
