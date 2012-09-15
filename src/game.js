@@ -230,7 +230,7 @@ var gameWorld = function()
 		else
 		{
 			body.setPosition(meRadius, 0, 0);
-			body.setSpeed(0, 225, 0);
+			body.setSpeed(0, 251.28, 0);
 		}
 	}
 
