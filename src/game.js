@@ -198,6 +198,18 @@ var gameWorld = function()
 		var shortTimer = new timer(shortDelay, shortLoop);
 		var longTimer = new timer(longDelay, longLoop);
 	};
+
+	/**
+	 * Get an update message.
+	 */
+	self.getUpdate = function()
+	{
+		return {
+			milliEarth: milliEarth,
+			player1: player1,
+			player2: player2,
+		};
+	}
 }
 
 
@@ -276,7 +288,7 @@ function meGame(id)
 	 */
 	self.add = function(player)
 	{
-		var index = players.push(player) - 1;
+		players.push(player);
 		log('Player ' + player.id + ' connected to game ' + self.id + '; ' + players.length + ' connected');
 		if (players.length == 2)
 		{
@@ -307,8 +319,7 @@ function meGame(id)
 					self.error(index, 'Invalid JSON: ' + message.utf8Data);
 					return;
 				}
-				self.message(index, info);
-
+				self.message(player, info);
 		});
 
 		connection.on('error', function(error) {
@@ -346,14 +357,9 @@ function meGame(id)
 	/**
 	 * Send an error to the client.
 	 */
-	self.error = function(index, message)
+	self.error = function(player, message)
 	{
-		log('Player ' + index + ' error: ' + message);
-		var player = players[index];
-		if (!player)
-		{
-			return;
-		}
+		log('Player ' + player.id + ' error: ' + message);
 		var error = {
 			type: 'error',
 			message: message
@@ -364,25 +370,24 @@ function meGame(id)
 	/**
 	 * One of the players has sent a message.
 	 */
-	self.message = function(index, message)
+	self.message = function(player, message)
 	{
 		if (!active)
 		{
-			self.error(index, 'Game not started');
+			self.error(player, 'Game not started');
 			return;
 		}
 		if (!message.type)
 		{
-			self.error(index, 'Missing game type');
+			self.error(player, 'Missing game type');
 		}
-		var player = players[index];
 		trace('Player ' + player.id + ' sent a message ' + message.type);
 		if (message.type == 'update')
 		{
 			self.sendUpdate(player);
 			return;
 		}
-		self.error(index, 'Unknown game type ' + message.type);
+		self.error(player, 'Unknown game type ' + message.type);
 	}
 
 	/**
@@ -475,12 +480,7 @@ function meGame(id)
 	 */
 	self.sendUpdate = function(player)
 	{
-		var update = {
-			milliEarth: milliEarth,
-			player1: player1,
-			player2: player2,
-		};
-		player.send(update);
+		player.send(world.getUpdate());
 	}
 
 	/**

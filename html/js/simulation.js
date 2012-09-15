@@ -11,6 +11,8 @@ var clientPlayer = function(index)
 	// self-reference
 	var self = this;
 
+	// interval between updates in milliseconds
+	var interval = 1000;
 	// keep track of the websocket
 	var websocket;
 	// check server latency
@@ -122,20 +124,19 @@ var clientPlayer = function(index)
 	self.start = function()
 	{
 		$('#status' + index).text('Simulation started!');
-		$('#submit' + index).removeAttr('disabled');
-		$('#punch' + index).submit(function() {
-				var message = {
-					type: 'hit',
-					force: $('#force' + index).val(),
-					position: {
-						x: $('#x' + index).val(),
-						y: $('#y' + index).val()
-					}
-				};
-				websocket.send(JSON.stringify(message));
-				lastTime = new Date().getTime();
-				return false;
-		});
+		setInterval(self.requestUpdate, interval);
+	}
+
+	/**
+	 * Request an update from the server.
+	 */
+	self.requestUpdate = function()
+	{
+		var message = {
+			type: 'update',
+		};
+		websocket.send(JSON.stringify(message));
+		lastTime = new Date().getTime();
 	}
 
 	/**
