@@ -144,7 +144,7 @@ var clientPlayer = function()
 	self.update = function(message)
 	{
 		$('#status').text('Update just arrived!');
-		paint(message.milliearth);
+		paint(message.milliEarth);
 		paint(message.player1);
 		paint(message.player2);
 	}
@@ -170,7 +170,19 @@ var clientPlayer = function()
 	 */
 	function paint(body)
 	{
-		$('#simulation');
+		var zstart = 6000;
+		var scale = 200;
+		var startx = 400;
+		var starty = 200;
+		var x = body.position.x / (body.position.z + 6000) * scale + startx;
+		var y = body.position.y / (body.position.z + 6000) * scale + starty;
+		console.log('At ' + x + ', ' + y);
+		$('#simulation').drawArc( {
+				fillStyle: 'black',
+				x: x,
+				y: y,
+				radius: 5
+		} );
 	}
 }
 
