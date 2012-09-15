@@ -24,7 +24,7 @@ var clientPlayer = function(index)
 	/**
 	 * Click on the connect or disconnect button.
 	 */
-	function click()
+	self.click = function()
 	{
 		if (!websocket)
 		{
@@ -34,7 +34,7 @@ var clientPlayer = function(index)
 		disconnect();
 		websocket = null;
 	}
-	$('#connect' + index).click(click);
+	$('#connect' + index).click(self.click);
 
 	/**
 	 * Connect using a websocket.
@@ -42,8 +42,8 @@ var clientPlayer = function(index)
 	function connect()
 	{
 		console.log('connecting player ' + index);
-		var gameId = $('#gameid' + index).val();
-		var playerId = $('#playerid' + index).val();
+		var gameId = 'simulation';
+		var playerId = 'human';
 		// open websocket
 		var wsUrl = 'ws://' + location.host + '/serve?game=' + gameId + '&player=' + playerId;
 		websocket = new WebSocket(wsUrl);
@@ -195,5 +195,6 @@ $(function () {
 		}
 
 		var player = new clientPlayer();
+		player.click();
 });
 

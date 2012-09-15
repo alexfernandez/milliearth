@@ -79,7 +79,7 @@ setInterval(function() {
  */
 
 // autostart
-var game = gameSelector.find('test');
+var game = gameSelector.find('simulation');
 game.autostart();
 
 /**
