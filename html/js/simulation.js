@@ -169,8 +169,10 @@ var clientPlayer = function()
 		}
 		$('#simulation').clearCanvas();
 		paintMilliEarth(message.milliEarth);
-		paint(message.player1);
-		paint(message.player2);
+		for (var name in message.players)
+		{
+			paint(message.players[name]);
+		}
 		updates ++;
 		if (message.id in latencyMap)
 		{

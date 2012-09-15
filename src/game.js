@@ -207,9 +207,10 @@ var gameWorld = function()
 	{
 		var update = {
 			milliEarth: milliEarth,
+			players: {},
 		};
 		iterate(function(body) {
-				update[body.name] = body;
+				update.players[body.name] = body;
 		});
 		return update;
 	}
@@ -221,7 +222,7 @@ var gameWorld = function()
 	{
 		var body = new massiveBody(100, 2);
 		var index = bodies.push(body);
-		body.name = 'player' + index;
+		body.name = player.id;
 		if (index % 2)
 		{
 			body.setPosition(-meRadius, 0, 0);
@@ -401,7 +402,14 @@ function meGame(id)
 	 */
 	self.start = function()
 	{
-		var playerIds = [players[0].id, players[1].id];
+		var playerIds = [];
+		for (var i = 0; i < players.length; i++)
+		{
+			if (players[i])
+			{
+				playerIds.push(players[i].id);
+			}
+		}
 		self.broadcast({
 				type: 'start',
 				players: playerIds
@@ -464,7 +472,7 @@ function meGame(id)
 			self.sendUpdate(player, message.id);
 			return;
 		}
-		self.error(player, 'Unknown game type ' + message.type);
+		self.error(player, 'Unknown message type ' + message.type);
 	}
 
 	/**
