@@ -26,13 +26,13 @@ var clientPlayer = function()
 	var intervalId;
 	// keep track of the websocket
 	var websocket;
-	// check server latency
-	var lastTime;
 	// check if running
 	var running = false;
 	// number of updates per second
 	var updates = 0;
+	// latency total and map
 	var latencies = 0;
+	var latencyMap = {};
 
 	$('#status').html('Press connect');
 
@@ -148,11 +148,13 @@ var clientPlayer = function()
 	 */
 	self.requestUpdate = function()
 	{
+		var id = Math.floor(Math.random() * 0x100000000).toString(16);
 		var message = {
 			type: 'update',
+			id: id,
 		};
 		websocket.send(JSON.stringify(message));
-		lastTime = new Date().getTime();
+		latencyMap[id] = new Date().getTime();
 	}
 
 	/**
@@ -170,12 +172,12 @@ var clientPlayer = function()
 		paint(message.player1);
 		paint(message.player2);
 		updates ++;
-		if (lastTime)
+		if (message.id in latencyMap)
 		{
+			var lastTime = latencyMap[message.id];
 			var newTime = new Date().getTime();
-			var latency = newTime - lastTime;
-			latencies += latency;
-			lastTime = null;
+			latencies += newTime - lastTime;
+			delete latencyMap[message.id];
 		}
 	}
 

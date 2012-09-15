@@ -461,7 +461,7 @@ function meGame(id)
 		trace('Player ' + player.id + ' sent a message ' + message.type);
 		if (message.type == 'update')
 		{
-			self.sendUpdate(player);
+			self.sendUpdate(player, message.id);
 			return;
 		}
 		self.error(player, 'Unknown game type ' + message.type);
@@ -555,10 +555,11 @@ function meGame(id)
 	/**
 	 * Send an update to a player.
 	 */
-	self.sendUpdate = function(player)
+	self.sendUpdate = function(player, id)
 	{
 		var update = world.getUpdate();
 		update.type = 'update';
+		update.id = id;
 		player.send(update);
 	}
 
