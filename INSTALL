@@ -21,7 +21,7 @@ Machine IP 54.247.100.172, instance rightimage_debian_6.0.1_amd64_20110405.1_ebs
 Debian:
   # apt-get remove exim4 exim4-base rightscale nfs-common portmap xfs subversion nfs-common emacs xauth
     bind9-host exim4-config mercurial mutt alien
-  # apt-get install unattended-upgrades vim-scripts sudo make gcc
+  # apt-get install unattended-upgrades vim-scripts sudo make gcc g++
   # vim /etc/vim/vimrc
 Amazon console:
   https://console.aws.amazon.com/ec2/home?region=eu-west-1&#s=Instances
