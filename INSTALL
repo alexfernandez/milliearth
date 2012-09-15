@@ -34,16 +34,13 @@ git:
   # adduser milliearth
   # su milliearth
   $ cd
-  $ mkdir git
-  $ cd git
-  $ mkdir milliearth.git
-  $ cd milliearth.git
-  $ git init --bare
-  [ add public keys, go to local machine ]
-  $ git clone milliearth.git
+  $ git clone git://github.com/alexfernandez/milliearth.git
+  $ mv milliearth deploy
+  $ cd deploy
 startup:
-  # ln -s /home/milliearth/srv/milliearth/start-milliearth.sh /etc/init.d/milliearth.sh
+  # ln -s /home/milliearth/deploy/bash/start-milliearth.sh /etc/init.d/milliearth.sh
   # update-rc.d milliearth.sh defaults
+  # ln -s /home/milliearth/deploy/bash/milliearth.sh /usr/bin/
 open files:
   # vim /etc/security/limits.d/nofile.conf
     root            hard    nofile          65000
