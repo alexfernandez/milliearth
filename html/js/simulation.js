@@ -12,13 +12,16 @@ var clientPlayer = function()
 	var self = this;
 
 	// interval between updates in milliseconds
-	var interval = 100;
+	var interval = 50;
 	// id to clear interval
 	var intervalId;
 	// keep track of the websocket
 	var websocket;
 	// check server latency
 	var lastTime;
+	// number of updates per second
+	var updates = 0;
+	var latencies = 0;
 
 	$('#status').html('Press connect');
 
@@ -70,12 +73,6 @@ var clientPlayer = function()
 		 */
 		websocket.onmessage = function (message)
 		{
-			var newTime = new Date().getTime();
-			if (lastTime)
-			{
-				$('#latency').text(newTime - lastTime);
-				lastTime = null;
-			}
 			$('#message').html(message.data);
 			// check it is valid JSON
 			try
@@ -126,6 +123,7 @@ var clientPlayer = function()
 	{
 		$('#status').text('Simulation started!');
 		intervalId = setInterval(self.requestUpdate, interval);
+		setInterval(self.control, 1000);
 	}
 
 	/**
@@ -150,6 +148,25 @@ var clientPlayer = function()
 		paint(message.milliEarth);
 		paint(message.player1);
 		paint(message.player2);
+		updates ++;
+		if (lastTime)
+		{
+			var newTime = new Date().getTime();
+			var latency = newTime - lastTime;
+			latencies += latency;
+			lastTime = null;
+		}
+	}
+
+	/**
+	 * Control heartbeat.
+	 */
+	self.control = function(message)
+	{
+		$('#status').text(updates + ' updates per second');
+		$('#latency').text(Math.round(10 * latencies / updates) / 10);
+		updates = 0;
+		latencies = 0;
 	}
 
 	/**
