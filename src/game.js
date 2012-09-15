@@ -91,10 +91,6 @@ function vector(x, y, z)
 	}
 }
 
-var a = new vector(1, 2, 3);
-var b = a.difference(new vector(2, 3, 4));
-log(b);
-
 /**
  * A massive body. Mass is given in kg.
  */
@@ -115,9 +111,9 @@ function massiveBody(mass, position, speed)
 	{
 		var difference = attractor.position.difference(self.position);
 		var distance = difference.length();
+		// log(period + ', ' + distance + ': ' + (bigG * attractor.mass / (distance * distance)));
 		var factor = bigG * attractor.mass / Math.pow(distance, 3);
-		difference.multiply(factor * period);
-		self.speed.add(difference);
+		self.speed.addScaled(difference, factor * period / 6.5);
 		self.position.addScaled(self.speed, period);
 	}
 }
@@ -152,10 +148,11 @@ function timer(delay, callback)
 	{
 		var diff = new Date().getTime() - start;
 		var drift = diff / delay - counter;
-		log('Seconds: ' + Math.round(diff / 1000) + ', counter: ' + counter + ', drift: ' + drift);
+		trace('Seconds: ' + Math.round(diff / 1000) + ', counter: ' + counter + ', drift: ' + drift);
 	}
 
 	// start timer
+	delayed();
 	setTimeout(delayed, delay);
 }
 
@@ -170,7 +167,7 @@ var world = new function()
 	// attributes
 	var radius = 6312.32;
 	var milliEarth = new massiveBody(5.97219e18, new vector(0, 0, 0));
-	var player1 = new massiveBody(100, new vector(radius, 0, 0));
+	var player1 = new massiveBody(100, new vector(radius, 0, 0), new vector(0, 0, 255));
 	var player2 = new massiveBody(100, new vector(-radius, 0, 0));
 	var seconds = 0;
 	var shortDelay = 20;
@@ -187,8 +184,10 @@ var world = new function()
 
 	function longLoop()
 	{
-		shortTimer.traceDrift();
-		log('Player1: ' + player1.position + ', player2: ' + player2.position);
+		// shortTimer.traceDrift();
+		var distance1 = radius - player1.position.length();
+		var distance2 = radius - player2.position.length();
+		log('Player1: ' + distance1 + ', player2: ' + distance2);
 	}
 
 	// start timers
