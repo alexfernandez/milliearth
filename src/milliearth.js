@@ -146,7 +146,7 @@ function serve(request, response)
  */
 function serve_home(request, response)
 {
-	serve_file(200, 'home.html', response);
+	serve_file(200, 'index.html', response);
 }
 
 /*
