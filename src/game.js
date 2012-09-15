@@ -116,7 +116,6 @@ function massiveBody(mass, position, speed)
 		var difference = attractor.position.difference(self.position);
 		var distance = difference.length();
 		var factor = bigG * attractor.mass / Math.pow(distance, 3);
-	log(distance + ', ' + factor);
 		difference.multiply(factor * period);
 		self.speed.add(difference);
 		self.position.addScaled(self.speed, period);
@@ -174,16 +173,16 @@ var world = new function()
 	var player1 = new massiveBody(100, new vector(radius, 0, 0));
 	var player2 = new massiveBody(100, new vector(-radius, 0, 0));
 	var seconds = 0;
-	var shortTimer = 20;
-	var longTimer = 1000;
+	var shortDelay = 20;
+	var longDelay = 1000;
 
 	/**
 	 * Run a short loop of the world.
 	 */
 	function shortLoop()
 	{
-		player1.computeAttraction(milliEarth, 1/shortTimer);
-		player2.computeAttraction(milliEarth, 1/shortTimer);
+		player1.computeAttraction(milliEarth, 1.0 / shortDelay);
+		player2.computeAttraction(milliEarth, 1.0 / shortDelay);
 	}
 
 	function longLoop()
@@ -193,8 +192,8 @@ var world = new function()
 	}
 
 	// start timers
-	var shortTimer = new timer(shortTimer, shortLoop);
-	var longTimer = new timer(longTimer, longLoop);
+	var shortTimer = new timer(shortDelay, shortLoop);
+	var longTimer = new timer(longDelay, longLoop);
 }
 
 
