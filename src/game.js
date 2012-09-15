@@ -371,9 +371,18 @@ function meGame(id)
 			self.error(index, 'Game not started');
 			return;
 		}
-		trace('Player ' + index + ' sent a message');
+		if (!message.type)
+		{
+			self.error(index, 'Missing game type');
+		}
 		var player = players[index];
-		var rival = players[1 - index];
+		trace('Player ' + player.id + ' sent a message ' + message.type);
+		if (message.type == 'update')
+		{
+			self.sendUpdate(player);
+			return;
+		}
+		self.error(index, 'Unknown game type ' + message.type);
 	}
 
 	/**
@@ -462,20 +471,16 @@ function meGame(id)
 	}
 
 	/**
-	 * Send an update to all players.
+	 * Send an update to a player.
 	 */
-	self.sendUpdate = function(message, player, rival)
+	self.sendUpdate = function(player)
 	{
 		var update = {
-			life1: player.life,
-			life2: rival.life,
+			milliEarth: milliEarth,
+			player1: player1,
+			player2: player2,
 		};
 		player.send(update);
-		var update = {
-			life1: rival.life,
-			life2: player.life,
-		};
-		rival.send(update);
 	}
 
 	/**

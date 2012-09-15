@@ -121,7 +121,7 @@ var clientPlayer = function(index)
 	 */
 	self.start = function()
 	{
-		$('#status' + index).text('Ready to fight!');
+		$('#status' + index).text('Simulation started!');
 		$('#submit' + index).removeAttr('disabled');
 		$('#punch' + index).submit(function() {
 				var message = {
