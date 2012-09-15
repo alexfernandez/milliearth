@@ -219,7 +219,7 @@ var gameWorld = function()
 	 */
 	self.add = function(player)
 	{
-		var body = new massiveBody(100, new vector(meRadius, 0, 0));
+		var body = new massiveBody(100, new vector(meRadius, 0, 0), new vector(0, 225, 0));
 		var index = bodies.push(body);
 		body.name = 'player' + index;
 		if (index % 2)
