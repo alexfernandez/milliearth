@@ -22,6 +22,44 @@ var trace = util.trace;
 var bigG = 6.67384e-11;
 
 /**
+ * A high resolution timer.
+ */
+function timer(delay, callback)
+{
+	// self-reference
+	var self = this;
+
+	// attributes
+	var counter = 0;
+	var start = new Date().getTime();
+
+	/**
+	 * Delayed running of the callback.
+	 */
+	function delayed()
+	{
+		callback();
+		counter ++;
+		var diff = (new Date().getTime() - start) - counter * delay;
+		setTimeout(delayed, delay - diff);
+	}
+
+	/**
+	 * Show the drift of the timer.
+	 */
+	self.traceDrift = function()
+	{
+		var diff = new Date().getTime() - start;
+		var drift = diff / delay - counter;
+		trace('Seconds: ' + Math.round(diff / 1000) + ', counter: ' + counter + ', drift: ' + drift);
+	}
+
+	// start timer
+	delayed();
+	setTimeout(delayed, delay);
+}
+
+/**
  * Three-dimensional vector, in meters.
  */
 function vector(x, y, z)
@@ -124,44 +162,6 @@ function massiveBody(mass, position, speed)
 		self.speed.addScaled(difference, factor * period / 6.5);
 		self.position.addScaled(self.speed, period);
 	}
-}
-
-/**
- * A high resolution timer.
- */
-function timer(delay, callback)
-{
-	// self-reference
-	var self = this;
-
-	// attributes
-	var counter = 0;
-	var start = new Date().getTime();
-
-	/**
-	 * Delayed running of the callback.
-	 */
-	function delayed()
-	{
-		callback();
-		counter ++;
-		var diff = (new Date().getTime() - start) - counter * delay;
-		setTimeout(delayed, delay - diff);
-	}
-
-	/**
-	 * Show the drift of the timer.
-	 */
-	self.traceDrift = function()
-	{
-		var diff = new Date().getTime() - start;
-		var drift = diff / delay - counter;
-		trace('Seconds: ' + Math.round(diff / 1000) + ', counter: ' + counter + ', drift: ' + drift);
-	}
-
-	// start timer
-	delayed();
-	setTimeout(delayed, delay);
 }
 
 /**
