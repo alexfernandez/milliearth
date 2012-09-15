@@ -197,11 +197,9 @@ var gameWorld = function()
 		var update = {
 			milliEarth: milliEarth,
 		};
-		for (var index in bodies)
-		{
-			var body = bodies[index];
-			update['player' + (index + 1)] = body;
-		}
+		iterate(function(body) {
+				update[body.name] = body;
+		});
 		return update;
 	}
 
@@ -212,7 +210,8 @@ var gameWorld = function()
 	{
 		var body = new massiveBody(100, new vector(radius, 0, 0), new vector(0, 65, 0));
 		var index = bodies.push(body);
-		if (index % 2)
+		body.name = 'player' + index;
+		if (!index % 2)
 		{
 			body.place(-radius, 0, 0);
 		}
@@ -223,22 +222,34 @@ var gameWorld = function()
 	 */
 	function shortLoop()
 	{
-		for (var index in bodies)
-		{
-			bodies[index].computeAttraction(milliEarth, 1.0 / shortDelay);
-		}
+		iterate(function(body) {
+				body.computeAttraction(milliEarth, 1.0 / shortDelay);
+		});
 	}
 
 	function longLoop()
 	{
 		var message = '';
-		for (var index in bodies)
-		{
-			var body = bodies[index];
-			var distance = radius - body.position.length();
-			bodies += 'player ' + index + ': ' + distance;
-		}
+		iterate(function(body) {
+				var distance = radius - body.position.length();
+				message += body.name + ': ' + distance + ', ';
+		});
 		log(message);
+	}
+
+	/**
+	 * Iterate over all bodies, call the callback for each.
+	 */
+	function iterate(callback)
+	{
+		for (var i = 0; i < bodies.length; i++)
+		{
+			var body = bodies[i];
+			if (body)
+			{
+				callback(body);
+			}
+		}
 	}
 }
 
