@@ -290,10 +290,6 @@ function meGame(id)
 	{
 		players.push(player);
 		log('Player ' + player.id + ' connected to game ' + self.id + '; ' + players.length + ' connected');
-		if (players.length == 2)
-		{
-			self.start();
-		}
 	}
 
 	/**
@@ -330,9 +326,20 @@ function meGame(id)
 		connection.on('close', function() {
 				log('Client ' + connection.remoteAddress + ' disconnected.');
 				self.close(player);
-		});     
+		});
+		if (active)
+		{
+			self.startAfter(player);
+		}
+		else if (players.length == 2)
+		{
+			self.start();
+		}
 	}
 
+	/**
+	 * Start the game officially.
+	 */
 	self.start = function()
 	{
 		var playerIds = [players[0].id, players[1].id];
@@ -343,6 +350,17 @@ function meGame(id)
 		active = true;
 		world.start();
 		trace('Game ' + self.id + ' started!');
+	}
+
+	/**
+	 * Start a player after the game has started.
+	 */
+	self.startAfter = function(player)
+	{
+		player.send({
+				type: 'start',
+				players: [player.id]
+		});
 	}
 
 	/**
