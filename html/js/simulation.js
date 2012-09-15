@@ -157,11 +157,17 @@ var clientPlayer = function(index)
 		$('#status' + index).text('Your opponent abandoned!');
 	}
 
+	/**
+	 * Show an error from the server.
+	 */
 	self.error = function(message)
 	{
 		$('#status' + index).text('Server error: ' + message.message);
 	}
 
+	/**
+	 * Paint a celestial body.
+	 */
 	function paint(body)
 	{
 		$('#simulation');
