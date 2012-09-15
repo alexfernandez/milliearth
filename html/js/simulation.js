@@ -12,7 +12,7 @@ var clientPlayer = function()
 	var self = this;
 
 	// interval between updates in milliseconds
-	var interval = 1000;
+	var interval = 100;
 	// id to clear interval
 	var intervalId;
 	// keep track of the websocket
@@ -77,7 +77,6 @@ var clientPlayer = function()
 				lastTime = null;
 			}
 			$('#message').html(message.data);
-			console.log(message.data);
 			// check it is valid JSON
 			try
 			{
@@ -146,7 +145,8 @@ var clientPlayer = function()
 	 */
 	self.update = function(message)
 	{
-		$('#status').text('Update just arrived!');
+		// $('#status').text('Update just arrived!');
+		$('#simulation').clearCanvas();
 		paint(message.milliEarth);
 		paint(message.player1);
 		paint(message.player2);
@@ -179,7 +179,6 @@ var clientPlayer = function()
 		var starty = 200;
 		var x = body.position.x / (body.position.z + 6000) * scale + startx;
 		var y = body.position.y / (body.position.z + 6000) * scale + starty;
-		console.log('At ' + x + ', ' + y);
 		$('#simulation').drawArc( {
 				fillStyle: 'black',
 				x: x,
