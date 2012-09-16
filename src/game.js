@@ -24,11 +24,11 @@
  * Requirements.
  */
 var params = require('./params.js').params;
+var vector = require('./vector.js').vector;
 var util = require('./util.js');
 var parser = util.parser;
 var log = util.log;
 var trace = util.trace;
-// util.enableTrace();
 
 /**
  * Globals.
@@ -75,94 +75,6 @@ function timer(delay, callback)
 	// start timer
 	delayed();
 	setTimeout(delayed, delay);
-}
-
-/**
- * Three-dimensional vector, in meters.
- */
-function vector(x, y, z)
-{
-	// self-reference
-	var self = this;
-
-	self.x = x;
-	self.y = y;
-	self.z = z;
-
-	/**
-	 * Return a copy of this vector.
-	 */
-	self.copy = function()
-	{
-		return new vector(self.x, self.y, self.z);
-	}
-
-	/**
-	 * Get a unit vector along this vector.
-	 */
-	self.unit = function()
-	{
-		var unit = self.copy();
-		unit.scale(1 / unit.length());
-		return unit;
-	}
-
-	/**
-	 * Add another vector to this one.
-	 */
-	self.add = function(point)
-	{
-		self.x += point.x;
-		self.y += point.y;
-		self.z += point.z;
-	}
-
-	self.addScaled = function(point, scale)
-	{
-		self.x += point.x * scale;
-		self.y += point.y * scale;
-		self.z += point.z * scale;
-	}
-
-	/**
-	 * Substract another point in space, return the difference as vector.
-	 */
-	self.difference = function(point)
-	{
-		return new vector(self.x - point.x, self.y - point.y, self.z - point.z);
-	}
-
-	/**
-	 * Multiply by a scalar.
-	 */
-	self.scale = function(factor)
-	{
-		self.x *= factor;
-		self.y *= factor;
-		self.z *= factor;
-	}
-
-	/**
-	 * Return the length of the vector, squared.
-	 */
-	self.squaredLength = function()
-	{
-		return self.x * self.x + self.y * self.y + self.z * self.z;
-	}
-
-	/**
-	 * Return the length of the given vector.
-	 */
-	self.length = function()
-	{
-		var squared = self.squaredLength();
-		return Math.sqrt(squared);
-	}
-
-	self.toString = function()
-	{
-		return '(' + Math.round(self.x) + ',' + Math.round(self.y) + ',' + Math.round(self.z) + ')';
-	}
 }
 
 /**
