@@ -59,25 +59,6 @@ var server = http.createServer(serve).listen(port, function() {
 		log('Server running at http://127.0.0.1:' + port + '/');
 });
 
-/**
- * setInterval tests.
-var counter = 0;
-var seconds = 0;
-var short = 20;
-var start = new Date().getTime();
-function delayed()
-{
-	counter ++;
-	var diff = (new Date().getTime() - start) - counter * short;
-	setTimeout(delayed, 100 - diff);
-}
-setTimeout(delayed, short);
-setInterval(function() {
-		seconds ++;
-		log('Seconds: ' + seconds + ', counter: ' + counter + ', missed ' + (seconds * 1000 / short - counter));
-	}, 1000);
- */
-
 // autostart
 var game = gameSelector.find('simulation');
 game.autostart();
