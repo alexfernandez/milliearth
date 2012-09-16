@@ -68,15 +68,16 @@ function massiveBody(id, mass, radius)
 	 */
 	self.computeAttraction = function(attractor, period)
 	{
-		var difference = self.position.difference(attractor.position);
+		var difference = attractor.position.difference(self.position);
 		var distance = difference.length();
-		if (distance < self.radius + attractor.radius)
+		var factor = params.bigG * attractor.mass / Math.pow(distance, 3);
+		self.speed.addScaled(difference, factor * period);
+		self.position.addScaled(self.speed, period);
+		var newDistance = attractor.position.difference(self.position).length();
+		if (newDistance < self.radius + attractor.radius)
 		{
 			self.computeCollision(attractor, period);
 		}
-		var factor = params.bigG * attractor.mass / Math.pow(distance, 3);
-		self.speed.addScaled(difference, -factor * period);
-		self.position.addScaled(self.speed, period);
 	}
 
 	/**
@@ -84,10 +85,9 @@ function massiveBody(id, mass, radius)
 	 */
 	self.computeCollision = function(attractor, period)
 	{
-		var difference = self.position.difference(attractor.position);
-		var collisionSpeed = -self.speed.scalarProduct(difference.unit());
-		var verticalSpeed = difference.unit().scale(collisionSpeed);
-		log(self.id + ' Collision speed: ' + collisionSpeed + ', vertical speed: ' + verticalSpeed);
+		var differenceUnit = attractor.position.difference(self.position).unit();
+		var collisionSpeed = self.speed.scalarProduct(differenceUnit);
+		var verticalSpeed = differenceUnit.scale(collisionSpeed);
 		var horizontalSpeed = self.speed.difference(verticalSpeed);
 		if (collisionSpeed > params.minHarmSpeed)
 		{
@@ -95,8 +95,8 @@ function massiveBody(id, mass, radius)
 		}
 		if (collisionSpeed > 0)
 		{
-			// rebound and dampen
-			self.speed.addScaled(difference.unit(), (2 - params.verticalDampening) * collisionSpeed);
+			// rebound with a little dampen
+			self.speed.addScaled(verticalSpeed, -(2 - params.verticalDampening));
 		}
 		// dampen horizontal speed
 		self.speed.addScaled(horizontalSpeed.unit(), params.frictionDeceleration * period);
