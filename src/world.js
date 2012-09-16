@@ -32,16 +32,6 @@ var trace = util.trace;
 
 
 /**
- * Globals.
- */
-var bigG = 6.67384e-11;
-// 1 thousandth the radius of Earth
-var meRadius = 6312.32;
-// 1 millionth the mass of Earth
-var meMass = 5.97219e18;
-
-
-/**
  * A massive body. Mass is given in kg.
  */
 function massiveBody(id, mass, radius)
@@ -95,7 +85,7 @@ function massiveBody(id, mass, radius)
 			self.position.addScaled(self.position.unit(), displacement);
 
 		}
-		var factor = bigG * attractor.mass / Math.pow(distance, 3);
+		var factor = params.bigG * attractor.mass / Math.pow(distance, 3);
 		self.speed.addScaled(difference, factor * period);
 		self.position.addScaled(self.speed, period);
 	}
@@ -120,7 +110,7 @@ var gameWorld = function(id)
 
 	// attributes
 	self.id = id;
-	var milliEarth = new massiveBody('milliEarth', meMass, meRadius);
+	var milliEarth = new massiveBody('milliEarth', params.meMass, params.meRadius);
 	var bodies = {};
 	var seconds = 0;
 	self.active = false;
@@ -159,6 +149,7 @@ var gameWorld = function(id)
 		iterate(function(body) {
 				update.players[body.id] = body;
 		});
+		// add arrow for human player
 		var player = bodies[id];
 		var unitSpeed = player.speed.unit();
 		var unitElevation = player.position.unit();
@@ -180,7 +171,7 @@ var gameWorld = function(id)
 	 */
 	self.add = function(player)
 	{
-		var body = new massiveBody(player.id, 100, 2);
+		var body = new massiveBody(player.id, params.robotMass, params.robotRadius);
 		bodies[body.id] = body;
 		var size = 0;
 		iterate(function(body) {
@@ -188,12 +179,12 @@ var gameWorld = function(id)
 		});
 		if (size % 2)
 		{
-			body.setPosition(-meRadius, 0, 0);
+			body.setPosition(-params.meRadius, 0, 0);
 			body.setSpeed(0, 95, 0);
 		}
 		else
 		{
-			body.setPosition(meRadius, 0, 0);
+			body.setPosition(params.meRadius, 0, 0);
 			body.setSpeed(0, 251.28, 0);
 		}
 	}
@@ -223,7 +214,7 @@ var gameWorld = function(id)
 		}
 		var message = 'World ' + self.id + ', ';
 		iterate(function(body) {
-				var distance = Math.round(meRadius - body.position.length());
+				var distance = Math.round(params.meRadius - body.position.length());
 				message += body.id + ' ' + body.position + ': ' + distance + ', ';
 		});
 		log(message);

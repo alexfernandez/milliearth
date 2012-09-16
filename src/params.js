@@ -31,6 +31,16 @@ var params = new function()
 	this.life = 1e9;
 	// min speed to cause harm, m/s
 	this.minHarmSpeed = 100;
+	// gravity G constant
+	this.bigG = 6.67384e-11;
+	// radius of MilliEarth: 1 thousandth the radius of Earth
+	this.meRadius = 6312.32;
+	// mass of MilliEarth: 1 millionth the mass of Earth
+	this.meMass = 5.97219e18;
+	// robot mass: 100 kg
+	this.robotMass = 100;
+	// robot radius: 2 m
+	this.robotRadius = 2;
 }
 
 module.exports.params = params;
