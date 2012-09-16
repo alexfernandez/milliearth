@@ -83,11 +83,17 @@ function massiveBody(id, mass, radius)
 		if (distance < self.radius + attractor.radius)
 		{
 			// collision!
-			var speed = self.speed.length();
-			if (speed > params.minHarmSpeed)
+			var verticalSpeed = self.speed.scalarProduct(self.position.unit());
+			if (verticalSpeed > params.minHarmSpeed)
 			{
-				self.substractDamage(speed * speed * self.mass / 2);
+				self.substractDamage(verticalSpeed * verticalSpeed * self.mass / 2);
 			}
+			// remove vertical speed component
+			self.speed.addScaled(self.position.unit(), -verticalSpeed);
+			// place out of collision
+			var displacement = self.radius + attractor.radius - distance;
+			self.position.addScaled(self.position.unit(), displacement);
+
 		}
 		var factor = bigG * attractor.mass / Math.pow(distance, 3);
 		self.speed.addScaled(difference, factor * period);
