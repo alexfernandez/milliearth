@@ -79,7 +79,10 @@ function massiveBody(id, mass, radius)
 				self.substractDamage(verticalSpeed * verticalSpeed * self.mass / 2);
 			}
 			// remove vertical speed component
-			self.speed.addScaled(self.position.unit(), -verticalSpeed);
+			self.speed.addScaled(self.position.unit(), -2 * verticalSpeed);
+			// dampen speed
+			var bumpSpeed = self.speed.length();
+			self.speed.scale((bumpSpeed - params.frictionDeceleration) / bumpSpeed);
 			// place out of collision
 			var displacement = self.radius + attractor.radius - distance;
 			self.position.addScaled(self.position.unit(), displacement);
@@ -181,7 +184,7 @@ var gameWorld = function(id)
 		if (size % 2)
 		{
 			body.setPosition(-distance, 0, 0);
-			body.setSpeed(0, 95, 0);
+			body.setSpeed(0, 100, 0);
 		}
 		else
 		{

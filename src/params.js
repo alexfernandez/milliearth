@@ -27,19 +27,21 @@ var params = new function()
 {
 	// the default port
 	this.port = 80;
-	// starting life for players, in energy
+	// starting life for players, in energy (joules)
 	this.life = 1e9;
 	// min speed to cause harm, m/s
 	this.minHarmSpeed = 100;
-	// gravity G constant
+	// friction deceleration, m/s^2
+	this.frictionDeceleration = 0.001;
+	// gravity G constant, N·(m/kg)^2
 	this.bigG = 6.67384e-11;
-	// radius of MilliEarth: 1 thousandth the radius of Earth
+	// radius of MilliEarth: 1 thousandth the radius of Earth, in m
 	this.meRadius = 6312.32;
-	// mass of MilliEarth: 1 millionth the mass of Earth
+	// mass of MilliEarth: 1 millionth the mass of Earth, in kg
 	this.meMass = 5.97219e18;
-	// robot mass: 100 kg
+	// robot mass, in kg
 	this.robotMass = 100;
-	// robot radius: 2 m
+	// robot radius, in m
 	this.robotRadius = 2;
 }
 
