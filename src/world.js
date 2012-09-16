@@ -177,15 +177,17 @@ var gameWorld = function(id)
 		iterate(function(body) {
 				size++;
 		});
+		var distance = params.meRadius + params.robotRadius;
 		if (size % 2)
 		{
-			body.setPosition(-params.meRadius, 0, 0);
+			body.setPosition(-distance, 0, 0);
 			body.setSpeed(0, 95, 0);
 		}
 		else
 		{
-			body.setPosition(params.meRadius, 0, 0);
-			body.setSpeed(0, 251.28, 0);
+			body.setPosition(distance, 0, 0);
+			var orbitingSpeed = Math.sqrt(params.bigG * params.meMass / distance);
+			body.setSpeed(0, orbitingSpeed, 0);
 		}
 	}
 
