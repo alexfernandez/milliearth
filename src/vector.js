@@ -58,17 +58,15 @@ function vector(x, y, z)
 	}
 
 	/**
-	 * Add another vector to this one.
+	 * Add another vector to this one, return the result.
 	 */
-	self.add = function(point)
+	self.sum = function(point)
 	{
-		self.x += point.x;
-		self.y += point.y;
-		self.z += point.z;
+		return new vector(self.x + point.x, self.y + point.y, self.z + point.z);
 	}
 
 	/**
-	 * Add a scaled vector.
+	 * Add a scaled vector. Modifies the current vector.
 	 */
 	self.addScaled = function(point, scale)
 	{

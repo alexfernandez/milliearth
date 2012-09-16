@@ -85,9 +85,9 @@ function massiveBody(id, mass, radius)
 	self.computeCollision = function(attractor, period)
 	{
 		var difference = self.position.difference(attractor.position);
-		var collisionSpeed = self.speed.scalarProduct(difference.unit());
+		var collisionSpeed = -self.speed.scalarProduct(difference.unit());
 		var verticalSpeed = difference.unit().scale(collisionSpeed);
-		log('Vertical speed: ' + verticalSpeed);
+		log(self.id + ' Collision speed: ' + collisionSpeed + ', vertical speed: ' + verticalSpeed);
 		var horizontalSpeed = self.speed.difference(verticalSpeed);
 		if (collisionSpeed > params.minHarmSpeed)
 		{
@@ -96,7 +96,7 @@ function massiveBody(id, mass, radius)
 		if (collisionSpeed > 0)
 		{
 			// rebound and dampen
-			self.speed.addScaled(difference.unit(), -(2 - params.verticalDampening) * verticalSpeed);
+			self.speed.addScaled(difference.unit(), (2 - params.verticalDampening) * collisionSpeed);
 		}
 		// dampen horizontal speed
 		self.speed.addScaled(horizontalSpeed.unit(), params.frictionDeceleration * period);
