@@ -136,9 +136,8 @@ function meGame(id)
 	var self = this;
 
 	self.id = id;
+	self.world = new gameWorld(id);
 	var players = [];
-	var active = false;
-	var world = new gameWorld();
 
 	/**
 	 * Add a new player to the game.
@@ -146,7 +145,7 @@ function meGame(id)
 	self.add = function(player)
 	{
 		players.push(player);
-		world.add(player);
+		self.world.add(player);
 		log('Player ' + player.id + ' connected to game ' + self.id + '; ' + players.length + ' connected');
 	}
 
@@ -185,7 +184,7 @@ function meGame(id)
 				log('Client ' + connection.remoteAddress + ' disconnected.');
 				self.close(player);
 		});
-		if (active)
+		if (self.world.active)
 		{
 			self.startAfter(player);
 		}
@@ -212,8 +211,7 @@ function meGame(id)
 				type: 'start',
 				players: playerIds
 		});
-		active = true;
-		world.start();
+		self.world.start();
 		trace('Game ' + self.id + ' started!');
 	}
 
@@ -255,7 +253,7 @@ function meGame(id)
 	 */
 	self.message = function(player, message)
 	{
-		if (!active)
+		if (!self.world.active)
 		{
 			self.error(player, 'Game not started');
 			return;
@@ -283,11 +281,11 @@ function meGame(id)
 			log('Could not remove ' + player.id + ' from players list');
 			return;
 		}
-		if (!active)
+		if (!self.world.active)
 		{
 			return;
 		}
-		active = false;
+		self.world.stop();
 		if (players.length == 0)
 		{
 			log('nobody left!?');
@@ -363,7 +361,7 @@ function meGame(id)
 	 */
 	self.sendUpdate = function(player, id)
 	{
-		var update = world.getUpdate(player.id);
+		var update = self.world.getUpdate(player.id);
 		update.type = 'update';
 		update.id = id;
 		player.send(update);
@@ -381,6 +379,7 @@ function meGame(id)
 	}
 }
 
+
 /**
  * Selector for games.
  */
@@ -388,6 +387,10 @@ var gameSelector = new function()
 {
 	// self-reference
 	var self = this;
+
+	// timers
+	var shortDelay = 20;
+	var longDelay = 1000;
 
 	// map of games
 	var games = {};
@@ -420,13 +423,35 @@ var gameSelector = new function()
 		var count = 0;
 		for (var id in games)
 		{
-			if (games.hasOwnProperty(id))
-			{
-				count++;
-			}
+			count++;
 		}
 		return count;
 	}
+
+	/**
+	 * Short loop all worlds.
+	 */
+	function shortLoop()
+	{
+		for (var id in games)
+		{
+			games[id].world.shortLoop(shortDelay);
+		}
+	}
+
+	/**
+	 * Long loop all worlds.
+	 */
+	function longLoop()
+	{
+		for (var id in games)
+		{
+			games[id].world.longLoop(longDelay);
+		}
+	}
+
+	var shortTimer = new timer(shortDelay, shortLoop);
+	var longTimer = new timer(longDelay, longLoop);
 }
 
 module.exports.gameSelector = gameSelector;

@@ -30,6 +30,7 @@ var parser = util.parser;
 var log = util.log;
 var trace = util.trace;
 
+
 /**
  * Globals.
  */
@@ -39,43 +40,6 @@ var meRadius = 6312.32;
 // 1 millionth the mass of Earth
 var meMass = 5.97219e18;
 
-/**
- * A high resolution timer.
- */
-function timer(delay, callback)
-{
-	// self-reference
-	var self = this;
-
-	// attributes
-	var counter = 0;
-	var start = new Date().getTime();
-
-	/**
-	 * Delayed running of the callback.
-	 */
-	function delayed()
-	{
-		callback();
-		counter ++;
-		var diff = (new Date().getTime() - start) - counter * delay;
-		setTimeout(delayed, delay - diff);
-	}
-
-	/**
-	 * Show the drift of the timer.
-	 */
-	self.traceDrift = function()
-	{
-		var diff = new Date().getTime() - start;
-		var drift = diff / delay - counter;
-		trace('Seconds: ' + Math.round(diff / 1000) + ', counter: ' + counter + ', drift: ' + drift);
-	}
-
-	// start timer
-	delayed();
-	setTimeout(delayed, delay);
-}
 
 /**
  * A massive body. Mass is given in kg.
@@ -121,35 +85,48 @@ function massiveBody(id, mass, radius)
 	}
 }
 
+
 /**
  * The world where the game runs.
  */
-var gameWorld = function()
+var gameWorld = function(id)
 {
 	// self-reference
 	var self = this;
 
 	// attributes
+	self.id = id;
 	var milliEarth = new massiveBody('milliEarth', meMass, meRadius);
 	var bodies = {};
 	var seconds = 0;
-	var shortDelay = 20;
-	var longDelay = 1000;
+	self.active = false;
 
 	/**
-	 * Start timers.
+	 * Start the world.
 	 */
 	self.start = function()
 	{
-		var shortTimer = new timer(shortDelay, shortLoop);
-		var longTimer = new timer(longDelay, longLoop);
+		self.active = true;
 	};
+
+	/**
+	 * Stop the world turning.
+	 */
+	self.stop = function()
+	{
+		self.active = false;
+	}
 
 	/**
 	 * Get an update message for the player with the given id.
 	 */
 	self.getUpdate = function(id)
 	{
+		if (!self.active)
+		{
+			log('World not active');
+			return {};
+		}
 		var update = {
 			milliEarth: milliEarth,
 			players: {},
@@ -200,16 +177,27 @@ var gameWorld = function()
 	/**
 	 * Run a short loop of the world.
 	 */
-	function shortLoop()
+	self.shortLoop = function(delay)
 	{
+		if (!self.active)
+		{
+			return;
+		}
 		iterate(function(body) {
-				body.computeAttraction(milliEarth, shortDelay / 1000);
+				body.computeAttraction(milliEarth, delay / 1000);
 		});
 	}
 
-	function longLoop()
+	/**
+	 * Run a long loop of the world.
+	 */
+	self.longLoop = function(delay)
 	{
-		var message = 'Distances: ';
+		if (!self.active)
+		{
+			return;
+		}
+		var message = 'World ' + self.id + ', ';
 		iterate(function(body) {
 				var distance = Math.round(meRadius - body.position.length());
 				message += body.id + ' ' + body.position + ': ' + distance + ', ';
