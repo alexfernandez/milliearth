@@ -55,6 +55,7 @@ function massiveBody(id, mass, radius)
 	self.radius = radius;
 	self.position = new vector(0, 0, 0);
 	self.speed = new vector(0, 0, 0);
+	self.life = params.life;
 
 	/**
 	 * Place the object at the given position.
@@ -79,9 +80,26 @@ function massiveBody(id, mass, radius)
 	{
 		var difference = attractor.position.difference(self.position);
 		var distance = difference.length();
+		if (distance < self.radius + attractor.radius)
+		{
+			// collision!
+			var speed = self.speed.length();
+			if (speed > params.minHarmSpeed)
+			{
+				self.substractDamage(speed * speed * self.mass / 2);
+			}
+		}
 		var factor = bigG * attractor.mass / Math.pow(distance, 3);
 		self.speed.addScaled(difference, factor * period);
 		self.position.addScaled(self.speed, period);
+	}
+
+	/**
+	 * Substract the given damage, in joules
+	 */
+	self.substractDamage = function(energy)
+	{
+		self.life -= energy;
 	}
 }
 

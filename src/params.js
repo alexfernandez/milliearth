@@ -27,6 +27,10 @@ var params = new function()
 {
 	// the default port
 	this.port = 80;
+	// starting life for players, in energy
+	this.life = 1e9;
+	// min speed to cause harm, m/s
+	this.minHarmSpeed = 100;
 }
 
 module.exports.params = params;

@@ -48,7 +48,7 @@ function timer(delay, callback)
 	 */
 	function delayed()
 	{
-		callback();
+		callback(delay);
 		counter ++;
 		var diff = (new Date().getTime() - start) - counter * delay;
 		setTimeout(delayed, delay - diff);
@@ -431,22 +431,22 @@ var gameSelector = new function()
 	/**
 	 * Short loop all worlds.
 	 */
-	function shortLoop()
+	function shortLoop(delay)
 	{
 		for (var id in games)
 		{
-			games[id].world.shortLoop(shortDelay);
+			games[id].world.shortLoop(delay);
 		}
 	}
 
 	/**
 	 * Long loop all worlds.
 	 */
-	function longLoop()
+	function longLoop(delay)
 	{
 		for (var id in games)
 		{
-			games[id].world.longLoop(longDelay);
+			games[id].world.longLoop(delay);
 		}
 	}
 
