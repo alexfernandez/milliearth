@@ -54,9 +54,7 @@ function vector(x, y, z)
 	 */
 	self.unit = function()
 	{
-		var unit = self.copy();
-		unit.scale(1 / unit.length());
-		return unit;
+		return self.scale(1 / self.length());
 	}
 
 	/**
@@ -69,6 +67,9 @@ function vector(x, y, z)
 		self.z += point.z;
 	}
 
+	/**
+	 * Add a scaled vector.
+	 */
 	self.addScaled = function(point, scale)
 	{
 		self.x += point.x * scale;
@@ -85,13 +86,11 @@ function vector(x, y, z)
 	}
 
 	/**
-	 * Multiply by a scalar.
+	 * Multiply by a scalar, return the result.
 	 */
 	self.scale = function(factor)
 	{
-		self.x *= factor;
-		self.y *= factor;
-		self.z *= factor;
+		return new vector(self.x * factor, self.y * factor, self.z * factor);
 	}
 
 	/**

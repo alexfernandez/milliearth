@@ -32,7 +32,9 @@ var params = new function()
 	// min speed to cause harm, m/s
 	this.minHarmSpeed = 100;
 	// friction deceleration, m/s^2
-	this.frictionDeceleration = 0.001;
+	this.frictionDeceleration = 0.01;
+	// coefficient of dampening due to suspension, unitless
+	this.verticalDampening = 0.1;
 	// gravity G constant, N·(m/kg)^2
 	this.bigG = 6.67384e-11;
 	// radius of MilliEarth: 1 thousandth the radius of Earth, in m

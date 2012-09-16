@@ -68,29 +68,38 @@ function massiveBody(id, mass, radius)
 	 */
 	self.computeAttraction = function(attractor, period)
 	{
-		var difference = attractor.position.difference(self.position);
+		var difference = self.position.difference(attractor.position);
 		var distance = difference.length();
 		if (distance < self.radius + attractor.radius)
 		{
-			// collision!
-			var verticalSpeed = self.speed.scalarProduct(self.position.unit());
-			if (verticalSpeed > params.minHarmSpeed)
-			{
-				self.substractDamage(verticalSpeed * verticalSpeed * self.mass / 2);
-			}
-			// remove vertical speed component
-			self.speed.addScaled(self.position.unit(), -2 * verticalSpeed);
-			// dampen speed
-			var bumpSpeed = self.speed.length();
-			self.speed.scale((bumpSpeed - params.frictionDeceleration) / bumpSpeed);
-			// place out of collision
-			var displacement = self.radius + attractor.radius - distance;
-			self.position.addScaled(self.position.unit(), displacement);
-
+			self.computeCollision(attractor, period);
 		}
 		var factor = params.bigG * attractor.mass / Math.pow(distance, 3);
-		self.speed.addScaled(difference, factor * period);
+		self.speed.addScaled(difference, -factor * period);
 		self.position.addScaled(self.speed, period);
+	}
+
+	/**
+	 * Compute a collision: rebound, apply friction.
+	 */
+	self.computeCollision = function(attractor, period)
+	{
+		var difference = self.position.difference(attractor.position);
+		var collisionSpeed = self.speed.scalarProduct(difference.unit());
+		var verticalSpeed = difference.unit().scale(collisionSpeed);
+		log('Vertical speed: ' + verticalSpeed);
+		var horizontalSpeed = self.speed.difference(verticalSpeed);
+		if (collisionSpeed > params.minHarmSpeed)
+		{
+			self.substractDamage(collisionSpeed * collisionSpeed * self.mass / 2);
+		}
+		if (collisionSpeed > 0)
+		{
+			// rebound and dampen
+			self.speed.addScaled(difference.unit(), -(2 - params.verticalDampening) * verticalSpeed);
+		}
+		// dampen horizontal speed
+		self.speed.addScaled(horizontalSpeed.unit(), params.frictionDeceleration * period);
 	}
 
 	/**
