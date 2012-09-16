@@ -234,10 +234,13 @@ var gameWorld = function()
 		});
 		var player = bodies[id];
 		var unitSpeed = player.speed.unit();
+		var unitElevation = player.position.unit();
 		var start = player.position.copy();
-		start.addScaled(unitSpeed, -20);
+		start.addScaled(unitSpeed, -100);
+		start.addScaled(unitElevation, 100);
 		var end = player.position.copy();
-		end.addScaled(unitSpeed, 20);
+		end.addScaled(unitSpeed, 100);
+		end.addScaled(unitElevation, 100);
 		update.arrows[id] = {
 			id: id,
 			points: [start, end]

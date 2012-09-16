@@ -252,7 +252,7 @@ var clientPlayer = function()
 	{
 		// The drawLine() object
 		var draw = {
-			strokeStyle: "#f00",
+			strokeStyle: "#00f",
 			strokeWidth: 1,
 			rounded: true
 		};
