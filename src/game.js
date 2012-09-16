@@ -136,12 +136,13 @@ function vector(x, y, z)
 /**
  * A massive body. Mass is given in kg.
  */
-function massiveBody(mass, radius)
+function massiveBody(id, mass, radius)
 {
 	// self-reference
 	var self = this;
 
 	// attributes
+	self.id = id;
 	self.mass = mass;
 	self.radius = radius;
 	self.position = new vector(0, 0, 0);
@@ -185,8 +186,8 @@ var gameWorld = function()
 	var self = this;
 
 	// attributes
-	var milliEarth = new massiveBody(meMass, meRadius);
-	var bodies = [];
+	var milliEarth = new massiveBody('milliEarth', meMass, meRadius);
+	var bodies = {};
 	var seconds = 0;
 	var shortDelay = 20;
 	var longDelay = 1000;
@@ -203,14 +204,15 @@ var gameWorld = function()
 	/**
 	 * Get an update message.
 	 */
-	self.getUpdate = function()
+	self.getUpdate = function(id)
 	{
 		var update = {
 			milliEarth: milliEarth,
 			players: {},
+			arrows: {},
 		};
 		iterate(function(body) {
-				update.players[body.name] = body;
+				update.players[body.id] = body;
 		});
 		return update;
 	}
@@ -220,10 +222,13 @@ var gameWorld = function()
 	 */
 	self.add = function(player)
 	{
-		var body = new massiveBody(100, 2);
-		var index = bodies.push(body);
-		body.name = player.id;
-		if (index % 2)
+		var body = new massiveBody(player.id, 100, 2);
+		bodies[body.id] = body;
+		var size = 0;
+		iterate(function(body) {
+				size++;
+		});
+		if (size % 2)
 		{
 			body.setPosition(-meRadius, 0, 0);
 			body.setSpeed(0, 95, 0);
@@ -250,7 +255,7 @@ var gameWorld = function()
 		var message = 'Distances: ';
 		iterate(function(body) {
 				var distance = Math.round(meRadius - body.position.length());
-				message += body.name + ' ' + body.position + ': ' + distance + ', ';
+				message += body.id + ' ' + body.position + ': ' + distance + ', ';
 		});
 		log(message);
 	}
@@ -260,13 +265,9 @@ var gameWorld = function()
 	 */
 	function iterate(callback)
 	{
-		for (var i = 0; i < bodies.length; i++)
+		for (var id in bodies)
 		{
-			var body = bodies[i];
-			if (body)
-			{
-				callback(body);
-			}
+			callback(bodies[id]);
 		}
 	}
 }
