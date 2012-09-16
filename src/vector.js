@@ -21,6 +21,14 @@
 
 
 /**
+ * Find out if a value is a number.
+ */
+function isNumber(n)
+{
+	return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+/**
  * Three-dimensional vector, in meters.
  */
 function vector(x, y, z)
@@ -31,6 +39,7 @@ function vector(x, y, z)
 	self.x = x;
 	self.y = y;
 	self.z = z;
+	self.isVector = true;
 
 	/**
 	 * Return a copy of this vector.
@@ -102,6 +111,35 @@ function vector(x, y, z)
 		return Math.sqrt(squared);
 	}
 
+	/**
+	 * Return the scalar product or dot product.
+	 */
+	self.scalarProduct = function(value)
+	{
+		if (!value.isVector)
+		{
+			log('Vector product value ' + value + ' is not a vector');
+			return 0;
+		}
+		return self.x * value.x + self.y * value.y + self.z * value.z;
+	}
+
+	/**
+	 * Return the vector product or cross product.
+	 */
+	self.vectorProduct = function(value)
+	{
+		if (!value.isVector)
+		{
+			log('Vector product value ' + value + ' is not a vector');
+			return new vector(0, 0, 0);
+		}
+		var x = self.y * value.z - self.z * value.y;
+		var y = self.z * value.x - self.x * value.z;
+		var z = self.x * value.y - self.y * value.x;
+		return new vector(x, y, z);
+	}
+
 	self.toString = function()
 	{
 		return '(' + Math.round(self.x) + ',' + Math.round(self.y) + ',' + Math.round(self.z) + ')';
@@ -109,5 +147,12 @@ function vector(x, y, z)
 }
 
 module.exports.vector = vector;
+
+module.test = function()
+{
+	var a = new vector(1, 2, 3);
+	console.log(a.scalarProduct(new vector(3, 4, 5)));
+	console.log(a.vectorProduct(new vector(3, 4, 5)).toString());
+}
 
 
