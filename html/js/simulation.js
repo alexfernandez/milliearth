@@ -173,6 +173,10 @@ var clientPlayer = function()
 		{
 			paint(message.players[name]);
 		}
+		for (var name in message.arrows)
+		{
+			paintPolygon(message.arrows[name]);
+		}
 		updates ++;
 		if (message.id in latencyMap)
 		{
@@ -239,6 +243,30 @@ var clientPlayer = function()
 				y: projectY(body.position.y, body.position.z),
 				radius: 1
 		});
+	}
+
+	/**
+	 * Paint a filled polygon sent by the server.
+	 */
+	function paintPolygon(polygon)
+	{
+		// The drawLine() object
+		var draw = {
+			strokeStyle: "#f00",
+			strokeWidth: 1,
+			rounded: true
+		};
+		// Add the points from the array to the object
+		for (var i = 0; i < polygon.points.length; i += 1)
+		{
+			var point = polygon.points[i];
+			draw['x' + (i+1)] = projectX(point.x, point.z);
+			draw['y' + (i+1)] = projectY(point.y, point.z);
+		}
+
+		// Draw the line
+		$("canvas").drawLine(draw);
+
 	}
 
 	/**

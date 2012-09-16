@@ -76,6 +76,24 @@ function vector(x, y, z)
 	self.z = z;
 
 	/**
+	 * Return a copy of this vector.
+	 */
+	self.copy = function()
+	{
+		return new vector(self.x, self.y, self.z);
+	}
+
+	/**
+	 * Get a unit vector along this vector.
+	 */
+	self.unit = function()
+	{
+		var unit = self.copy();
+		unit.scale(1 / unit.length());
+		return unit;
+	}
+
+	/**
 	 * Add another vector to this one.
 	 */
 	self.add = function(point)
@@ -202,7 +220,7 @@ var gameWorld = function()
 	};
 
 	/**
-	 * Get an update message.
+	 * Get an update message for the player with the given id.
 	 */
 	self.getUpdate = function(id)
 	{
@@ -214,6 +232,16 @@ var gameWorld = function()
 		iterate(function(body) {
 				update.players[body.id] = body;
 		});
+		var player = bodies[id];
+		var unitSpeed = player.speed.unit();
+		var start = player.position.copy();
+		start.addScaled(unitSpeed, -20);
+		var end = player.position.copy();
+		end.addScaled(unitSpeed, 20);
+		update.arrows[id] = {
+			id: id,
+			points: [start, end]
+		};
 		return update;
 	}
 
@@ -566,7 +594,7 @@ function meGame(id)
 	 */
 	self.sendUpdate = function(player, id)
 	{
-		var update = world.getUpdate();
+		var update = world.getUpdate(player.id);
 		update.type = 'update';
 		update.id = id;
 		player.send(update);
