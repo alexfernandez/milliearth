@@ -29,6 +29,7 @@ var util = require('./util.js');
 var parser = util.parser;
 var log = util.log;
 var trace = util.trace;
+var extend = util.extend;
 
 
 /**
@@ -72,12 +73,12 @@ function massiveBody(id, mass, radius)
 		var distance = difference.length();
 		var factor = params.bigG * attractor.mass / Math.pow(distance, 3);
 		self.speed.addScaled(difference, factor * period);
-		self.position.addScaled(self.speed, period);
 		var newDistance = attractor.position.difference(self.position).length();
 		if (newDistance < self.radius + attractor.radius)
 		{
 			self.computeCollision(attractor, period);
 		}
+		self.position.addScaled(self.speed, period);
 	}
 
 	/**
@@ -110,6 +111,16 @@ function massiveBody(id, mass, radius)
 		self.life -= energy;
 	}
 }
+
+
+/**
+ * A fighter robot.
+ */
+function robot(id, mass, radius)
+{
+}
+
+util.extend(massiveBody, robot);
 
 
 /**

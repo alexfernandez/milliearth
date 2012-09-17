@@ -124,8 +124,16 @@ function iso(date)
 	+ pad(date.getUTCMilliseconds(), 3) + 'Z'
 }
 
+/**
+ * Make the child function extend the parent function.
+ */
+function extend(parent, child)
+{
+}
+
 module.exports.parser = parser;
 module.exports.trace = trace;
 module.exports.enableTrace = enableTrace;
 module.exports.log = log;
+module.exports.extend = extend;
 
