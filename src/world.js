@@ -163,7 +163,7 @@ function fighterRobot(id)
 			sight[body.id] = {
 				id: body.id,
 				radius: body.radius,
-				coords: new vector(x, y, z),
+				position: new vector(x, y, z),
 			};
 		}
 		return sight;

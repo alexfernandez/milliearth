@@ -51,18 +51,14 @@ var paintingProjection = function(startx, starty, startz, scale)
 }
 
 /**
- * The global painting layer.
+ * A painting layer.
  */
-var globalPainting = function()
+var paintingLayer = function(name, projection)
 {
 	// self-reference
 	var self = this;
 
 	var canvas = $('#simulation');
-	var width = canvas.width();
-	var height = canvas.height();
-	var projection = new paintingProjection(width * 7 / 8, height / 8, 6000, 4/5 * Math.min(width, height) / 8);
-	var name = 'global';
 
 	/**
 	 * Clear the layer.
@@ -163,7 +159,12 @@ var clientPlayer = function()
 	var latencies = 0;
 	var latencyMap = {};
 	// layers
-	var globalLayer = new globalPainting();
+	var width = $('#simulation').width();
+	var height = $('#simulation').height();
+	var projection = new paintingProjection(width * 7 / 8, height / 8, 6000, 4/5 * height / 8);
+	var globalLayer = new paintingLayer('global', projection);
+	projection = new paintingProjection(width / 2, height / 2, 6000, 4/5 * height);
+	var mainLayer = new paintingLayer('main', projection);
 
 	$('#status').html('Press connect');
 
@@ -318,6 +319,12 @@ var clientPlayer = function()
 		}
 		$('#message').text(message);
 		countUpdate(message.id);
+		mainLayer.clear();
+		for (var name in message.sight)
+		{
+			mainLayer.paint(message.sight[name]);
+		}
+		mainLayer.show();
 	}
 
 	/**
@@ -330,8 +337,18 @@ var clientPlayer = function()
 			console.error('Not running');
 			return;
 		}
-		paintGlobal(message);
 		countUpdate(message.id);
+		globalLayer.clear();
+		globalLayer.paintMilliEarth(message.milliEarth);
+		for (var name in message.players)
+		{
+			globalLayer.paint(message.players[name]);
+		}
+		for (var name in message.arrows)
+		{
+			globalLayer.paintPolygon(message.arrows[name]);
+		}
+		globalLayer.show();
 	}
 
 	function countUpdate(id)
@@ -344,24 +361,6 @@ var clientPlayer = function()
 			latencies += newTime - lastTime;
 			delete latencyMap[id];
 		}
-	}
-
-	/**
-	 * Paint the global view.
-	 */
-	function paintGlobal(message)
-	{
-		globalLayer.clear();
-		globalLayer.paintMilliEarth(message.milliEarth);
-		for (var name in message.players)
-		{
-			globalLayer.paint(message.players[name]);
-		}
-		for (var name in message.arrows)
-		{
-			globalLayer.paintPolygon(message.arrows[name]);
-		}
-		globalLayer.show();
 	}
 
 	/**
