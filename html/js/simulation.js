@@ -98,13 +98,15 @@ var paintingLayer = function(name, projection)
 	 */
 	self.paint = function(body)
 	{
+		var radius = projection.project(body.radius, body.position.z);
+		radius = Math.max(radius, 1);
 		canvas.drawArc( {
 				layer: true,
 				name: name,
 				fillStyle: '#000',
 				x: projection.projectX(body.position.x, body.position.z),
 				y: projection.projectY(body.position.y, body.position.z),
-				radius: 1
+				radius: radius,
 		});
 	}
 
@@ -317,7 +319,7 @@ var clientPlayer = function()
 			console.error('Not running');
 			return;
 		}
-		$('#message').text(message);
+		$('#message').text(JSON.stringify(message));
 		countUpdate(message.id);
 		mainLayer.clear();
 		for (var name in message.sight)
