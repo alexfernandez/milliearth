@@ -152,19 +152,21 @@ function fighterRobot(id)
 	{
 		var up = milliEarth.position.difference(self.position).unit();
 		var side = self.sight.vectorProduct(up);
-		var coords = {};
-		for (var body in vodies)
+		var sight = {};
+		for (var id in bodies)
 		{
+			var body = bodies[id];
 			var position = body.position.difference(self.position);
-			coords[body.id] = {
-				x: side.scalarProduct(position),
-				y: up.scalarProduct(position),
-				z: self.sight.scalarProduct(position),
-				radius: body.radius
+			var x = side.scalarProduct(position);
+			var y = up.scalarProduct(position);
+			var z = self.sight.scalarProduct(position);
+			sight[body.id] = {
+				id: body.id,
+				radius: body.radius,
+				coords: new vector(x, y, z),
 			};
 		}
-		return coords;
-
+		return sight;
 	}
 }
 
@@ -204,6 +206,21 @@ var gameWorld = function(id)
 	 * Get an update message for the player with the given id.
 	 */
 	self.getUpdate = function(id)
+	{
+		if (!self.active)
+		{
+			log('World not active');
+			return {};
+		}
+		var player = bodies[id];
+		var update = player.computeSight(milliEarth, bodies);
+		return update;
+	}
+
+	/**
+	 * Get global positions update for the player with the given id.
+	 */
+	self.getGlobalUpdate = function(id)
 	{
 		if (!self.active)
 		{

@@ -268,6 +268,11 @@ function meGame(id)
 			self.sendUpdate(player, message.id);
 			return;
 		}
+		if (message.type == 'global')
+		{
+			self.sendGlobalUpdate(player, message.id);
+			return;
+		}
 		self.error(player, 'Unknown message type ' + message.type);
 	}
 
@@ -363,6 +368,17 @@ function meGame(id)
 	{
 		var update = self.world.getUpdate(player.id);
 		update.type = 'update';
+		update.id = id;
+		player.send(update);
+	}
+
+	/**
+	 * Send a global update to a player.
+	 */
+	self.sendGlobalUpdate = function(player, id)
+	{
+		var update = self.world.getGlobalUpdate(player.id);
+		update.type = 'global';
 		update.id = id;
 		player.send(update);
 	}
