@@ -50,7 +50,6 @@ function massiveBody(id, mass, radius)
 	self.radius = radius;
 	self.position = new vector(0, 0, 0);
 	self.speed = new vector(0, 0, 0);
-	self.life = params.life;
 
 	/**
 	 * Place the object at the given position.
@@ -86,6 +85,32 @@ function massiveBody(id, mass, radius)
 	}
 
 	/**
+	 * Compute a collision: just stop.
+	 */
+	self.computeCollision = function(attractor, period)
+	{
+		var differenceUnit = attractor.position.difference(self.position).unit();
+		var collisionSpeed = self.speed.scalarProduct(differenceUnit);
+		var verticalSpeed = differenceUnit.scale(collisionSpeed);
+		self.speed.addScaled(verticalSpeed, 1);
+	}
+}
+
+
+/**
+ * A fighter robot.
+ */
+function robot(id)
+{
+	// self-reference
+	var self = this;
+	// extend massiveBody
+	extend(new massiveBody(id, params.robotMass, params.robotRadius), self);
+
+	// attributes
+	self.life = params.life;
+
+	/**
 	 * Compute a collision: rebound, apply friction.
 	 */
 	self.computeCollision = function(attractor, period)
@@ -114,18 +139,6 @@ function massiveBody(id, mass, radius)
 	{
 		self.life -= energy;
 	}
-}
-
-
-/**
- * A fighter robot.
- */
-function robot(id)
-{
-	// self-reference
-	var self = this;
-	// extend massiveBody
-	extend(new massiveBody(id, params.robotMass, params.robotRadius), self);
 }
 
 
