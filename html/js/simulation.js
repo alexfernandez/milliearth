@@ -20,6 +20,36 @@
  */
 
 
+var paintingProjection = function(startx, starty, startz, scale)
+{
+	// self-reference
+	var self = this;
+
+	/**
+	 * Project the x coordinate.
+	 */
+	self.projectX = function(x, z)
+	{
+		return self.project(x, z) + startx;
+	}
+
+	/**
+	 * Project the y coordinate.
+	 */
+	self.projectY = function(y, z)
+	{
+		return self.project(y, z) + starty;
+	}
+
+	/**
+	 * Project a length on the z axis.
+	 */
+	self.project = function(length, z)
+	{
+		return length / (z + startz) * scale;
+	}
+}
+
 /**
  * The global painting layer.
  */
@@ -28,14 +58,10 @@ var globalPainting = function()
 	// self-reference
 	var self = this;
 
-	// projection values
 	var canvas = $('#simulation');
 	var width = canvas.width();
 	var height = canvas.height();
-	var startx = width * 7 / 8;
-	var starty = height / 8;
-	var startz = 6000;
-	var scale = 4/5 * Math.min(width, height) / 8;
+	var projection = new paintingProjection(width * 7 / 8, height / 8, 6000, 4/5 * Math.min(width, height) / 8);
 	var name = 'global';
 
 	/**
@@ -65,9 +91,9 @@ var globalPainting = function()
 				layer: true,
 				name: name,
 				fillStyle: '#ccc',
-				x: projectX(body.position.x, body.position.z),
-				y: projectY(body.position.y, body.position.z),
-				radius: project(body.radius, body.position.z)
+				x: projection.projectX(body.position.x, body.position.z),
+				y: projection.projectY(body.position.y, body.position.z),
+				radius: projection.project(body.radius, body.position.z)
 		});
 	}
 
@@ -80,8 +106,8 @@ var globalPainting = function()
 				layer: true,
 				name: name,
 				fillStyle: '#000',
-				x: projectX(body.position.x, body.position.z),
-				y: projectY(body.position.y, body.position.z),
+				x: projection.projectX(body.position.x, body.position.z),
+				y: projection.projectY(body.position.y, body.position.z),
 				radius: 1
 		});
 	}
@@ -103,37 +129,11 @@ var globalPainting = function()
 		for (var i = 0; i < polygon.points.length; i += 1)
 		{
 			var point = polygon.points[i];
-			draw['x' + (i+1)] = projectX(point.x, point.z);
-			draw['y' + (i+1)] = projectY(point.y, point.z);
+			draw['x' + (i+1)] = projection.projectX(point.x, point.z);
+			draw['y' + (i+1)] = projection.projectY(point.y, point.z);
 		}
-
 		// Draw the line
 		canvas.drawLine(draw);
-
-	}
-
-	/**
-	 * Project a length on the z axis.
-	 */
-	function project(length, z)
-	{
-		return length / (z + startz) * scale;
-	}
-
-	/**
-	 * Project the x coordinate.
-	 */
-	function projectX(x, z)
-	{
-		return project(x, z) + startx;
-	}
-
-	/**
-	 * Project the y coordinate.
-	 */
-	function projectY(y, z)
-	{
-		return project(y, z) + starty;
 	}
 }
 
