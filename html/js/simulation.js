@@ -23,26 +23,34 @@
 /**
  * A painting layer.
  */
-var paintingLayer = function(layer)
+var paintingLayer = function(name)
 {
 	// self-reference
 	var self = this;
 
-	// layer
-	self.layer = layer;
-
 	// projection values
-	var startx = 0;
-	var starty = 0;
+	var startx = $('#simulation').width() / 2;
+	var starty = $('#simulation').height() / 2;
 	var startz = 6000;
 	var scale = 200;
+	$('#simulation').addLayer(name);
+
+	/**
+	 * Clear the layer.
+	 */
+	self.clear = function()
+	{
+		layer.clearCanvas();
+	}
 
 	/**
 	 * Paint the milliEarth.
 	 */
-	function paintMilliEarth(body)
+	self.paintMilliEarth = function(body)
 	{
-		drawArc( {
+		layer.drawArc( {
+				layer: true,
+				name: name,
 				fillStyle: '#ccc',
 				x: projectX(body.position.x, body.position.z),
 				y: projectY(body.position.y, body.position.z),
@@ -53,9 +61,11 @@ var paintingLayer = function(layer)
 	/**
 	 * Paint a celestial body.
 	 */
-	function paint(body)
+	self.paint = function(body)
 	{
-		$('#simulation').drawArc( {
+		layer.drawArc( {
+				layer: true,
+				name: name,
 				fillStyle: '#000',
 				x: projectX(body.position.x, body.position.z),
 				y: projectY(body.position.y, body.position.z),
@@ -66,10 +76,12 @@ var paintingLayer = function(layer)
 	/**
 	 * Paint a filled polygon sent by the server.
 	 */
-	function paintPolygon(polygon)
+	self.paintPolygon = function(polygon)
 	{
 		// The drawLine() object
 		var draw = {
+			layer: true,
+			name: name,
 			strokeStyle: "#00f",
 			strokeWidth: 1,
 			rounded: true
@@ -83,7 +95,7 @@ var paintingLayer = function(layer)
 		}
 
 		// Draw the line
-		$("canvas").drawLine(draw);
+		layer.drawLine(draw);
 
 	}
 
@@ -138,8 +150,9 @@ var clientPlayer = function()
 	var latencies = 0;
 	var latencyMap = {};
 	// layers
-	var globalLayer = new paintingLayer($('#simulation').addLayer('global'));
-	var sightLayer = new paintingLayer($('#simulation').addLayer('sight'));
+	var globalLayer = new paintingLayer('global');
+	var sightLayer = new paintingLayer('sight');
+	$('#simulation').drawLayers();
 
 	$('#status').html('Press connect');
 
@@ -304,7 +317,8 @@ var clientPlayer = function()
 			console.error('Not running');
 			return;
 		}
-		$('#simulation').clearCanvas();
+		//$('#simulation').clearCanvas();
+		globalLayer.clear();
 		globalLayer.paintMilliEarth(message.milliEarth);
 		for (var name in message.players)
 		{
@@ -363,8 +377,6 @@ var clientPlayer = function()
 $(function () {
 
 		$('#status').html('Starting');
-		startx = $('#simulation').width() / 2;
-		starty = $('#simulation').height() / 2;
 
 		// player id sent to the server
 		var playerId = 'dddddd';
