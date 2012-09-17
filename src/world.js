@@ -109,6 +109,7 @@ function fighterRobot(id)
 
 	// attributes
 	self.life = params.life;
+	self.pov = new vector(0, 0, 0);
 
 	/**
 	 * Compute a collision: rebound, apply friction.
@@ -208,7 +209,10 @@ var gameWorld = function(id)
 			arrows: {},
 		};
 		iterate(function(body) {
-				update.players[body.id] = body;
+				update.players[body.id] = {
+					id: body.id,
+					position: body.position
+				};
 		});
 		// add arrow for current player
 		var player = bodies[id];
