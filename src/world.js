@@ -213,8 +213,7 @@ var gameWorld = function(id)
 			return {};
 		}
 		var player = bodies[id];
-		var update = player.computeSight(milliEarth, bodies);
-		return update;
+		return { sight: player.computeSight(milliEarth, bodiesExcept(id)) };
 	}
 
 	/**
@@ -309,6 +308,21 @@ var gameWorld = function(id)
 		{
 			callback(bodies[id]);
 		}
+	}
+
+	/**
+	 * Return all bodies except the given one.
+	 */
+	function bodiesExcept(id)
+	{
+		var except = {};
+		iterate(function(body) {
+				if (body.id != id)
+				{
+					except[body.id] = body;
+				}
+		});
+		return except;
 	}
 }
 
