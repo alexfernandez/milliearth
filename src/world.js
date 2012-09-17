@@ -100,7 +100,7 @@ function massiveBody(id, mass, radius)
 /**
  * A fighter robot.
  */
-function robot(id)
+function fighterRobot(id)
 {
 	// self-reference
 	var self = this;
@@ -217,27 +217,27 @@ var gameWorld = function(id)
 	}
 
 	/**
-	 * Add the body for a new player.
+	 * Add the robot for a new player.
 	 */
 	self.add = function(player)
 	{
-		var body = new robot(player.id);
-		bodies[body.id] = body;
+		var robot = new fighterRobot(player.id);
+		bodies[robot.id] = robot;
 		var size = 0;
 		iterate(function(body) {
 				size++;
 		});
-		var distance = params.meRadius + params.robotRadius;
+		var distance = params.meRadius + robot.radius;
 		if (size % 2)
 		{
-			body.setPosition(-distance, 0, 0);
-			body.setSpeed(0, 100, 0);
+			robot.setPosition(-distance, 0, 0);
+			robot.setSpeed(0, 100, 0);
 		}
 		else
 		{
-			body.setPosition(distance, 0, 0);
+			robot.setPosition(distance, 0, 0);
 			var orbitingSpeed = Math.sqrt(params.bigG * params.meMass / distance);
-			body.setSpeed(0, orbitingSpeed, 0);
+			robot.setSpeed(0, orbitingSpeed, 0);
 		}
 	}
 
