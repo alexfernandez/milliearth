@@ -52,22 +52,6 @@ function massiveBody(id, mass, radius)
 	self.speed = new vector(0, 0, 0);
 
 	/**
-	 * Place the object at the given position.
-	 */
-	self.setPosition = function(x, y, z)
-	{
-		self.position = new vector(x, y, z);
-	}
-
-	/**
-	 * Set the speed.
-	 */
-	self.setSpeed = function(x, y, z)
-	{
-		self.speed = new vector(x, y, z);
-	}
-
-	/**
 	 * Compute gravitational attraction by another body in the given period (in seconds).
 	 */
 	self.computeAttraction = function(attractor, period)
@@ -109,7 +93,7 @@ function fighterRobot(id)
 
 	// attributes
 	self.life = params.life;
-	self.pov = new vector(0, 0, 0);
+	self.sight = new vector(0, 0, 0);
 
 	/**
 	 * Compute a collision: rebound, apply friction.
@@ -234,14 +218,14 @@ var gameWorld = function(id)
 		var distance = params.meRadius + robot.radius;
 		if (size % 2)
 		{
-			robot.setPosition(-distance, 0, 0);
-			robot.setSpeed(0, 100, 0);
+			robot.position = new vector(-distance, 0, 0);
+			robot.speed = new vector(0, 100, 0);
 		}
 		else
 		{
-			robot.setPosition(distance, 0, 0);
+			robot.position = new vector(distance, 0, 0);
 			var orbitingSpeed = Math.sqrt(params.bigG * params.meMass / distance);
-			robot.setSpeed(0, orbitingSpeed, 0);
+			robot.speed = new vector(0, orbitingSpeed, 0);
 		}
 	}
 
