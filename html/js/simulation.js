@@ -36,14 +36,18 @@ var clientPlayer = function()
 	// self-reference
 	var self = this;
 
-	// interval between updates in milliseconds
-	var interval = 50;
-	// id to clear interval
-	var intervalId;
 	// keep track of the websocket
 	var websocket;
 	// check if running
 	var running = false;
+	// interval between updates in milliseconds
+	var updateInterval = 50;
+	// id to clear interval
+	var updateIntervalId;
+	// interval between global update
+	var globalInterval = 1000;
+	// id to clear global interval
+	var globalIntervalId;
 	// number of updates per second
 	var updates = 0;
 	// latency total and map
@@ -141,7 +145,8 @@ var clientPlayer = function()
 		websocket = null;
 		if (running)
 		{
-			clearInterval(intervalId);
+			clearInterval(updateIntervalId);
+			clearInterval(globalIntervalId);
 			// automatic reconnect
 			setTimeout(connect, 100);
 			running = false;
@@ -155,18 +160,35 @@ var clientPlayer = function()
 	self.start = function()
 	{
 		$('#status').text('Simulation started!');
-		intervalId = setInterval(self.requestUpdate, interval);
+		updateIntervalId = setInterval(self.requestSightUpdate, updateInterval);
+		globalIntervalId = setInterval(self.requestGlobalUpdate, globalInterval);
 		running = true;
 	}
 
 	/**
-	 * Request an update from the server.
+	 * Request a line-of-sight update from the server.
 	 */
-	self.requestUpdate = function()
+	self.requestSightUpdate = function(type)
+	{
+		self.requestUpdate('update');
+	}
+
+	/**
+	 * Request a global update from the server.
+	 */
+	self.requestGlobalUpdate = function(type)
+	{
+		self.requestUpdate('global');
+	}
+
+	/**
+	 * Request an update from the server ('update' or 'global').
+	 */
+	self.requestUpdate = function(type)
 	{
 		var id = Math.floor(Math.random() * 0x100000000).toString(16);
 		var message = {
-			type: 'update',
+			type: type,
 			id: id,
 		};
 		websocket.send(JSON.stringify(message));
@@ -177,6 +199,18 @@ var clientPlayer = function()
 	 * Update world.
 	 */
 	self.update = function(message)
+	{
+		if (!running)
+		{
+			console.error('Not running');
+			return;
+		}
+	}
+
+	/**
+	 * Global update for the whole world.
+	 */
+	self.global = function(message)
 	{
 		if (!running)
 		{
