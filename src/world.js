@@ -39,6 +39,10 @@ function massiveBody(id, mass, radius)
 {
 	// self-reference
 	var self = this;
+	self.setSelf = function(that)
+	{
+		self = that;
+	}
 
 	// attributes
 	self.id = id;
@@ -116,11 +120,13 @@ function massiveBody(id, mass, radius)
 /**
  * A fighter robot.
  */
-function robot(id, mass, radius)
+function robot(id)
 {
+	// self-reference
+	var self = this;
+	// extend massiveBody
+	extend(new massiveBody(id, params.robotMass, params.robotRadius), self);
 }
-
-util.extend(massiveBody, robot);
 
 
 /**
@@ -194,7 +200,7 @@ var gameWorld = function(id)
 	 */
 	self.add = function(player)
 	{
-		var body = new massiveBody(player.id, params.robotMass, params.robotRadius);
+		var body = new robot(player.id);
 		bodies[body.id] = body;
 		var size = 0;
 		iterate(function(body) {

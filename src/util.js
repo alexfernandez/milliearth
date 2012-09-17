@@ -129,6 +129,15 @@ function iso(date)
  */
 function extend(parent, child)
 {
+	parent.setSelf(child);
+	for (var property in parent)
+	{
+		if (!(property in child))
+		{
+			console.log('Copying over ' + property);
+			child[property] = parent[property];
+		}
+	}
 }
 
 module.exports.parser = parser;
