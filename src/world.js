@@ -139,6 +139,25 @@ function robot(id)
 	{
 		self.life -= energy;
 	}
+
+	/**
+	 * Get the arrow above the robot.
+	 */
+	self.getArrow = function()
+	{
+		var unitSpeed = self.speed.unit();
+		var unitElevation = self.position.unit();
+		var start = self.position.copy();
+		start.addScaled(unitSpeed, -100);
+		start.addScaled(unitElevation, 100);
+		var end = self.position.copy();
+		end.addScaled(unitSpeed, 100);
+		end.addScaled(unitElevation, 100);
+		return {
+			id: self.id,
+			points: [start, end]
+		};
+	}
 }
 
 
@@ -191,20 +210,9 @@ var gameWorld = function(id)
 		iterate(function(body) {
 				update.players[body.id] = body;
 		});
-		// add arrow for human player
+		// add arrow for current player
 		var player = bodies[id];
-		var unitSpeed = player.speed.unit();
-		var unitElevation = player.position.unit();
-		var start = player.position.copy();
-		start.addScaled(unitSpeed, -100);
-		start.addScaled(unitElevation, 100);
-		var end = player.position.copy();
-		end.addScaled(unitSpeed, 100);
-		end.addScaled(unitElevation, 100);
-		update.arrows[id] = {
-			id: id,
-			points: [start, end]
-		};
+		update.arrows[id] = player.getArrow();
 		return update;
 	}
 
