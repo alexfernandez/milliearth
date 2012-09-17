@@ -29,11 +29,13 @@ var globalPainting = function()
 	var self = this;
 
 	// projection values
-	var startx = $('#simulation').width() / 2;
-	var starty = $('#simulation').height() / 2;
-	var startz = 6000;
-	var scale = 200;
 	var canvas = $('#simulation');
+	var width = canvas.width();
+	var height = canvas.height();
+	var startx = width * 7 / 8;
+	var starty = height / 8;
+	var startz = 6000;
+	var scale = 4/5 * Math.min(width, height) / 8;
 	var name = 'global';
 
 	/**
