@@ -419,6 +419,7 @@ var gameSelector = new function()
 		if (!(id in games))
 		{
 			games[id] = new meGame(id);
+			games[id].autostart();
 		}
 		return games[id];
 	}

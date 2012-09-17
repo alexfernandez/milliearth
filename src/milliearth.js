@@ -59,10 +59,6 @@ var server = http.createServer(serve).listen(port, function() {
 		log('Server running at http://127.0.0.1:' + port + '/');
 });
 
-// autostart
-var game = gameSelector.find('simulation');
-game.autostart();
-
 /**
  * WebSocket server
  */
