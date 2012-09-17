@@ -134,11 +134,11 @@ function fighterRobot(id)
 		var unitSpeed = self.speed.unit();
 		var unitElevation = self.position.unit();
 		var start = self.position.copy();
-		start.addScaled(unitSpeed, -100);
-		start.addScaled(unitElevation, 100);
+		start.addScaled(unitSpeed, -400);
+		start.addScaled(unitElevation, 400);
 		var end = self.position.copy();
-		end.addScaled(unitSpeed, 100);
-		end.addScaled(unitElevation, 100);
+		end.addScaled(unitSpeed, 400);
+		end.addScaled(unitElevation, 400);
 		return {
 			id: self.id,
 			points: [start, end]
