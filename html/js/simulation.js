@@ -59,15 +59,23 @@ var paintingLayer = function(name, projection)
 	var self = this;
 
 	var canvas = $('#simulation');
+	canvas.addLayer(name).drawLayers();
 
 	/**
 	 * Clear the layer.
 	 */
 	self.clear = function()
 	{
-		canvas.clearCanvas();
-		canvas.removeLayer(name);
-		canvas.addLayer(name);
+		canvas.drawRect( {
+				layer: true,
+				name: name,
+				fillStyle: '#fff',
+				x: 0,
+				y: 0,
+				width: canvas.width(),
+				height: canvas.height(),
+				fromCenter: false,
+		});
 	}
 
 	/**
@@ -75,7 +83,6 @@ var paintingLayer = function(name, projection)
 	 */
 	self.show = function()
 	{
-		// canvas.drawLayers();
 	}
 
 	/**
@@ -89,7 +96,8 @@ var paintingLayer = function(name, projection)
 				fillStyle: '#ccc',
 				x: projection.projectX(body.position.x, body.position.z),
 				y: projection.projectY(body.position.y, body.position.z),
-				radius: projection.project(body.radius, body.position.z)
+				radius: projection.project(body.radius, body.position.z),
+				opacity: 0.5
 		});
 	}
 
@@ -163,10 +171,10 @@ var clientPlayer = function()
 	// layers
 	var width = $('#simulation').width();
 	var height = $('#simulation').height();
-	var projection = new paintingProjection(width * 7 / 8, height / 8, 6000, 4/5 * height / 8);
-	var globalLayer = new paintingLayer('global', projection);
-	projection = new paintingProjection(width / 2, height / 2, 6000, 4/5 * height);
-	var mainLayer = new paintingLayer('main', projection);
+	var mainProjection = new paintingProjection(width / 2, height / 2, 6000, 4/5 * height);
+	var mainLayer = new paintingLayer('main', mainProjection);
+	var globalProjection = new paintingProjection(width * 7 / 8, height / 8, 6000, 4/5 * height / 8);
+	var globalLayer = new paintingLayer('global', globalProjection);
 
 	$('#status').html('Press connect');
 
