@@ -144,6 +144,28 @@ function fighterRobot(id)
 			points: [start, end]
 		};
 	}
+
+	/**
+	 * Compute the line of sight positions for other bodies.
+	 */
+	self.computeSight = function(milliEarth, bodies)
+	{
+		var up = milliEarth.position.difference(self.position).unit();
+		var side = self.sight.vectorProduct(up);
+		var coords = {};
+		for (var body in vodies)
+		{
+			var position = body.position.difference(self.position);
+			coords[body.id] = {
+				x: side.scalarProduct(position),
+				y: up.scalarProduct(position),
+				z: self.sight.scalarProduct(position),
+				radius: body.radius
+			};
+		}
+		return coords;
+
+	}
 }
 
 
