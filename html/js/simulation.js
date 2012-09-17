@@ -316,6 +316,8 @@ var clientPlayer = function()
 			console.error('Not running');
 			return;
 		}
+		$('#message').text(message);
+		countUpdate(message.id);
 	}
 
 	/**
@@ -329,13 +331,18 @@ var clientPlayer = function()
 			return;
 		}
 		paintGlobal(message);
+		countUpdate(message.id);
+	}
+
+	function countUpdate(id)
+	{
 		updates ++;
-		if (message.id in latencyMap)
+		if (id in latencyMap)
 		{
-			var lastTime = latencyMap[message.id];
+			var lastTime = latencyMap[id];
 			var newTime = new Date().getTime();
 			latencies += newTime - lastTime;
-			delete latencyMap[message.id];
+			delete latencyMap[id];
 		}
 	}
 
