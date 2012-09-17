@@ -21,9 +21,9 @@
 
 
 /**
- * A painting layer.
+ * The global painting layer.
  */
-var paintingLayer = function(name)
+var globalPainting = function()
 {
 	// self-reference
 	var self = this;
@@ -33,14 +33,25 @@ var paintingLayer = function(name)
 	var starty = $('#simulation').height() / 2;
 	var startz = 6000;
 	var scale = 200;
-	$('#simulation').addLayer(name);
+	var canvas = $('#simulation');
+	var name = 'global';
 
 	/**
 	 * Clear the layer.
 	 */
 	self.clear = function()
 	{
-		layer.clearCanvas();
+		canvas.clearCanvas();
+		canvas.removeLayer(name);
+		canvas.addLayer(name);
+	}
+
+	/**
+	 * Show the layer.
+	 */
+	self.show = function()
+	{
+		// canvas.drawLayers();
 	}
 
 	/**
@@ -48,7 +59,7 @@ var paintingLayer = function(name)
 	 */
 	self.paintMilliEarth = function(body)
 	{
-		layer.drawArc( {
+		canvas.drawArc( {
 				layer: true,
 				name: name,
 				fillStyle: '#ccc',
@@ -63,7 +74,7 @@ var paintingLayer = function(name)
 	 */
 	self.paint = function(body)
 	{
-		layer.drawArc( {
+		canvas.drawArc( {
 				layer: true,
 				name: name,
 				fillStyle: '#000',
@@ -95,7 +106,7 @@ var paintingLayer = function(name)
 		}
 
 		// Draw the line
-		layer.drawLine(draw);
+		canvas.drawLine(draw);
 
 	}
 
@@ -150,9 +161,7 @@ var clientPlayer = function()
 	var latencies = 0;
 	var latencyMap = {};
 	// layers
-	var globalLayer = new paintingLayer('global');
-	var sightLayer = new paintingLayer('sight');
-	$('#simulation').drawLayers();
+	var globalLayer = new globalPainting();
 
 	$('#status').html('Press connect');
 
@@ -317,7 +326,22 @@ var clientPlayer = function()
 			console.error('Not running');
 			return;
 		}
-		//$('#simulation').clearCanvas();
+		paintGlobal(message);
+		updates ++;
+		if (message.id in latencyMap)
+		{
+			var lastTime = latencyMap[message.id];
+			var newTime = new Date().getTime();
+			latencies += newTime - lastTime;
+			delete latencyMap[message.id];
+		}
+	}
+
+	/**
+	 * Paint the global view.
+	 */
+	function paintGlobal(message)
+	{
 		globalLayer.clear();
 		globalLayer.paintMilliEarth(message.milliEarth);
 		for (var name in message.players)
@@ -328,14 +352,7 @@ var clientPlayer = function()
 		{
 			globalLayer.paintPolygon(message.arrows[name]);
 		}
-		updates ++;
-		if (message.id in latencyMap)
-		{
-			var lastTime = latencyMap[message.id];
-			var newTime = new Date().getTime();
-			latencies += newTime - lastTime;
-			delete latencyMap[message.id];
-		}
+		globalLayer.show();
 	}
 
 	/**
