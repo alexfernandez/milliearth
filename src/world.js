@@ -258,7 +258,7 @@ var gameWorld = function(id)
 		var distance = params.meRadius + robot.radius;
 		if (size % 2)
 		{
-			robot.position = new vector(-distance, 0, 0);
+			robot.position = new vector(distance, distance/2, 0);
 			robot.speed = new vector(0, 100, 0);
 		}
 		else
