@@ -107,15 +107,14 @@ var paintingLayer = function(name, projection)
 	 */
 	self.paint = function(body)
 	{
-		var radius = projection.project(body.radius, body.position.z);
-		radius = Math.max(radius, 1);
+		var radius = Math.max(projection.project(body.radius, body.position.z), 1);
 		canvas.drawArc( {
 				layer: true,
 				name: name,
 				fillStyle: '#000',
 				x: projection.projectX(body.position.x, body.position.z),
 				y: projection.projectY(body.position.y, body.position.z),
-				radius: 1,
+				radius: radius,
 		});
 	}
 

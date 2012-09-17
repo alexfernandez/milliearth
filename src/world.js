@@ -237,6 +237,7 @@ var gameWorld = function(id)
 		iterate(function(body) {
 				update.players[body.id] = {
 					id: body.id,
+					radius: body.radius,
 					position: body.position
 				};
 		});
