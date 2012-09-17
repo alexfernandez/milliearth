@@ -93,7 +93,7 @@ function fighterRobot(id)
 
 	// attributes
 	self.life = params.life;
-	self.sight = new vector(0, 0, 0);
+	self.sight = new vector(0, 0, 1);
 
 	/**
 	 * Compute a collision: rebound, apply friction.
@@ -115,6 +115,7 @@ function fighterRobot(id)
 		}
 		// dampen horizontal speed
 		self.speed.addScaled(horizontalSpeed.unit(), params.frictionDeceleration * period);
+		self.sight = self.speed.unit();
 	}
 
 	/**
