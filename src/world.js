@@ -114,7 +114,10 @@ function fighterRobot(id)
 			self.speed.addScaled(verticalSpeed, -(2 - params.verticalDampening));
 		}
 		// dampen horizontal speed
-		self.speed.addScaled(horizontalSpeed.unit(), params.frictionDeceleration * period);
+		if (horizontalSpeed.length() > 0)
+		{
+			self.speed.addScaled(horizontalSpeed.unit(), params.frictionDeceleration * period);
+		}
 		self.sight = self.speed.unit();
 	}
 
