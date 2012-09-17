@@ -134,7 +134,6 @@ function extend(parent, child)
 	{
 		if (!(property in child))
 		{
-			console.log('Copying over ' + property);
 			child[property] = parent[property];
 		}
 	}
