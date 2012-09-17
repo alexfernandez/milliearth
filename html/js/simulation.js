@@ -171,7 +171,7 @@ var clientPlayer = function()
 	// layers
 	var width = $('#simulation').width();
 	var height = $('#simulation').height();
-	var mainProjection = new paintingProjection(width / 2, height / 2, 6000, 4/5 * height);
+	var mainProjection = new paintingProjection(width / 2, height / 2, 10, 4/5 * height);
 	var mainLayer = new paintingLayer('main', mainProjection);
 	var globalProjection = new paintingProjection(width * 7 / 8, height / 8, 6000, 4/5 * height / 8);
 	var globalLayer = new paintingLayer('global', globalProjection);
