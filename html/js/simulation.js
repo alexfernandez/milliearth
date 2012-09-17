@@ -75,6 +75,7 @@ var paintingLayer = function(name, projection)
 				width: canvas.width(),
 				height: canvas.height(),
 				fromCenter: false,
+				opacity: 0,
 		});
 	}
 
@@ -114,7 +115,7 @@ var paintingLayer = function(name, projection)
 				fillStyle: '#000',
 				x: projection.projectX(body.position.x, body.position.z),
 				y: projection.projectY(body.position.y, body.position.z),
-				radius: radius,
+				radius: 1,
 		});
 	}
 
