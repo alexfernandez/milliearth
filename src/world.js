@@ -113,11 +113,13 @@ function fighterRobot(id)
 			// rebound with a little dampen
 			self.speed.addScaled(verticalSpeed, -(2 - params.verticalDampening)) * collisionSpeed;
 		}
-		// dampen horizontal speed
-		if (horizontalSpeed.length() > 0)
+		if (horizontalSpeed.length() < 0)
 		{
-			self.speed.addScaled(horizontalSpeed.unit(), params.frictionDeceleration * period);
+			// no horizontal speed; end here.
+			return;
 		}
+		// dampen horizontal speed
+		self.speed.addScaled(horizontalSpeed.unit(), - params.frictionDeceleration * period);
 		self.sight = horizontalSpeed.unit();
 	}
 
@@ -280,8 +282,8 @@ var gameWorld = function(id)
 		var distance = params.meRadius + robot.radius;
 		if (size % 2)
 		{
-			robot.position = new vector(0, (distance + 2), 0);
-			robot.speed = new vector(100, 0, 0);
+			robot.position = new vector(distance + 2, 1000, 0);
+			robot.speed = new vector(1, 0, 0);
 		}
 		else
 		{
