@@ -155,7 +155,7 @@ function fighterRobot(id)
 	{
 		var up = milliEarth.position.difference(self.position).unit();
 		var side = self.sight.vectorProduct(up);
-		var sight = {};
+		var sightUpdate = {};
 		for (var id in bodies)
 		{
 			var body = bodies[id];
@@ -165,14 +165,14 @@ function fighterRobot(id)
 			{
 				var x = side.scalarProduct(position);
 				var y = up.scalarProduct(position);
-				sight[body.id] = {
+				sightUpdate[body.id] = {
 					id: body.id,
 					radius: body.radius,
 					position: new vector(x, y, z),
 				};
 			}
 		}
-		return sight;
+		return sightUpdate;
 	}
 }
 
