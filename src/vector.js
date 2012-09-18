@@ -21,6 +21,13 @@
 
 
 /**
+ * Requirements.
+ */
+var util = require('./util.js');
+var log = util.log;
+
+
+/**
  * Find out if a value is a number.
  */
 function isNumber(n)

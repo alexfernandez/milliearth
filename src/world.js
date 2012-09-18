@@ -118,7 +118,7 @@ function fighterRobot(id)
 		{
 			self.speed.addScaled(horizontalSpeed.unit(), params.frictionDeceleration * period);
 		}
-		self.sight = self.speed.unit();
+		self.sight = horizontalSpeed.unit();
 	}
 
 	/**
