@@ -137,16 +137,16 @@ var paintingLayer = function(name, projection)
 	{
 		var y = projection.projectY(horizon.y, horizon.z);
 		// the drawLine() object
-		canvas.drawLine({
+		canvas.drawRect({
 				layer: true,
 				name: name,
-				strokeStyle: "#ccc",
-				strokeWidth: 1,
+				fillStyle: "#ccc",
 				rounded: true,
-				x1: 0,
-				y1: y,
-				x2: canvas.width(),
-				y2: y,
+				x: 0,
+				y: y,
+				width: canvas.width(),
+				height: canvas.height() - y,
+				fromCenter: false,
 		});
 	}
 }
