@@ -111,7 +111,7 @@ var paintingLayer = function(name, projection)
 	 */
 	self.paintPolygon = function(polygon)
 	{
-		// The drawLine() object
+		// the drawLine() object
 		var draw = {
 			layer: true,
 			name: name,
@@ -119,7 +119,7 @@ var paintingLayer = function(name, projection)
 			strokeWidth: 1,
 			rounded: true
 		};
-		// Add the points from the array to the object
+		// add the points from the array to the object
 		for (var i = 0; i < polygon.points.length; i += 1)
 		{
 			var point = polygon.points[i];
@@ -128,6 +128,26 @@ var paintingLayer = function(name, projection)
 		}
 		// Draw the line
 		canvas.drawLine(draw);
+	}
+
+	/**
+	 * Paint the horizon as a single line.
+	 */
+	self.paintHorizon = function(horizon)
+	{
+		var y = projection.projectY(horizon.y, horizon.z);
+		// the drawLine() object
+		canvas.drawLine({
+				layer: true,
+				name: name,
+				strokeStyle: "#ccc",
+				strokeWidth: 1,
+				rounded: true,
+				x1: 0,
+				y1: y,
+				x2: canvas.width(),
+				y2: y,
+		});
 	}
 }
 
@@ -324,6 +344,7 @@ var clientPlayer = function()
 		{
 			mainLayer.paint(message.sight[name]);
 		}
+		mainLayer.paintHorizon(message.horizon);
 		paintGlobalUpdate();
 	}
 

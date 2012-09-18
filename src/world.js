@@ -174,6 +174,19 @@ function fighterRobot(id)
 		}
 		return sightUpdate;
 	}
+
+	/**
+	 * Compute the horizon vanishing point.
+ 	 */
+	self.computeHorizon = function(milliEarth)
+	{
+		var x = 0;
+		var r = milliEarth.radius;
+		var h = self.radius;
+		var y = r * r / (r + h) - r - h;
+		var z = r * Math.sqrt(h * h + 2 * h * r) / (milliEarth.radius + self.radius);
+		return new vector(x, y, z);
+	}
 }
 
 
@@ -219,7 +232,10 @@ var gameWorld = function(id)
 			return {};
 		}
 		var player = bodies[id];
-		return { sight: player.computeSight(milliEarth, bodiesExcept(id)) };
+		return {
+			sight: player.computeSight(milliEarth, bodiesExcept(id)),
+			horizon: player.computeHorizon(milliEarth),
+		};
 	}
 
 	/**
