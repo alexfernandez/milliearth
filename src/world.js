@@ -160,14 +160,17 @@ function fighterRobot(id)
 		{
 			var body = bodies[id];
 			var position = body.position.difference(self.position);
-			var x = side.scalarProduct(position);
-			var y = up.scalarProduct(position);
 			var z = self.sight.scalarProduct(position);
-			sight[body.id] = {
-				id: body.id,
-				radius: body.radius,
-				position: new vector(x, y, z),
-			};
+			if (z > 0)
+			{
+				var x = side.scalarProduct(position);
+				var y = up.scalarProduct(position);
+				sight[body.id] = {
+					id: body.id,
+					radius: body.radius,
+					position: new vector(x, y, z),
+				};
+			}
 		}
 		return sight;
 	}
@@ -261,15 +264,14 @@ var gameWorld = function(id)
 		var distance = params.meRadius + robot.radius;
 		if (size % 2)
 		{
-			var d = Math.sqrt(distance * distance / 2) + 2;
-			robot.position = new vector(d, d, 0);
+			robot.position = new vector(distance, 100, 0);
 			robot.speed = new vector(0, 0, 0);
 		}
 		else
 		{
 			robot.position = new vector(distance, 0, 0);
 			var orbitingSpeed = Math.sqrt(params.bigG * params.meMass / distance);
-			robot.speed = new vector(0, orbitingSpeed, 0);
+			robot.speed = new vector(0, 0.01, 0);
 		}
 	}
 
