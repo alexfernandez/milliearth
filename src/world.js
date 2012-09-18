@@ -280,14 +280,14 @@ var gameWorld = function(id)
 		var distance = params.meRadius + robot.radius;
 		if (size % 2)
 		{
-			robot.position = new vector(distance + 2, 40, 0);
-			robot.speed = new vector(0, 0, 0);
+			robot.position = new vector(0, (distance + 2), 0);
+			robot.speed = new vector(100, 0, 0);
 		}
 		else
 		{
-			robot.position = new vector(distance, 0, 0);
+			robot.position = new vector(distance + 2, 0, 0);
 			var orbitingSpeed = Math.sqrt(params.bigG * params.meMass / distance);
-			robot.speed = new vector(0, 1, 0);
+			robot.speed = new vector(0, 100, 0);
 		}
 	}
 
