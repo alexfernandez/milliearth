@@ -111,7 +111,7 @@ function fighterRobot(id)
 		if (collisionSpeed > 0)
 		{
 			// rebound with a little dampen
-			self.speed.addScaled(verticalSpeed, -(2 - params.verticalDampening));
+			self.speed.addScaled(verticalSpeed, -(2 - params.verticalDampening)) * collisionSpeed;
 		}
 		// dampen horizontal speed
 		if (horizontalSpeed.length() > 0)
@@ -264,14 +264,14 @@ var gameWorld = function(id)
 		var distance = params.meRadius + robot.radius;
 		if (size % 2)
 		{
-			robot.position = new vector(distance, 100, 0);
+			robot.position = new vector(distance + 2, 40, 0);
 			robot.speed = new vector(0, 0, 0);
 		}
 		else
 		{
 			robot.position = new vector(distance, 0, 0);
 			var orbitingSpeed = Math.sqrt(params.bigG * params.meMass / distance);
-			robot.speed = new vector(0, 0.01, 0);
+			robot.speed = new vector(0, 1, 0);
 		}
 	}
 

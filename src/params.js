@@ -34,7 +34,7 @@ var params = new function()
 	// friction deceleration, m/s^2
 	this.frictionDeceleration = 0.1;
 	// coefficient of dampening due to suspension, unitless
-	this.verticalDampening = 0.1;
+	this.verticalDampening = 0.3;
 	// gravity G constant, N·(m/kg)^2
 	this.bigG = 6.67384e-11;
 	// radius of MilliEarth: 1 thousandth the radius of Earth, in m
