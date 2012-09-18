@@ -39,7 +39,6 @@ function vector(x, y, z)
 	self.x = x;
 	self.y = y;
 	self.z = z;
-	self.isVector = true;
 
 	/**
 	 * Return a copy of this vector.
@@ -113,7 +112,7 @@ function vector(x, y, z)
 	 */
 	self.scalarProduct = function(value)
 	{
-		if (!value.isVector)
+		if (!isVector(value))
 		{
 			log('Vector product value ' + value + ' is not a vector');
 			return 0;
@@ -126,7 +125,7 @@ function vector(x, y, z)
 	 */
 	self.vectorProduct = function(value)
 	{
-		if (!value.isVector)
+		if (!isVector(value))
 		{
 			log('Vector product value ' + value + ' is not a vector');
 			return new vector(0, 0, 0);
@@ -155,6 +154,22 @@ function vector(x, y, z)
 			return Math.round(value * 10) / 10;
 		}
 		return Math.round(value);
+	}
+
+	/**
+	 * Find out if the value has x, y and z components.
+	 */
+	function isVector(value)
+	{
+		if (!value)
+		{
+			return false;
+		}
+		if (!isFinite(value.x) || !isFinite(value.y) || !isFinite(value.z))
+		{
+			return false;
+		}
+		return true;
 	}
 }
 
