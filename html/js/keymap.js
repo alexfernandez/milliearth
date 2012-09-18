@@ -40,23 +40,32 @@ var keymap = new function()
 	/**
 	 * A key has been pressed.
 	 */
-	self.keydown = function(keycode)
+	self.keydown = function(event)
 	{
-		keycodes[keycode] = new Date().getTime();
+		keycodes[event.keycode] = event.timeStamp;
+		$('#keycode').text(event.which);
+		return true;
 	}
 
 	/**
 	 * A key has been released.
 	 */
-	self.keyup = function(keycode)
+	self.keyup = function(event)
 	{
+		var keycode = event.which;
+		var end = event.timeStamp;
 		var start = keycodes[keycode];
 		if (start)
 		{
-			var time = new Date().getTime() - start;
-			keypresses[keycode] = time;
+			var time = end - start;
+			if (!(keycode in keypresses))
+			{
+				keypresses[keycode] = 0;
+			}
+			keypresses[keycode] += time;
 		}
 		delete keycodes[keymap];
+		return true;
 	}
 
 	/**
@@ -66,13 +75,13 @@ var keymap = new function()
 	{
 		var end = new Date().getTime();
 		var recordedEvents = {};
-		for (keycode in keycodes)
+		for (var keycode in keycodes)
 		{
 			var time = end - keycodes[keycode];
 			addKeycode(recordedEvents, keycode, time);
 			keycodes[keycode] = end;
 		}
-		for (keycode in keypresses)
+		for (var keycode in keypresses)
 		{
 			addKeycode(recordedEvents, keycode, keypresses[keycode]);
 			delete keypresses[keycode]

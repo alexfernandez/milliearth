@@ -190,6 +190,7 @@ var clientPlayer = function()
 		var message = {
 			type: type,
 			id: id,
+			events: keymap.getKeys(),
 		};
 		websocket.send(JSON.stringify(message));
 		latencyMap[id] = new Date().getTime();
