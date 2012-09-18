@@ -328,7 +328,6 @@ var clientPlayer = function()
 			console.error('Not running');
 			return;
 		}
-		$('#message').text(JSON.stringify(message));
 		countUpdate(message.id);
 		$('#simulation').clearCanvas();
 		mainLayer.clear();
