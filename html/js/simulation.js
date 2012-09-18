@@ -80,8 +80,6 @@ var paintingLayer = function(name, projection)
 	self.paintMilliEarth = function(body)
 	{
 		canvas.drawArc( {
-				layer: true,
-				name: name,
 				fillStyle: '#ccc',
 				x: projection.projectX(body.position.x, body.position.z),
 				y: projection.projectY(body.position.y, body.position.z),
@@ -97,8 +95,6 @@ var paintingLayer = function(name, projection)
 	{
 		var radius = Math.max(projection.project(body.radius, body.position.z), 1);
 		canvas.drawArc( {
-				layer: true,
-				name: name,
 				fillStyle: '#000',
 				x: projection.projectX(body.position.x, body.position.z),
 				y: projection.projectY(body.position.y, body.position.z),
@@ -113,8 +109,6 @@ var paintingLayer = function(name, projection)
 	{
 		// the drawLine() object
 		var draw = {
-			layer: true,
-			name: name,
 			strokeStyle: "#00f",
 			strokeWidth: 1,
 			rounded: true
@@ -138,8 +132,6 @@ var paintingLayer = function(name, projection)
 		var y = projection.projectY(horizon.y, horizon.z);
 		// the drawLine() object
 		canvas.drawRect({
-				layer: true,
-				name: name,
 				fillStyle: "#ccc",
 				rounded: true,
 				x: 0,
