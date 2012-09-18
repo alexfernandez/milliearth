@@ -46,6 +46,9 @@ $(function () {
 			return;
 		}
 
+		$(document).keydown(keymap.keydown);
+		$(document).keyup(keymap.keyup);
+
 		var player = new clientPlayer();
 		player.click();
 });
