@@ -332,11 +332,11 @@ var clientPlayer = function()
 		countUpdate(message.id);
 		$('#simulation').clearCanvas();
 		mainLayer.clear();
+		mainLayer.paintHorizon(message.horizon);
 		for (var name in message.sight)
 		{
 			mainLayer.paint(message.sight[name]);
 		}
-		mainLayer.paintHorizon(message.horizon);
 		paintGlobalUpdate();
 	}
 
