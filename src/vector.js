@@ -137,9 +137,24 @@ function vector(x, y, z)
 		return new vector(x, y, z);
 	}
 
+	/**
+	 * Printable representation.
+	 */
 	self.toString = function()
 	{
-		return '(' + Math.round(self.x) + ',' + Math.round(self.y) + ',' + Math.round(self.z) + ')';
+		return '(' + round(self.x) + ',' + round(self.y) + ',' + round(self.z) + ')';
+	}
+
+	/**
+	 * Round a vector value.
+	 */
+	function round(value)
+	{
+		if (value < 10)
+		{
+			return Math.round(value * 10) / 10;
+		}
+		return Math.round(value);
 	}
 }
 
