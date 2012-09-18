@@ -59,24 +59,12 @@ var paintingLayer = function(name, projection)
 	var self = this;
 
 	var canvas = $('#simulation');
-	canvas.addLayer(name).drawLayers();
 
 	/**
 	 * Clear the layer.
 	 */
 	self.clear = function()
 	{
-		canvas.drawRect( {
-				layer: true,
-				name: name,
-				fillStyle: '#fff',
-				x: 0,
-				y: 0,
-				width: canvas.width(),
-				height: canvas.height(),
-				fromCenter: false,
-				opacity: 0,
-		});
 	}
 
 	/**
@@ -161,6 +149,7 @@ var clientPlayer = function()
 	var updateIntervalId;
 	// interval between global update
 	var globalInterval = 1000;
+	var globalMessage = null;
 	// id to clear global interval
 	var globalIntervalId;
 	// number of updates per second
@@ -329,12 +318,13 @@ var clientPlayer = function()
 		}
 		$('#message').text(JSON.stringify(message));
 		countUpdate(message.id);
+		$('#simulation').clearCanvas();
 		mainLayer.clear();
 		for (var name in message.sight)
 		{
 			mainLayer.paint(message.sight[name]);
 		}
-		mainLayer.show();
+		paintGlobalUpdate();
 	}
 
 	/**
@@ -347,16 +337,26 @@ var clientPlayer = function()
 			console.error('Not running');
 			return;
 		}
-		countUpdate(message.id);
-		globalLayer.clear();
-		globalLayer.paintMilliEarth(message.milliEarth);
-		for (var name in message.players)
+		globalMessage = message;
+	}
+
+	/**
+	 * Paint the latest global update we have."
+	 */
+	function paintGlobalUpdate()
+	{
+		if (!globalMessage)
 		{
-			globalLayer.paint(message.players[name]);
+			return;
 		}
-		for (var name in message.arrows)
+		globalLayer.paintMilliEarth(globalMessage.milliEarth);
+		for (var name in globalMessage.players)
 		{
-			globalLayer.paintPolygon(message.arrows[name]);
+			globalLayer.paint(globalMessage.players[name]);
+		}
+		for (var name in globalMessage.arrows)
+		{
+			globalLayer.paintPolygon(globalMessage.arrows[name]);
 		}
 		globalLayer.show();
 	}
