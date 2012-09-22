@@ -76,7 +76,7 @@ function massiveBody(id, mass, radius)
 		var differenceUnit = attractor.position.difference(self.position).unit();
 		var collisionSpeed = self.speed.scalarProduct(differenceUnit);
 		var verticalSpeed = differenceUnit.scale(collisionSpeed);
-		self.speed.addScaled(verticalSpeed, 1);
+		self.speed.addScaled(verticalSpeed, -1);
 	}
 }
 
