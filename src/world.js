@@ -119,7 +119,8 @@ function fighterRobot(id)
 			return;
 		}
 		// dampen horizontal speed
-		self.speed.addScaled(horizontalSpeed.unit(), - params.frictionDeceleration * period);
+		var deceleration = params.frictionDeceleration + self.speed.length() * params.frictionPeriod;
+		self.speed.addScaled(horizontalSpeed.unit(), -deceleration * period);
 		self.sight = horizontalSpeed.unit();
 	}
 

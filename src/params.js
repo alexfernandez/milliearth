@@ -33,6 +33,10 @@ var params = new function()
 	this.minHarmSpeed = 100;
 	// friction deceleration, m/s^2
 	this.frictionDeceleration = 1;
+	// friction due to speed, 1/s
+	this.frictionPeriod = 0.01;
+	// friction deceleration, m/s^2
+	this.frictionDeceleration = 1;
 	// coefficient of dampening due to suspension, unitless
 	this.verticalDampening = 0.3;
 	// gravity G constant, N·(m/kg)^2
