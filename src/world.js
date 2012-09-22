@@ -167,7 +167,7 @@ function fighterRobot(id)
 				};
 			}
 		}
-		var mark = self.computeMark();
+		var mark = self.computeMark(milliEarth);
 		return {
 			players: playerPositions,
 			arrows: [mark],
@@ -191,8 +191,13 @@ function fighterRobot(id)
 	/**
 	 * Get the next mark on the ground.
 	 */
-	self.computeMark = function()
+	self.computeMark = function(milliEarth)
 	{
+		var theta = self.mark/milliEarth.radius;
+		var s = Math.sin(theta / 2);
+		var c = Math.cos(theta / 2);
+		var y = 2 * milliEarth.radius * s * s;
+		var z = 2 * milliEarth.radius * s * c;
 		var start = new vector(-2, 0, 100);
 		var end = new vector(2, 0, 100);
 		return {
