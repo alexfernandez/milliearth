@@ -182,7 +182,7 @@ function fighterRobot(id)
 	{
 		var x = 0;
 		var r = milliEarth.radius;
-		var h = self.radius;
+		var h = computeHeight(milliEarth);
 		var y = r * r / (r + h) - r - h;
 		var z = r * Math.sqrt(h * h + 2 * h * r) / (milliEarth.radius + self.radius);
 		return new vector(x, y, z);
@@ -193,13 +193,15 @@ function fighterRobot(id)
 	 */
 	self.computeMark = function(milliEarth)
 	{
-		var theta = self.mark/milliEarth.radius;
-		var s = Math.sin(theta / 2);
-		var c = Math.cos(theta / 2);
-		var y = 2 * milliEarth.radius * s * s;
-		var z = 2 * milliEarth.radius * s * c;
-		var start = new vector(-2, 0, 100);
-		var end = new vector(2, 0, 100);
+		var r = milliEarth.radius;
+		var h = computeHeight(milliEarth);
+		var theta = self.mark / r;
+		var sin = Math.sin(theta / 2);
+		var cos = Math.cos(theta / 2);
+		var y = 2 * r * sin * sin + h;
+		var z = 2 * r * sin * cos;
+		var start = new vector(-2, y, z);
+		var end = new vector(2, y, z);
 		return {
 			id: 'mark',
 			points: [start, end]
@@ -211,6 +213,11 @@ function fighterRobot(id)
 	 */
 	self.modifyMarks = function(positionChange)
 	{
+		self.mark -= positionChange.length();
+		if (self.mark < 0)
+		{
+			self.mark += 100;
+		}
 	}
 
 	/**
@@ -227,6 +234,15 @@ function fighterRobot(id)
 		var x = self.side.scalarProduct(position);
 		var y = self.up.scalarProduct(position);
 		return new vector(x, y, z);
+	}
+
+	/**
+	 * Compute the height above the given body.
+	 */
+	function computeHeight(body)
+	{
+		var difference = body.position.difference(self.position);
+		return difference.length() - body.radius;
 	}
 }
 
