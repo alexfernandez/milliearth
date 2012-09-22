@@ -210,9 +210,9 @@ var clientPlayer = function()
 		$('#simulation').clearCanvas();
 		mainLayer.clear();
 		mainLayer.paintHorizon(message.horizon);
-		for (var name in message.sight)
+		for (var name in message.players)
 		{
-			mainLayer.paint(message.sight[name]);
+			mainLayer.paint(message.players[name]);
 		}
 		paintGlobalUpdate();
 	}

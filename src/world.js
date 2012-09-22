@@ -85,6 +85,8 @@ function fighterRobot(id)
 	// attributes
 	self.life = params.life;
 	self.sight = new vector(0, 0, 1);
+	self.up = new vector(0, 1, 0);
+	self.side = new vector(1, 0, 0);
 	self.mark = 100;
 
 	/**
@@ -144,30 +146,33 @@ function fighterRobot(id)
 	}
 
 	/**
-	 * Compute the line of sight positions for other bodies.
+	 * Compute the line of sight positions for other players.
 	 */
-	self.computeSight = function(milliEarth, bodies)
+	self.computeSight = function(milliEarth, players)
 	{
-		var up = milliEarth.position.difference(self.position).unit();
-		var side = self.sight.vectorProduct(up);
-		var sightUpdate = {};
-		for (var id in bodies)
+		self.up = milliEarth.position.difference(self.position).unit();
+		self.side = self.sight.vectorProduct(self.up);
+		var playerPositions = {};
+		for (var id in players)
 		{
-			var body = bodies[id];
-			var position = body.position.difference(self.position);
-			var z = self.sight.scalarProduct(position);
-			if (z > 0)
+			var player = players[id];
+			var position = player.position.difference(self.position);
+			var projected = project(position);
+			if (projected)
 			{
-				var x = side.scalarProduct(position);
-				var y = up.scalarProduct(position);
-				sightUpdate[body.id] = {
-					id: body.id,
-					radius: body.radius,
-					position: new vector(x, y, z),
+				playerPositions[player.id] = {
+					id: player.id,
+					radius: player.radius,
+					position: projected,
 				};
 			}
 		}
-		return sightUpdate;
+		var mark = self.computeMark();
+		return {
+			players: playerPositions,
+			arrows: [mark],
+			horizon: self.computeHorizon(milliEarth)
+		};
 	}
 
 	/**
@@ -184,10 +189,39 @@ function fighterRobot(id)
 	}
 
 	/**
+	 * Get the next mark on the ground.
+	 */
+	self.computeMark = function()
+	{
+		var start = self.position.copy();
+		var end = self.position.copy();
+		return {
+			id: 'mark',
+			points: [start, end]
+		};
+	}
+
+	/**
 	 * Modify the marks.
 	 */
 	self.modifyMarks = function(positionChange)
 	{
+	}
+
+	/**
+	 * Project a position along the line of sight.
+	 * If behind the camera, return null.
+	 */
+	function project(position)
+	{
+		var z = self.sight.scalarProduct(position);
+		if (z < 0)
+		{
+			return null;
+		}
+		var x = self.side.scalarProduct(position);
+		var y = self.up.scalarProduct(position);
+		return new vector(x, y, z);
 	}
 }
 
@@ -234,10 +268,7 @@ var gameWorld = function(id)
 			return {};
 		}
 		var player = bodies[id];
-		return {
-			sight: player.computeSight(milliEarth, bodiesExcept(id)),
-			horizon: player.computeHorizon(milliEarth),
-		};
+		return player.computeSight(milliEarth, bodiesExcept(id));
 	}
 
 	/**
