@@ -214,6 +214,10 @@ var clientPlayer = function()
 		{
 			mainLayer.paint(message.players[name]);
 		}
+		for (var name in message.arrows)
+		{
+			mainLayer.paintPolygon(message.arrows[name]);
+		}
 		paintGlobalUpdate();
 	}
 

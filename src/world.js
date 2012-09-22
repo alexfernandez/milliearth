@@ -193,8 +193,8 @@ function fighterRobot(id)
 	 */
 	self.computeMark = function()
 	{
-		var start = self.position.copy();
-		var end = self.position.copy();
+		var start = new vector(-2, 0, 100);
+		var end = new vector(2, 0, 100);
 		return {
 			id: 'mark',
 			points: [start, end]
