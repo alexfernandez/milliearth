@@ -65,18 +65,9 @@ function massiveBody(id, mass, radius)
 		{
 			self.computeCollision(attractor, period);
 		}
-		self.position.addScaled(self.speed, period);
-	}
-
-	/**
-	 * Compute a collision: just stop.
-	 */
-	self.computeCollision = function(attractor, period)
-	{
-		var differenceUnit = attractor.position.difference(self.position).unit();
-		var collisionSpeed = self.speed.scalarProduct(differenceUnit);
-		var verticalSpeed = differenceUnit.scale(collisionSpeed);
-		self.speed.addScaled(verticalSpeed, -1);
+		var scaledSpeed = self.speed.scale(period);
+		self.position.add(scaledSpeed);
+		self.modifyMarks(scaledSpeed);
 	}
 }
 
@@ -94,6 +85,7 @@ function fighterRobot(id)
 	// attributes
 	self.life = params.life;
 	self.sight = new vector(0, 0, 1);
+	self.mark = 100;
 
 	/**
 	 * Compute a collision: rebound, apply friction.
@@ -189,6 +181,13 @@ function fighterRobot(id)
 		var y = r * r / (r + h) - r - h;
 		var z = r * Math.sqrt(h * h + 2 * h * r) / (milliEarth.radius + self.radius);
 		return new vector(x, y, z);
+	}
+
+	/**
+	 * Modify the marks.
+	 */
+	self.modifyMarks = function(positionChange)
+	{
 	}
 }
 

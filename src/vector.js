@@ -72,6 +72,16 @@ function vector(x, y, z)
 	}
 
 	/**
+	 * Add the given vector. Modifies the current vector.
+	 */
+	self.add = function(point)
+	{
+		self.x += point.x;
+		self.y += point.y;
+		self.z += point.z;
+	}
+
+	/**
 	 * Add a scaled vector. Modifies the current vector.
 	 */
 	self.addScaled = function(point, scale)

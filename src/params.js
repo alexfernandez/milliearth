@@ -49,6 +49,8 @@ var params = new function()
 	this.robotMass = 100;
 	// robot radius, in m
 	this.robotRadius = 2;
+	// set marks every given distance, m
+	this.markDistance = 100;
 }
 
 module.exports.params = params;
