@@ -60,7 +60,7 @@ function vector(x, y, z)
 	 */
 	self.unit = function()
 	{
-		return self.scale(1 / self.length());
+		return self.elongate(1);
 	}
 
 	/**
@@ -87,6 +87,14 @@ function vector(x, y, z)
 	self.difference = function(point)
 	{
 		return new vector(self.x - point.x, self.y - point.y, self.z - point.z);
+	}
+
+	/**
+	 * Return a vector along this one but with the given length.
+	 */
+	self.elongate = function(length)
+	{
+		return self.scale(length / self.length());
 	}
 
 	/**
