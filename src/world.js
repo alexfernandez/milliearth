@@ -167,10 +167,9 @@ function fighterRobot(id)
 				};
 			}
 		}
-		var mark = self.computeMark(milliEarth);
 		return {
 			players: playerPositions,
-			arrows: [mark],
+			arrows: self.computeMarks(milliEarth),
 			horizon: self.computeHorizon(milliEarth)
 		};
 	}
@@ -183,29 +182,43 @@ function fighterRobot(id)
 		var x = 0;
 		var r = milliEarth.radius;
 		var h = computeHeight(milliEarth);
-		var y = r * r / (r + h) - r - h;
-		var z = r * Math.sqrt(h * h + 2 * h * r) / (milliEarth.radius + self.radius);
+		var d = Math.sqrt(h * h + 2 * h * r);
+		var y = r * r / (r + h) - r + h;
+		var z = r * d / (r + h);
 		return new vector(x, y, z);
 	}
 
 	/**
-	 * Get the next mark on the ground.
+	 * Get the next marks on the ground.
 	 */
-	self.computeMark = function(milliEarth)
+	self.computeMarks = function(milliEarth)
 	{
+		var marks = {};
 		var r = milliEarth.radius;
 		var h = computeHeight(milliEarth);
-		var theta = self.mark / r;
-		var sin = Math.sin(theta / 2);
-		var cos = Math.cos(theta / 2);
-		var y = 2 * r * sin * sin + h;
-		var z = 2 * r * sin * cos;
-		var start = new vector(-2, y, z);
-		var end = new vector(2, y, z);
-		return {
-			id: 'mark',
-			points: [start, end]
-		};
+		var d = Math.sqrt(h * h + 2 * h * r);
+		// distance to the horizon along the surface
+		var sHor = r * Math.acos(r / (r + h));
+		var s = self.mark;
+		var index = 1;
+		while (s < sHor)
+		{
+			var theta = s / r;
+			var sin = Math.sin(theta / 2);
+			var cos = Math.cos(theta / 2);
+			var y = 2 * r * sin * sin + h;
+			var z = 2 * r * sin * cos;
+			var start = new vector(-2, y, z);
+			var end = new vector(2, y, z);
+			var id = 'mark' + index;
+			marks[id] = {
+				id: id,
+				points: [start, end]
+			};
+			s += params.markDistance;
+			index ++;
+		}
+		return marks;
 	}
 
 	/**
