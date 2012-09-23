@@ -198,7 +198,52 @@ function vector(x, y, z)
 	}
 }
 
+/**
+ * A coordinate system with three axis, each determined by an orthogonal unit vector.
+ */
+function coordinateSystem(u, v, w)
+{
+	// self-reference
+	var self = this;
+
+	self.u = u;
+	self.v = v;
+	self.w = w;
+
+	/**
+	 * Align the v axis with the given vector.
+	 */
+	self.alignV = function(newV)
+	{
+		var vProduct = self.v.scalarProduct(newV);
+		if (vProduct == 0)
+		{
+			log('Cannot align with perpendicular vector');
+			return;
+		}
+		self.v = newV;
+		var uProduct = self.u.scalarProduct(newV);
+		if (uProduct != 0)
+		{
+			self.u = self.u.sum(newV.scale(-uProduct)).unit();
+		}
+		self.w = self.u.vectorProduct(self.v);
+	}
+
+	/**
+	 * Project a position along the coordinate system.
+	 */
+	self.project = function(position)
+	{
+		var x = self.u.scalarProduct(position);
+		var y = self.v.scalarProduct(position);
+		var z = self.w.scalarProduct(position);
+		return new vector(x, y, z);
+	}
+}
+
 module.exports.vector = vector;
+module.exports.coordinateSystem = coordinateSystem;
 
 module.test = function()
 {

@@ -25,6 +25,7 @@
  */
 var params = require('./params.js').params;
 var vector = require('./vector.js').vector;
+var coordinateSystem = require('./vector.js').coordinateSystem;
 var util = require('./util.js');
 var parser = util.parser;
 var log = util.log;
@@ -83,11 +84,18 @@ function fighterRobot(id, milliEarth)
 
 	// attributes
 	self.life = params.life;
-	self.ahead = new vector(0, 0, 1);
-	self.sight = new vector(0, 0, 1);
-	self.up = new vector(0, 1, 0);
-	self.side = new vector(1, 0, 0);
 	self.mark = 100;
+	var camera = new coordinateSystem(new vector(0, 0, 1), new vector(0, 1, 0), new vector(1, 0, 0));
+
+	/**
+	 * Start a robot with position and speed. Aligns the camera to the given speed.
+	 */
+	self.start = function(position, speed)
+	{
+		self.position = position;
+		self.speed = speed;
+		self.camera = new coordinateSystem(position.vectorProduct(speed), position, speed);
+	}
 
 	/**
 	 * Compute a collision with a body: rebound, apply friction.
@@ -122,8 +130,7 @@ function fighterRobot(id, milliEarth)
 		{
 			self.speed.addScaled(horizontalSpeed.unit(), -deceleration);
 		}
-		self.ahead = horizontalSpeed.unit();
-		self.sight = horizontalSpeed.unit();
+		camera.alignV(differenceUnit);
 	}
 
 	/**
@@ -183,8 +190,6 @@ function fighterRobot(id, milliEarth)
 	 */
 	self.computeSight = function(players)
 	{
-		self.up = self.position.unit();
-		self.side = self.sight.vectorProduct(self.up);
 		var bodies = [self.computeHorizon()].concat(self.computeMarks());
 		for (var id in players)
 		{
@@ -216,8 +221,8 @@ function fighterRobot(id, milliEarth)
 				return null;
 			}
 		}
-		var projected = project(position);
-		if (!projected)
+		var projected = camera.project(position);
+		if (projected.z < 0)
 		{
 			return null;
 		}
@@ -297,7 +302,7 @@ function fighterRobot(id, milliEarth)
 	 */
 	self.accelerate = function(period)
 	{
-		self.speed.addScaled(self.ahead, params.motorAcceleration * period);
+		self.speed.addScaled(camera.w, params.motorAcceleration * period);
 	}
 
 	/**
@@ -305,23 +310,7 @@ function fighterRobot(id, milliEarth)
 	 */
 	self.brake = function(period)
 	{
-		self.speed.addScaled(self.ahead, - params.brakeDeceleration * period);
-	}
-
-	/**
-	 * Project a position along the line of sight.
-	 * If behind the camera, return null.
-	 */
-	function project(position)
-	{
-		var z = self.sight.scalarProduct(position);
-		if (z < 0)
-		{
-			return null;
-		}
-		var x = self.side.scalarProduct(position);
-		var y = self.up.scalarProduct(position);
-		return new vector(x, y, z);
+		self.speed.addScaled(camera.w, - params.brakeDeceleration * period);
 	}
 
 	/**
@@ -407,14 +396,16 @@ var gameWorld = function(id)
 		var distance = params.meRadius + robot.radius;
 		if (size % 2)
 		{
-			robot.position = new vector(distance + 2, 1000, 0);
-			robot.speed = new vector(1, 0, 0);
+			robot.start(
+				new vector(distance + 2, 1000, 0),
+				new vector(1, 0, 0));
 		}
 		else
 		{
-			robot.position = new vector(distance + 2, 0, 0);
 			var orbitingSpeed = Math.sqrt(params.bigG * params.meMass / distance);
-			robot.speed = new vector(0, 100, 0);
+			robot.start(
+				new vector(distance + 2, 0, 0),
+				new vector(0, 100, 0));
 		}
 		return robot;
 	}
