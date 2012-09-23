@@ -80,7 +80,7 @@ var paintingLayer = function(name, projection, opacity)
 	/**
 	 * Paint some text on the canvas.
 	 */
-	self.paintText = function(message, value)
+	self.paintText = function(message, value, units)
 	{
 		value = Math.round(value);
 		canvas.drawText( {
@@ -89,7 +89,7 @@ var paintingLayer = function(name, projection, opacity)
 				strokeWidth: 1,
 				x: 10, y: textPosition,
 				font: '10pt Helvetica, sans-serif',
-				text: message + ' '  + value,
+				text: message + ' ' + value + ' ' + units,
 				fromCenter: false,
 				opacity: opacity,
 		});

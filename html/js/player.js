@@ -254,8 +254,8 @@ var clientPlayer = function()
 		{
 			globalLayer.paintPolygon(globalMessage.arrows[name]);
 		}
-		globalLayer.paintText('height:', globalMessage.height);
-		globalLayer.paintText('speed:', globalMessage.speed);
+		globalLayer.paintText('height:', globalMessage.height, 'm');
+		globalLayer.paintText('speed:', globalMessage.speed, 'm/s');
 		globalLayer.show();
 	}
 
