@@ -60,8 +60,7 @@ function massiveBody(id, mass, radius)
 		var distance = difference.length();
 		var factor = params.bigG * attractor.mass / Math.pow(distance, 3);
 		self.speed.addScaled(difference, factor * period);
-		var newDistance = attractor.position.difference(self.position).length();
-		if (newDistance < self.radius + attractor.radius)
+		if (distance < self.radius + attractor.radius)
 		{
 			self.computeCollision(attractor, period);
 		}
@@ -75,7 +74,7 @@ function massiveBody(id, mass, radius)
 /**
  * A fighter robot.
  */
-function fighterRobot(id)
+function fighterRobot(id, milliEarth)
 {
 	// self-reference
 	var self = this;
@@ -90,11 +89,11 @@ function fighterRobot(id)
 	self.mark = 100;
 
 	/**
-	 * Compute a collision: rebound, apply friction.
+	 * Compute a collision with a body: rebound, apply friction.
 	 */
-	self.computeCollision = function(attractor, period)
+	self.computeCollision = function(body, period)
 	{
-		var differenceUnit = attractor.position.difference(self.position).unit();
+		var differenceUnit = body.position.difference(self.position).unit();
 		var collisionSpeed = self.speed.scalarProduct(differenceUnit);
 		var verticalSpeed = differenceUnit.scale(collisionSpeed);
 		var horizontalSpeed = self.speed.difference(verticalSpeed);
@@ -129,14 +128,14 @@ function fighterRobot(id)
 	/**
 	 * Get a global update for the player.
 	 */
-	self.getGlobalUpdate = function(milliEarth, bodies)
+	self.getGlobalUpdate = function(bodies)
 	{
 		var update = {
 			milliEarth: milliEarth,
 			players: {},
 			arrows: {},
 			speed: self.speed.length(),
-			height: computeHeight(milliEarth) - self.radius,
+			height: self.computeHeight() - self.radius,
 		};
 		for (var id in bodies)
 		{
@@ -173,7 +172,7 @@ function fighterRobot(id)
 	/**
 	 * Compute the line of sight positions for other players.
 	 */
-	self.computeSight = function(milliEarth, players)
+	self.computeSight = function(players)
 	{
 		self.up = self.position.unit();
 		self.side = self.sight.vectorProduct(self.up);
@@ -189,8 +188,8 @@ function fighterRobot(id)
 		}
 		return {
 			players: playerPositions,
-			arrows: self.computeMarks(milliEarth),
-			horizon: self.computeHorizon(milliEarth)
+			arrows: self.computeMarks(),
+			horizon: self.computeHorizon()
 		};
 	}
 
@@ -200,6 +199,7 @@ function fighterRobot(id)
 	function computePlayerPosition(player)
 	{
 		var position = player.position.difference(self.position);
+		var h1 = self.computeHeight();
 		var projected = project(position);
 		if (!projected)
 		{
@@ -215,11 +215,11 @@ function fighterRobot(id)
 	/**
 	 * Compute the horizon vanishing point.
 	 */
-	self.computeHorizon = function(milliEarth)
+	self.computeHorizon = function()
 	{
 		var x = 0;
 		var r = milliEarth.radius;
-		var h = computeHeight(milliEarth);
+		var h = self.computeHeight();
 		var d = Math.sqrt(h * h + 2 * h * r);
 		var y = r * r / (r + h) - r - h;
 		var z = r * d / (r + h);
@@ -229,11 +229,11 @@ function fighterRobot(id)
 	/**
 	 * Get the next marks on the ground.
 	 */
-	self.computeMarks = function(milliEarth)
+	self.computeMarks = function()
 	{
 		var marks = {};
 		var r = milliEarth.radius;
-		var h = computeHeight(milliEarth);
+		var h = self.computeHeight();
 		var d = Math.sqrt(h * h + 2 * h * r);
 		// distance to the horizon along the surface
 		var sHor = r * Math.acos(r / (r + h));
@@ -304,12 +304,11 @@ function fighterRobot(id)
 	}
 
 	/**
-	 * Compute the height above the given body.
+	 * Compute the height above the milliEarth, position at (0,0,0).
 	 */
-	function computeHeight(body)
+	self.computeHeight = function()
 	{
-		var difference = body.position.difference(self.position);
-		return difference.length() - body.radius;
+		return self.position.length() - milliEarth.radius;
 	}
 }
 
@@ -356,7 +355,7 @@ var gameWorld = function(id)
 			return {};
 		}
 		var player = bodies[id];
-		return player.computeSight(milliEarth, bodiesExcept(id));
+		return player.computeSight(bodiesExcept(id));
 	}
 
 	/**
@@ -370,7 +369,7 @@ var gameWorld = function(id)
 			return {};
 		}
 		var player = bodies[id];
-		return player.getGlobalUpdate(milliEarth, bodies)
+		return player.getGlobalUpdate(bodies)
 	}
 
 	/**
@@ -378,7 +377,7 @@ var gameWorld = function(id)
 	 */
 	self.add = function(id)
 	{
-		var robot = new fighterRobot(id);
+		var robot = new fighterRobot(id, milliEarth);
 		bodies[robot.id] = robot;
 		var size = 0;
 		iterate(function(body) {
