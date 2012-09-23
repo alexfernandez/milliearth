@@ -32,15 +32,15 @@ var params = new function()
 	// min speed to cause harm, m/s
 	this.minHarmSpeed = 100;
 	// friction deceleration, m/s^2
-	this.frictionDeceleration = 1;
-	// friction due to speed, 1/s
-	this.frictionPeriod = 0.03;
-	// friction deceleration, m/s^2
-	this.frictionDeceleration = 3;
+	this.frictionDeceleration = 2;
 	// forward acceleration using the motor, m/s^2
 	this.motorAcceleration = 9;
+	// max speed, m/s
+	this.maxSpeed = 200
+	// friction due to speed, 1/s
+	this.frictionPeriod = (this.motorAcceleration - this.frictionDeceleration ) / this.maxSpeed;
 	// brakes deceleration, m/s^2
-	this.brakeDeceleration = 18;
+	this.brakeDeceleration = 27;
 	// coefficient of dampening due to suspension, unitless
 	this.verticalDampening = 0.3;
 	// gravity G constant, N·(m/kg)^2
