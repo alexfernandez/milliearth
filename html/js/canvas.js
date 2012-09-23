@@ -59,6 +59,7 @@ var paintingLayer = function(name, projection, opacity)
 	var self = this;
 
 	var canvas = $('#simulation');
+	var position = 10;
 	opacity = opacity | 1.0;
 
 	/**
@@ -72,6 +73,13 @@ var paintingLayer = function(name, projection, opacity)
 	 * Show the layer.
 	 */
 	self.show = function()
+	{
+	}
+
+	/**
+	 * Paint some text on the canvas.
+	 */
+	self.paintText = function(message, value)
 	{
 	}
 

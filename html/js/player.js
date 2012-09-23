@@ -244,6 +244,7 @@ var clientPlayer = function()
 		{
 			return;
 		}
+		globalLayer.clear();
 		globalLayer.paintMilliEarth(globalMessage.milliEarth);
 		for (var name in globalMessage.players)
 		{
@@ -253,6 +254,8 @@ var clientPlayer = function()
 		{
 			globalLayer.paintPolygon(globalMessage.arrows[name]);
 		}
+		globalLayer.paintText('speed:', globalMessage.speed);
+		globalLayer.paintText('height:', globalMessage.height);
 		globalLayer.show();
 	}
 

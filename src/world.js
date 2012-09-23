@@ -127,6 +127,31 @@ function fighterRobot(id)
 	}
 
 	/**
+	 * Get a global update for the player.
+	 */
+	self.getGlobalUpdate = function(milliEarth, bodies)
+	{
+		var update = {
+			milliEarth: milliEarth,
+			players: {},
+			arrows: {},
+			speed: self.speed.length(),
+			height: computeHeight(milliEarth),
+		};
+		for (var id in bodies)
+		{
+			var body = bodies[id];
+			update.players[id] = {
+				id: id,
+				radius: body.radius,
+				position: body.position
+			};
+		}
+		update.arrows[self.id] = self.getArrow();
+		return update;
+	}
+
+	/**
 	 * Get the arrow above the robot.
 	 */
 	self.getArrow = function()
@@ -331,22 +356,8 @@ var gameWorld = function(id)
 			log('World not active');
 			return {};
 		}
-		var update = {
-			milliEarth: milliEarth,
-			players: {},
-			arrows: {},
-		};
-		iterate(function(body) {
-				update.players[body.id] = {
-					id: body.id,
-					radius: body.radius,
-					position: body.position
-				};
-		});
-		// add arrow for current player
 		var player = bodies[id];
-		update.arrows[id] = player.getArrow();
-		return update;
+		return player.getGlobalUpdate(milliEarth, bodies)
 	}
 
 	/**
