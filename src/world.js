@@ -83,6 +83,7 @@ function fighterRobot(id, milliEarth)
 
 	// attributes
 	self.life = params.life;
+	self.ahead = new vector(0, 0, 1);
 	self.sight = new vector(0, 0, 1);
 	self.up = new vector(0, 1, 0);
 	self.side = new vector(1, 0, 0);
@@ -121,6 +122,7 @@ function fighterRobot(id, milliEarth)
 		{
 			self.speed.addScaled(horizontalSpeed.unit(), -deceleration);
 		}
+		self.ahead = horizontalSpeed.unit();
 		self.sight = horizontalSpeed.unit();
 	}
 
@@ -295,7 +297,7 @@ function fighterRobot(id, milliEarth)
 	 */
 	self.accelerate = function(period)
 	{
-		self.speed.addScaled(self.sight, params.motorAcceleration * period);
+		self.speed.addScaled(self.ahead, params.motorAcceleration * period);
 	}
 
 	/**
@@ -303,7 +305,7 @@ function fighterRobot(id, milliEarth)
 	 */
 	self.brake = function(period)
 	{
-		self.speed.addScaled(self.sight, - params.brakeDeceleration * period);
+		self.speed.addScaled(self.ahead, - params.brakeDeceleration * period);
 	}
 
 	/**
