@@ -238,6 +238,15 @@ function fighterRobot(id)
 	 */
 	self.accelerate = function(period)
 	{
+		self.speed.addScaled(self.sight, params.motorAcceleration * period);
+	}
+
+	/**
+	 * Activate the brakes.
+	 */
+	self.brake = function(period)
+	{
+		self.speed.addScaled(self.sight, - params.brakeDeceleration * period);
 	}
 
 	/**

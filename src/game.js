@@ -103,7 +103,7 @@ function connectedPlayer(id, connection)
 			log('Event ' + name + ' for player ' + self.id + ' without callback');
 			return;
 		}
-		callback(period);
+		callback(period / 1000);
 	}
 
 	/**

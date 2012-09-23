@@ -37,6 +37,10 @@ var params = new function()
 	this.frictionPeriod = 0.01;
 	// friction deceleration, m/s^2
 	this.frictionDeceleration = 1;
+	// forward acceleration using the motor, m/s^2
+	this.motorAcceleration = 9;
+	// brakes deceleration, m/s^2
+	this.brakeDeceleration = 18;
 	// coefficient of dampening due to suspension, unitless
 	this.verticalDampening = 0.3;
 	// gravity G constant, N·(m/kg)^2
