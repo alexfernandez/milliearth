@@ -343,9 +343,9 @@ var gameWorld = function(id)
 	/**
 	 * Add the robot for a new player.
 	 */
-	self.add = function(player)
+	self.add = function(id)
 	{
-		var robot = new fighterRobot(player.id);
+		var robot = new fighterRobot(id);
 		bodies[robot.id] = robot;
 		var size = 0;
 		iterate(function(body) {
@@ -363,6 +363,7 @@ var gameWorld = function(id)
 			var orbitingSpeed = Math.sqrt(params.bigG * params.meMass / distance);
 			robot.speed = new vector(0, 100, 0);
 		}
+		return robot;
 	}
 
 	/**

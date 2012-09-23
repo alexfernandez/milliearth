@@ -81,6 +81,7 @@ function connectedPlayer(id, connection)
 	self.id = id;
 	self.life = 100;
 	self.connection = connection;
+	self.robot = null;
 
 	/**
 	 * Send a message to the player.
@@ -96,6 +97,7 @@ function connectedPlayer(id, connection)
 	 */
 	self.event = function(name, period)
 	{
+		var method = 'event' + name;
 	}
 
 	/**
@@ -151,8 +153,8 @@ function meGame(id)
 	 */
 	self.add = function(player)
 	{
+		player.robot = self.world.add(player.id);
 		players.push(player);
-		self.world.add(player);
 		log('Player ' + player.id + ' connected to game ' + self.id + '; ' + players.length + ' connected');
 	}
 
