@@ -92,6 +92,13 @@ function connectedPlayer(id, connection)
 	}
 
 	/**
+	 * Process a client-side event.
+	 */
+	self.event = function(name, period)
+	{
+	}
+
+	/**
 	 * Disconnect the player.
 	 */
 	self.disconnect = function()
@@ -265,11 +272,13 @@ function meGame(id)
 		trace('Player ' + player.id + ' sent a message ' + message.type);
 		if (message.type == 'update')
 		{
+			self.processEvents(player, message.events);
 			self.sendUpdate(player, message.id);
 			return;
 		}
 		if (message.type == 'global')
 		{
+			self.processEvents(player, message.events);
 			self.sendGlobalUpdate(player, message.id);
 			return;
 		}
@@ -359,6 +368,17 @@ function meGame(id)
 			players[index].disconnect();
 		}
 		log('Game ' + self.id + ' finished');
+	}
+
+	/**
+	 * Process client-side events.
+	 */
+	self.processEvents = function(player, events)
+	{
+		for (var name in events)
+		{
+			player.event(name, events[name]);
+		}
 	}
 
 	/**

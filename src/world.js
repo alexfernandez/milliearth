@@ -234,6 +234,13 @@ function fighterRobot(id)
 	}
 
 	/**
+	 * Process a client-side event.
+	 */
+	self.event = function(name, period)
+	{
+	}
+
+	/**
 	 * Project a position along the line of sight.
 	 * If behind the camera, return null.
 	 */

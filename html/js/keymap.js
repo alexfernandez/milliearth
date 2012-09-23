@@ -33,8 +33,8 @@ var keymap = new function()
 	var keypresses = {};
 
 	var eventMap = {
-		65: 'a',
-		83: 's'
+		65: 'accelerate',
+		83: 'brake'
 	};
 
 	/**
@@ -42,9 +42,15 @@ var keymap = new function()
 	 */
 	self.keydown = function(event)
 	{
-		keycodes[event.keycode] = event.timeStamp;
-		$('#keycode').text(event.which);
-		return true;
+		var keycode = event.which;
+		if (!(keycode in eventMap))
+		{
+			return true;
+		}
+		console.log('down: ' + keycode);
+		keycodes[keycode] = event.timeStamp;
+		$('#keycode').text(keycode);
+		return false;
 	}
 
 	/**
@@ -53,6 +59,11 @@ var keymap = new function()
 	self.keyup = function(event)
 	{
 		var keycode = event.which;
+		if (!(keycode in eventMap))
+		{
+			return false;
+		}
+		console.log('up: ' + keycode);
 		var end = event.timeStamp;
 		var start = keycodes[keycode];
 		if (start)
@@ -64,7 +75,7 @@ var keymap = new function()
 			}
 			keypresses[keycode] += time;
 		}
-		delete keycodes[keymap];
+		delete keycodes[keycode];
 		return true;
 	}
 
