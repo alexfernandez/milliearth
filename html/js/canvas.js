@@ -59,7 +59,7 @@ var paintingLayer = function(name, projection, opacity)
 	var self = this;
 
 	var canvas = $('#simulation');
-	var position = 10;
+	var textPosition = 0;
 	opacity = opacity | 1.0;
 
 	/**
@@ -67,6 +67,7 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	self.clear = function()
 	{
+		textPosition = 10;
 	}
 
 	/**
@@ -81,6 +82,18 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	self.paintText = function(message, value)
 	{
+		value = Math.round(value);
+		canvas.drawText( {
+				fillStyle: '#000',
+				// strokeStyle: '#25a',
+				strokeWidth: 1,
+				x: 10, y: textPosition,
+				font: '10pt Helvetica, sans-serif',
+				text: message + ' '  + value,
+				fromCenter: false,
+				opacity: opacity,
+		});
+		textPosition += 20
 	}
 
 	/**
