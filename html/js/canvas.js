@@ -34,11 +34,11 @@ var paintingProjection = function(startx, starty, startz, scale)
 	}
 
 	/**
-	 * Project the y coordinate.
+	 * Project the y coordinate (reversed).
 	 */
 	self.projectY = function(y, z)
 	{
-		return self.project(y, z) + starty;
+		return - self.project(y, z) + starty;
 	}
 
 	/**

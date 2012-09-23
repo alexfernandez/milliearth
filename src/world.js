@@ -150,7 +150,7 @@ function fighterRobot(id)
 	 */
 	self.computeSight = function(milliEarth, players)
 	{
-		self.up = milliEarth.position.difference(self.position).unit();
+		self.up = self.position.difference(milliEarth.position).unit();
 		self.side = self.sight.vectorProduct(self.up);
 		var playerPositions = {};
 		for (var id in players)
@@ -183,7 +183,7 @@ function fighterRobot(id)
 		var r = milliEarth.radius;
 		var h = computeHeight(milliEarth);
 		var d = Math.sqrt(h * h + 2 * h * r);
-		var y = r * r / (r + h) - r + h;
+		var y = r * r / (r + h) - r - h;
 		var z = r * d / (r + h);
 		return new vector(x, y, z);
 	}
@@ -206,7 +206,7 @@ function fighterRobot(id)
 			var theta = s / r;
 			var sin = Math.sin(theta / 2);
 			var cos = Math.cos(theta / 2);
-			var y = 2 * r * sin * sin + h;
+			var y = - h - 2 * r * sin * sin;
 			var z = 2 * r * sin * cos;
 			var start = new vector(-2, y, z);
 			var end = new vector(2, y, z);
