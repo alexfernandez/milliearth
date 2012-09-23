@@ -257,7 +257,7 @@ function fighterRobot(id, milliEarth)
 		var sHor = r * Math.acos(r / (r + h));
 		var s = self.mark;
 		var index = 1;
-		while (s < sHor)
+		while (s < sHor && index < 10)
 		{
 			var theta = s / r;
 			var sin = Math.sin(theta / 2);
