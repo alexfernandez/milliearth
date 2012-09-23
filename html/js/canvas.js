@@ -111,9 +111,9 @@ var paintingLayer = function(name, projection, opacity)
 	}
 
 	/**
-	 * Paint a celestial body.
+	 * Paint a circle with position and radius.
 	 */
-	self.paint = function(body)
+	self.paintCircle = function(body)
 	{
 		var radius = Math.max(projection.project(body.radius, body.position.z), 1);
 		canvas.drawArc( {
@@ -123,6 +123,26 @@ var paintingLayer = function(name, projection, opacity)
 				radius: radius,
 				opacity: opacity,
 		});
+	}
+
+	/**
+	 * Paint a line sent by the server, with start and end.
+	 */
+	self.paintLine = function(line)
+	{
+		// the drawLine() object
+		var draw = {
+			strokeStyle: "#00f",
+			strokeWidth: 1,
+			rounded: true,
+			opacity: opacity,
+		};
+		draw['x1'] = projection.projectX(line.start.x, line.start.z);
+		draw['y1'] = projection.projectY(line.start.y, line.start.z);
+		draw['x2'] = projection.projectX(line.end.x, line.end.z);
+		draw['y2'] = projection.projectY(line.end.y, line.end.z);
+		// Draw the line
+		canvas.drawLine(draw);
 	}
 
 	/**
@@ -153,7 +173,7 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	self.paintHorizon = function(horizon)
 	{
-		var y = projection.projectY(horizon.y, horizon.z);
+		var y = projection.projectY(horizon.position.y, horizon.position.z);
 		// the drawLine() object
 		canvas.drawRect({
 				fillStyle: "#ccc",

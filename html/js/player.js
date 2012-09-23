@@ -210,14 +210,29 @@ var clientPlayer = function()
 		countUpdate(message.id);
 		$('#simulation').clearCanvas();
 		mainLayer.clear();
-		mainLayer.paintHorizon(message.horizon);
-		for (var name in message.players)
+		for (var id in message.bodies)
 		{
-			mainLayer.paint(message.players[name]);
-		}
-		for (var name in message.arrows)
-		{
-			mainLayer.paintPolygon(message.arrows[name]);
+			var object = message.bodies[id];
+			if (object.type == 'horizon')
+			{
+				mainLayer.paintHorizon(object);
+			}
+			else if (object.type == 'robot')
+			{
+				mainLayer.paintCircle(object);
+			}
+			else if (object.type == 'mark')
+			{
+				mainLayer.paintLine(object);
+			}
+			else if (!object.type)
+			{
+				console.error('Object without type: ' + JSON.stringify(object));
+			}
+			else
+			{
+				console.error('Unknown object type ' + object.type);
+			}
 		}
 		paintGlobalUpdate();
 	}
@@ -248,7 +263,7 @@ var clientPlayer = function()
 		globalLayer.paintMilliEarth(globalMessage.milliEarth);
 		for (var name in globalMessage.players)
 		{
-			globalLayer.paint(globalMessage.players[name]);
+			globalLayer.paintCircle(globalMessage.players[name]);
 		}
 		for (var name in globalMessage.arrows)
 		{
