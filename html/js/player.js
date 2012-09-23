@@ -50,9 +50,10 @@ var clientPlayer = function()
 	var width = $('#simulation').width();
 	var height = $('#simulation').height();
 	var mainProjection = new paintingProjection(width / 2, height / 2, 1, 4/5 * height);
-	var mainLayer = new paintingLayer('main', mainProjection);
-	var globalProjection = new paintingProjection(width * 7 / 8, height / 8, 6000, 4/5 * height / 8);
-	var globalLayer = new paintingLayer('global', globalProjection);
+	var mainLayer = new paintingLayer('main', mainProjection, 1.0);
+	var globalWidth = height / 6;
+	var globalProjection = new paintingProjection(width - globalWidth, globalWidth, 6000, 2/3 * globalWidth);
+	var globalLayer = new paintingLayer('global', globalProjection, 0.5);
 
 	$('#status').html('Press connect');
 

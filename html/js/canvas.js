@@ -30,7 +30,7 @@ var paintingProjection = function(startx, starty, startz, scale)
 	 */
 	self.projectX = function(x, z)
 	{
-		return self.project(x, z) + startx;
+		return startx + self.project(x, z);
 	}
 
 	/**
@@ -38,7 +38,7 @@ var paintingProjection = function(startx, starty, startz, scale)
 	 */
 	self.projectY = function(y, z)
 	{
-		return - self.project(y, z) + starty;
+		return starty - self.project(y, z);
 	}
 
 	/**
@@ -53,12 +53,13 @@ var paintingProjection = function(startx, starty, startz, scale)
 /**
  * A painting layer.
  */
-var paintingLayer = function(name, projection)
+var paintingLayer = function(name, projection, opacity)
 {
 	// self-reference
 	var self = this;
 
 	var canvas = $('#simulation');
+	opacity = opacity | 1.0;
 
 	/**
 	 * Clear the layer.
@@ -84,7 +85,7 @@ var paintingLayer = function(name, projection)
 				x: projection.projectX(body.position.x, body.position.z),
 				y: projection.projectY(body.position.y, body.position.z),
 				radius: projection.project(body.radius, body.position.z),
-				opacity: 0.5
+				opacity: opacity,
 		});
 	}
 
@@ -99,6 +100,7 @@ var paintingLayer = function(name, projection)
 				x: projection.projectX(body.position.x, body.position.z),
 				y: projection.projectY(body.position.y, body.position.z),
 				radius: radius,
+				opacity: opacity,
 		});
 	}
 
@@ -111,7 +113,8 @@ var paintingLayer = function(name, projection)
 		var draw = {
 			strokeStyle: "#00f",
 			strokeWidth: 1,
-			rounded: true
+			rounded: true,
+			opacity: opacity,
 		};
 		// add the points from the array to the object
 		for (var i = 0; i < polygon.points.length; i += 1)
@@ -139,6 +142,7 @@ var paintingLayer = function(name, projection)
 				width: canvas.width(),
 				height: canvas.height() - y,
 				fromCenter: false,
+				opacity: opacity,
 		});
 	}
 }
