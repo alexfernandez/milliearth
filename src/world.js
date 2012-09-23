@@ -136,7 +136,7 @@ function fighterRobot(id)
 			players: {},
 			arrows: {},
 			speed: self.speed.length(),
-			height: computeHeight(milliEarth),
+			height: computeHeight(milliEarth) - self.radius,
 		};
 		for (var id in bodies)
 		{
@@ -175,21 +175,16 @@ function fighterRobot(id)
 	 */
 	self.computeSight = function(milliEarth, players)
 	{
-		self.up = self.position.difference(milliEarth.position).unit();
+		self.up = self.position.unit();
 		self.side = self.sight.vectorProduct(self.up);
 		var playerPositions = {};
 		for (var id in players)
 		{
 			var player = players[id];
-			var position = player.position.difference(self.position);
-			var projected = project(position);
-			if (projected)
+			var position = computePlayerPosition(player);
+			if (position)
 			{
-				playerPositions[player.id] = {
-					id: player.id,
-					radius: player.radius,
-					position: projected,
-				};
+				playerPositions[player.id] = position;
 			}
 		}
 		return {
@@ -200,8 +195,26 @@ function fighterRobot(id)
 	}
 
 	/**
+	 * Compute the position of a player with respect to the line of sight.
+	 */
+	function computePlayerPosition(player)
+	{
+		var position = player.position.difference(self.position);
+		var projected = project(position);
+		if (!projected)
+		{
+			return null;
+		}
+		return {
+			id: player.id,
+			radius: player.radius,
+			position: projected,
+		};
+	}
+
+	/**
 	 * Compute the horizon vanishing point.
- 	 */
+	 */
 	self.computeHorizon = function(milliEarth)
 	{
 		var x = 0;
