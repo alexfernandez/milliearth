@@ -115,9 +115,12 @@ function fighterRobot(id, milliEarth)
 		var deceleration = (params.frictionDeceleration + self.speed.length() * params.frictionPeriod) * period;
 		if (deceleration * period > horizontalSpeed.length())
 		{
-			deceleration = horizontalSpeed.length();
+			self.speed.addScaled(horizontalSpeed, -1);
 		}
-		self.speed.addScaled(horizontalSpeed.unit(), -deceleration);
+		else
+		{
+			self.speed.addScaled(horizontalSpeed.unit(), -deceleration);
+		}
 		self.sight = horizontalSpeed.unit();
 	}
 
