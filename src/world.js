@@ -183,21 +183,16 @@ function fighterRobot(id, milliEarth)
 	{
 		self.up = self.position.unit();
 		self.side = self.sight.vectorProduct(self.up);
-		var update = {
-			bodies: {
-				_horizon: self.computeHorizon(),
-			},
-		};
-		self.computeMarks(update.bodies);
+		var bodies = [self.computeHorizon()].concat(self.computeMarks());
 		for (var id in players)
 		{
 			var position = computePlayerPosition(players[id]);
 			if (position)
 			{
-				update.bodies['player_' + id] = position;
+				bodies.push(position);
 			}
 		}
-		return update;
+		return { bodies: bodies };
 	}
 
 	/**
@@ -252,8 +247,9 @@ function fighterRobot(id, milliEarth)
 	/**
 	 * Get the next marks on the ground.
 	 */
-	self.computeMarks = function(update)
+	self.computeMarks = function()
 	{
+		var marks = [];
 		var r = milliEarth.radius;
 		var h = self.computeHeight();
 		var d = Math.sqrt(h * h + 2 * h * r);
@@ -269,16 +265,17 @@ function fighterRobot(id, milliEarth)
 			var y = - h - 2 * r * sin * sin;
 			var z = 2 * r * sin * cos;
 			var id = 'mark_' + index;
-			update[id] = {
+			marks.push({
 				id: id,
 				type: 'mark',
 				position: new vector(0, y, z),
 				start: new vector(-params.markHalfWidth, y, z),
 				end: new vector(params.markHalfWidth, y, z),
-			};
+			});
 			s += params.markDistance;
 			index ++;
 		}
+		return marks;
 	}
 
 	/**

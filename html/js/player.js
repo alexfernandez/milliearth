@@ -210,6 +210,14 @@ var clientPlayer = function()
 		countUpdate(message.id);
 		$('#simulation').clearCanvas();
 		mainLayer.clear();
+		message.bodies.sort(function(p1, p2) {
+				if (!p1.position || !p2.position)
+				{
+					console.error('Sorting objects without position!');
+					return 0;
+				}
+				return p2.position.z - p1.position.z;
+		});
 		for (var id in message.bodies)
 		{
 			var object = message.bodies[id];
