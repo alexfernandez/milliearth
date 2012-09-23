@@ -199,7 +199,19 @@ function fighterRobot(id, milliEarth)
 	function computePlayerPosition(player)
 	{
 		var position = player.position.difference(self.position);
+		var distance = position.length();
 		var h1 = self.computeHeight();
+		var d1 = Math.sqrt(h1 * h1 + 2 * h1 * milliEarth.radius);
+		if (distance > d1)
+		{
+			var h2 = player.computeHeight() + player.radius;
+			var d2 = Math.sqrt(h2 * h2 + 2 * h2 * milliEarth.radius);
+			if (d1 + d2 < distance)
+			{
+				// below horizon
+				return null;
+			}
+		}
 		var projected = project(position);
 		if (!projected)
 		{
