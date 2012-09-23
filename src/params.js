@@ -34,9 +34,9 @@ var params = new function()
 	// friction deceleration, m/s^2
 	this.frictionDeceleration = 1;
 	// friction due to speed, 1/s
-	this.frictionPeriod = 0.01;
+	this.frictionPeriod = 0.03;
 	// friction deceleration, m/s^2
-	this.frictionDeceleration = 1;
+	this.frictionDeceleration = 3;
 	// forward acceleration using the motor, m/s^2
 	this.motorAcceleration = 9;
 	// brakes deceleration, m/s^2
