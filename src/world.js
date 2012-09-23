@@ -234,9 +234,9 @@ function fighterRobot(id)
 	}
 
 	/**
-	 * Process a client-side event.
+	 * Accelerate the robot.
 	 */
-	self.event = function(name, period)
+	self.accelerate = function(period)
 	{
 	}
 

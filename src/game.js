@@ -97,7 +97,13 @@ function connectedPlayer(id, connection)
 	 */
 	self.event = function(name, period)
 	{
-		var method = 'event' + name;
+		var callback = self.robot[name];
+		if (!callback)
+		{
+			log('Event ' + name + ' for player ' + self.id + ' without callback');
+			return;
+		}
+		callback(period);
 	}
 
 	/**

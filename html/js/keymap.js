@@ -47,7 +47,6 @@ var keymap = new function()
 		{
 			return true;
 		}
-		console.log('down: ' + keycode);
 		keycodes[keycode] = event.timeStamp;
 		$('#keycode').text(keycode);
 		return false;
@@ -63,7 +62,6 @@ var keymap = new function()
 		{
 			return false;
 		}
-		console.log('up: ' + keycode);
 		var end = event.timeStamp;
 		var start = keycodes[keycode];
 		if (start)
