@@ -268,14 +268,13 @@ function fighterRobot(id, milliEarth)
 			var cos = Math.cos(theta / 2);
 			var y = - h - 2 * r * sin * sin;
 			var z = 2 * r * sin * cos;
-			var start = new vector(-2, y, z);
-			var end = new vector(2, y, z);
 			var id = 'mark_' + index;
 			update[id] = {
 				id: id,
 				type: 'mark',
-				start: start,
-				end: end,
+				position: new vector(0, y, z),
+				start: new vector(-params.markHalfWidth, y, z),
+				end: new vector(params.markHalfWidth, y, z),
 			};
 			s += params.markDistance;
 			index ++;

@@ -55,6 +55,8 @@ var params = new function()
 	this.robotRadius = 2;
 	// set marks every given distance, m
 	this.markDistance = 100;
+	// half-width of the speed marks, m
+	this.markHalfWidth = 2;
 }
 
 module.exports.params = params;
