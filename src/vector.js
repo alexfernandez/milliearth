@@ -278,12 +278,4 @@ module.test = function()
 	console.log(a.vectorProduct(new vector(3, 4, 5)).toString());
 }
 
-var u = new vector(1, 0, 0);
-var v = new vector(0, 1, 0);
-var w = new vector(0, 0, 1);
-
-var factor = Math.sin(0.5 * (Math.PI / 2));
-var u2 = u.scale(factor);
-var w2 = w.scale(Math.sqrt(1 - factor * factor));
-log(u2.sum(w2));
 
