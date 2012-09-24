@@ -240,6 +240,26 @@ function coordinateSystem(u, v, w)
 		var z = self.w.scalarProduct(position);
 		return new vector(x, y, z);
 	}
+
+	/**
+	 * Turn on the yaw angle (left and right horizontally), radians.
+	 */
+	self.yaw = function(angle)
+	{
+		var p = Math.cos(angle / (Math.PI / 2));
+		var q = Math.sin(angle / (Math.PI / 2));
+		var u = self.u.scale(p).sum(self.w.scale(q));
+		var w = self.w.scale(p).sum(self.u.scale(-q));
+		self.u = u;
+		self.w = w;
+	}
+
+	/**
+	 * Turn on the pitch angle (up and down), radians.
+	 */
+	self.pitch = function(angle)
+	{
+	}
 }
 
 module.exports.vector = vector;
@@ -252,4 +272,12 @@ module.test = function()
 	console.log(a.vectorProduct(new vector(3, 4, 5)).toString());
 }
 
+var u = new vector(1, 0, 0);
+var v = new vector(0, 1, 0);
+var w = new vector(0, 0, 1);
+
+var factor = Math.sin(0.5 * (Math.PI / 2));
+var u2 = u.scale(factor);
+var w2 = w.scale(Math.sqrt(1 - factor * factor));
+log(u2.sum(w2));
 

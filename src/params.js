@@ -57,6 +57,8 @@ var params = new function()
 	this.markDistance = 100;
 	// half-width of the speed marks, m
 	this.markHalfWidth = 2;
+	// degrees of turn per second, radians
+	this.turningAngle = Math.PI / 4;
 }
 
 module.exports.params = params;

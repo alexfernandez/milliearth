@@ -315,6 +315,38 @@ function fighterRobot(id, milliEarth)
 	}
 
 	/**
+	 * Turn the camera left.
+	 */
+	self.turnLeft = function(period)
+	{
+		camera.yaw(params.turningAngle * period);
+	}
+
+	/**
+	 * Turn the camera right.
+	 */
+	self.turnRight = function(period)
+	{
+		camera.yaw(-params.turningAngle * period);
+	}
+
+	/**
+	 * Turn the camera up.
+	 */
+	self.turnUp = function(period)
+	{
+		camera.pitch(params.turningAngle * period);
+	}
+
+	/**
+	 * Turn the camera down.
+	 */
+	self.turnDown = function(period)
+	{
+		camera.pitch(-params.turningAngle * period);
+	}
+
+	/**
 	 * Compute the height above the milliEarth, position at (0,0,0).
 	 */
 	self.computeHeight = function()
