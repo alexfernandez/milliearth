@@ -259,6 +259,12 @@ function coordinateSystem(u, v, w)
 	 */
 	self.pitch = function(angle)
 	{
+		var p = Math.cos(angle / (Math.PI / 2));
+		var q = Math.sin(angle / (Math.PI / 2));
+		var v = self.v.scale(p).sum(self.w.scale(q));
+		var w = self.w.scale(p).sum(self.v.scale(-q));
+		self.v = v;
+		self.w = w;
 	}
 }
 
