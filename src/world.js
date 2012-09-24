@@ -483,7 +483,7 @@ var gameWorld = function(id)
 		}
 		var message = 'World ' + self.id + ', ';
 		iterate(function(body) {
-				var distance = Math.round(params.meRadius - body.position.length());
+				var distance = Math.round(body.computeHeight());
 				message += body.id + ' ' + body.position + ': ' + distance + ', ';
 		});
 		log(message);
