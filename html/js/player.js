@@ -198,54 +198,6 @@ var clientPlayer = function()
 	}
 
 	/**
-	 * Update world.
-	 */
-	self.update = function(message)
-	{
-		if (!running)
-		{
-			console.error('Not running');
-			return;
-		}
-		countUpdate(message.id);
-		$('#simulation').clearCanvas();
-		mainLayer.clear();
-		message.objects.sort(function(p1, p2) {
-				if (!p1.position || !p2.position)
-				{
-					console.error('Sorting objects without position!');
-					return 0;
-				}
-				return p2.position.z - p1.position.z;
-		});
-		for (var id in message.objects)
-		{
-			var object = message.objects[id];
-			if (object.type == 'horizon')
-			{
-				mainLayer.paintHorizon(object);
-			}
-			else if (object.type == 'robot')
-			{
-				mainLayer.paintCircle(object);
-			}
-			else if (object.type == 'mark')
-			{
-				mainLayer.paintLine(object);
-			}
-			else if (!object.type)
-			{
-				console.error('Object without type: ' + JSON.stringify(object));
-			}
-			else
-			{
-				console.error('Unknown object type ' + object.type);
-			}
-		}
-		paintGlobalUpdate();
-	}
-
-	/**
 	 * Global update for the whole world.
 	 */
 	self.global = function(message)
@@ -259,6 +211,22 @@ var clientPlayer = function()
 	}
 
 	/**
+	 * Update world.
+	 */
+	self.update = function(message)
+	{
+		if (!running)
+		{
+			console.error('Not running');
+			return;
+		}
+		countUpdate(message.id);
+		$('#simulation').clearCanvas();
+		paintObjects(message.objects, mainLayer);
+		paintGlobalUpdate();
+	}
+
+	/**
 	 * Paint the latest global update we have."
 	 */
 	function paintGlobalUpdate()
@@ -267,21 +235,47 @@ var clientPlayer = function()
 		{
 			return;
 		}
-		globalLayer.clear();
-		for (var id in globalMessage.objects)
+		paintObjects(globalMessage.objects, globalLayer);
+		globalLayer.paintText('height:', globalMessage.height, 'm');
+		globalLayer.paintText('speed:', globalMessage.speed, 'm/s');
+	}
+
+	/**
+	 * Paint some objects on a layer.
+	 */
+	function paintObjects(objects, layer)
+	{
+		layer.clear();
+		objects.sort(function(p1, p2) {
+				if (!p1.position || !p2.position)
+				{
+					console.error('Sorting objects without position!');
+					return 0;
+				}
+				return p2.position.z - p1.position.z;
+		});
+		for (var id in objects)
 		{
-			var object = globalMessage.objects[id];
-			if (object.type == 'milliEarth')
+			var object = objects[id];
+			if (object.type == 'horizon')
 			{
-				globalLayer.paintMilliEarth(object);
+				layer.paintHorizon(object);
 			}
 			else if (object.type == 'robot')
 			{
-				globalLayer.paintCircle(object);
+				layer.paintCircle(object);
+			}
+			else if (object.type == 'milliEarth')
+			{
+				globalLayer.paintMilliEarth(object);
 			}
 			else if (object.type == 'arrow')
 			{
 				globalLayer.paintPolygon(object);
+			}
+			else if (object.type == 'mark')
+			{
+				layer.paintLine(object);
 			}
 			else if (!object.type)
 			{
@@ -292,11 +286,12 @@ var clientPlayer = function()
 				console.error('Unknown object type ' + object.type);
 			}
 		}
-		globalLayer.paintText('height:', globalMessage.height, 'm');
-		globalLayer.paintText('speed:', globalMessage.speed, 'm/s');
-		globalLayer.show();
+		layer.show();
 	}
 
+	/**
+	 * Count an update.
+	 */
 	function countUpdate(id)
 	{
 		updates ++;
