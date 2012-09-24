@@ -53,6 +53,11 @@ var keymap = new function()
 		{
 			return true;
 		}
+		if (keycode in keycodes)
+		{
+			// already pressed
+			return false;
+		}
 		keycodes[keycode] = event.timeStamp;
 		return false;
 	}
