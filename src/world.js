@@ -94,7 +94,7 @@ function fighterRobot(id, milliEarth)
 	{
 		self.position = position;
 		self.speed = speed;
-		self.camera = new coordinateSystem(position.vectorProduct(speed), position, speed);
+		camera = new coordinateSystem(position.vectorProduct(speed), position, speed);
 	}
 
 	/**
@@ -171,17 +171,18 @@ function fighterRobot(id, milliEarth)
 	 */
 	self.getArrow = function()
 	{
-		var unitSpeed = self.speed.unit();
-		var unitElevation = self.position.unit();
 		var start = self.position.copy();
-		start.addScaled(unitSpeed, -400);
-		start.addScaled(unitElevation, 400);
+		start.addScaled(camera.w, -400);
+		start.addScaled(camera.v, 400);
 		var end = self.position.copy();
-		end.addScaled(unitSpeed, 400);
-		end.addScaled(unitElevation, 400);
+		end.addScaled(camera.w, 400);
+		end.addScaled(camera.v, 400);
+		var hat = self.position.copy();
+		hat.addScaled(camera.w, 300);
+		hat.addScaled(camera.v, 500);
 		return {
 			id: self.id,
-			points: [start, end]
+			points: [start, end, hat]
 		};
 	}
 
