@@ -52,7 +52,7 @@ var clientPlayer = function()
 	var mainProjection = new paintingProjection(width / 2, height / 2, 1, 4/5 * height);
 	var mainLayer = new paintingLayer('main', mainProjection, 1.0);
 	var globalWidth = height / 6;
-	var globalProjection = new paintingProjection(width - globalWidth, globalWidth, 6000, 2/3 * globalWidth);
+	var globalProjection = new paintingProjection(width - globalWidth, globalWidth, 0, 2/3 * globalWidth / 6000);
 	var globalLayer = new paintingLayer('global', globalProjection, 0.5);
 
 	$('#status').html('Press connect');

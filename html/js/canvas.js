@@ -20,6 +20,10 @@
  */
 
 
+/**
+ * A painting projection. Starting coordinates for x and y, start depth and scale.
+ * Zero startz means that z is not used to project.
+ */
 var paintingProjection = function(startx, starty, startz, scale)
 {
 	// self-reference
@@ -46,6 +50,10 @@ var paintingProjection = function(startx, starty, startz, scale)
 	 */
 	self.project = function(length, z)
 	{
+		if (startz == 0)
+		{
+			return length * scale;
+		}
 		return length / (z + startz) * scale;
 	}
 }
