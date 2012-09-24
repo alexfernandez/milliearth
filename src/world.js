@@ -178,8 +178,8 @@ function fighterRobot(id, milliEarth)
 		end.addScaled(camera.w, 400);
 		end.addScaled(camera.v, 400);
 		var hat = self.position.copy();
-		hat.addScaled(camera.w, 300);
-		hat.addScaled(camera.v, 500);
+		hat.addScaled(camera.w, 250);
+		hat.addScaled(camera.v, 550);
 		return {
 			id: self.id,
 			points: [start, end, hat]
