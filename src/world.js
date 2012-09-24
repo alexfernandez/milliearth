@@ -146,24 +146,29 @@ function fighterRobot(id, milliEarth)
 	 */
 	self.getGlobalUpdate = function(bodies)
 	{
-		var update = {
-			milliEarth: milliEarth,
-			players: {},
-			arrows: {},
-			speed: self.speed.length(),
-			height: self.computeHeight() - self.radius,
+		var meBody = {
+			id: 'milliEarth',
+			type: 'milliEarth',
+			radius: milliEarth.radius,
+			position: milliEarth.position,
 		};
+		var objects = [meBody];
 		for (var id in bodies)
 		{
 			var body = bodies[id];
-			update.players[id] = {
-				id: id,
-				radius: body.radius,
-				position: body.position
-			};
+			objects.push({
+					id: id,
+					type: 'robot',
+					radius: body.radius,
+					position: body.position
+			});
 		}
-		update.arrows[self.id] = self.getArrow();
-		return update;
+		objects.push(self.getArrow());
+		return {
+			speed: self.speed.length(),
+			height: self.computeHeight() - self.radius,
+			objects: objects,
+		};
 	}
 
 	/**
@@ -182,6 +187,7 @@ function fighterRobot(id, milliEarth)
 		hat.addScaled(camera.v, 550);
 		return {
 			id: self.id,
+			type: 'arrow',
 			points: [start, end, hat]
 		};
 	}
@@ -189,18 +195,18 @@ function fighterRobot(id, milliEarth)
 	/**
 	 * Compute the line of sight positions for other players.
 	 */
-	self.computeSight = function(players)
+	self.computeSight = function(bodies)
 	{
-		var bodies = [self.computeHorizon()].concat(self.computeMarks());
-		for (var id in players)
+		var objects = [self.computeHorizon()].concat(self.computeMarks());
+		for (var id in bodies)
 		{
-			var position = computePlayerPosition(players[id]);
+			var position = computePlayerPosition(bodies[id]);
 			if (position)
 			{
-				bodies.push(position);
+				objects.push(position);
 			}
 		}
-		return { bodies: bodies };
+		return { objects: objects };
 	}
 
 	/**

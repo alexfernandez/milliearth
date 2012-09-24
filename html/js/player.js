@@ -210,7 +210,7 @@ var clientPlayer = function()
 		countUpdate(message.id);
 		$('#simulation').clearCanvas();
 		mainLayer.clear();
-		message.bodies.sort(function(p1, p2) {
+		message.objects.sort(function(p1, p2) {
 				if (!p1.position || !p2.position)
 				{
 					console.error('Sorting objects without position!');
@@ -218,9 +218,9 @@ var clientPlayer = function()
 				}
 				return p2.position.z - p1.position.z;
 		});
-		for (var id in message.bodies)
+		for (var id in message.objects)
 		{
-			var object = message.bodies[id];
+			var object = message.objects[id];
 			if (object.type == 'horizon')
 			{
 				mainLayer.paintHorizon(object);
@@ -268,14 +268,29 @@ var clientPlayer = function()
 			return;
 		}
 		globalLayer.clear();
-		globalLayer.paintMilliEarth(globalMessage.milliEarth);
-		for (var name in globalMessage.players)
+		for (var id in globalMessage.objects)
 		{
-			globalLayer.paintCircle(globalMessage.players[name]);
-		}
-		for (var name in globalMessage.arrows)
-		{
-			globalLayer.paintPolygon(globalMessage.arrows[name]);
+			var object = globalMessage.objects[id];
+			if (object.type == 'milliEarth')
+			{
+				globalLayer.paintMilliEarth(object);
+			}
+			else if (object.type == 'robot')
+			{
+				globalLayer.paintCircle(object);
+			}
+			else if (object.type == 'arrow')
+			{
+				globalLayer.paintPolygon(object);
+			}
+			else if (!object.type)
+			{
+				console.error('Object without type: ' + JSON.stringify(object));
+			}
+			else
+			{
+				console.error('Unknown object type ' + object.type);
+			}
 		}
 		globalLayer.paintText('height:', globalMessage.height, 'm');
 		globalLayer.paintText('speed:', globalMessage.speed, 'm/s');
