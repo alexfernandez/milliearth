@@ -206,9 +206,9 @@ function coordinateSystem(u, v, w)
 	// self-reference
 	var self = this;
 
-	self.u = u;
-	self.v = v;
-	self.w = w;
+	self.u = u.unit();
+	self.v = v.unit();
+	self.w = w.unit();
 
 	/**
 	 * Align the v axis with the given vector.
