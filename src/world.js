@@ -311,7 +311,13 @@ function fighterRobot(id, milliEarth)
 	 */
 	self.brake = function(period)
 	{
-		self.speed.addScaled(camera.w, - params.brakeDeceleration * period);
+		var deceleration = params.brakeDeceleration * period;
+		if (self.speed.length() < deceleration)
+		{
+			self.speed = new vector(0, 0, 0);
+			return;
+		}
+		self.speed.addScaled(self.speed.unit(), -deceleration);
 	}
 
 	/**
