@@ -130,7 +130,7 @@ function fighterRobot(id, milliEarth)
 		{
 			self.speed.addScaled(horizontalSpeed.unit(), -deceleration);
 		}
-		camera.alignV(differenceUnit);
+		camera.alignV(differenceUnit.scale(-1));
 	}
 
 	/**
