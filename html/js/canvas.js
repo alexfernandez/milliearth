@@ -68,7 +68,10 @@ var paintingLayer = function(name, projection, opacity)
 
 	var canvas = $('#simulation');
 	var textPosition = 0;
-	opacity = opacity | 1.0;
+	if (opacity == 0)
+	{
+		opacity = opacity | 1.0;
+	}
 
 	/**
 	 * Clear the layer.
