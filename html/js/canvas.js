@@ -57,15 +57,12 @@ var paintingProjection = function(startx, starty, startz, scale)
 	 */
 	self.center = function(point, radius)
 	{
-		console.log(point);
-		console.log(radius);
-		var p = point.x * point.x + point.y * point.y + point.z * point.z;
+		var p = Math.sqrt(point.x * point.x + point.y * point.y + point.z * point.z);
 		var h = p - radius;
-		var d = h * h + 2 * h * radius;
-		var below = d * d - point.x * point.x - point.y * point.y;
-		console.log(p + ' - ' + below);
-		var cx = startx + point.x * point.z / below;
-		var cy = starty - point.y * point.z / below;
+		var d2 = h * h + 2 * h * radius;
+		var below = d2 - point.x * point.x - point.y * point.y;
+		var cx = startx + scale * point.x * point.z / below;
+		var cy = starty - scale * point.y * point.z / below;
 		return new planarPoint(cx, cy);
 	}
 
@@ -92,9 +89,9 @@ var paintingProjection = function(startx, starty, startz, scale)
 	{
 		if (self.isPlanar())
 		{
-			return length * scale;
+			return scale * length;
 		}
-		return length / (z + startz) * scale;
+		return scale * length / (z + startz);
 	}
 
 	/**
