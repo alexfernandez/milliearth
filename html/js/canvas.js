@@ -55,6 +55,7 @@ var paintingProjection = function(startx, starty, startz, scale)
 	/**
 	 * Return the ellipse that corresponds a projected circle.
 	 * Contains: center, major axis, minor axis.
+	 * See: http://mathworld.wolfram.com/Ellipse.html
 	 */
 	self.ellipse = function(point, radius)
 	{
@@ -66,11 +67,37 @@ var paintingProjection = function(startx, starty, startz, scale)
 		var cy = starty - scale * point.y * point.z / below;
 		var a = scale * radius / Math.sqrt(point.z * point.z - radius * radius);
 		var b = scale * Math.sqrt(d2) * radius / (point.z * point.z - radius * radius);
+		var diff = point.x * point.x - point.y * point.y;
+		var angle;
+		if (point.x == 0 || point.y == 0)
+		{
+			if (diff < 0)
+			{
+				angle = 0;
+			}
+			else
+			{
+				angle = Math.PI / 2;
+			}
+		}
+		else
+		{
+			var atan = Math.atan(2 * point.x * point.y / diff);
+			if (diff < 0)
+			{
+				angle = atan / 2;
+			}
+			else
+			{
+				angle = (Math.PI + atan) / 2;
+			}
+			console.log('angle: ' + angle);
+		}
 		return {
 			center: new planarPoint(cx, cy),
 			major: a,
 			minor: b,
-			angle: 0,
+			angle: angle,
 		}
 	}
 
