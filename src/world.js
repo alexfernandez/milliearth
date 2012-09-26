@@ -217,6 +217,7 @@ function fighterRobot(id, milliEarth)
 	 */
 	function computePlayerPosition(player)
 	{
+		// find out if the player is visible
 		var position = player.position.difference(self.position);
 		var distance = position.length();
 		var h1 = self.computeHeight();
@@ -236,6 +237,7 @@ function fighterRobot(id, milliEarth)
 		{
 			return null;
 		}
+		// return the projected position
 		return {
 			id: player.id,
 			type: 'robot',
