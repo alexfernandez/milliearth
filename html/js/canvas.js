@@ -57,9 +57,15 @@ var paintingProjection = function(startx, starty, startz, scale)
 	 */
 	self.center = function(point, radius)
 	{
-		var d = point.x * point.x + point.y * point.y - radius * radius;
-		var cx = startx - point.x * point.z / d;
-		var cy = starty + point.y * point.z / d;
+		console.log(point);
+		console.log(radius);
+		var p = point.x * point.x + point.y * point.y + point.z * point.z;
+		var h = p - radius;
+		var d = h * h + 2 * h * radius;
+		var below = d * d - point.x * point.x - point.y * point.y;
+		console.log(p + ' - ' + below);
+		var cx = startx + point.x * point.z / below;
+		var cy = starty - point.y * point.z / below;
 		return new planarPoint(cx, cy);
 	}
 
@@ -84,11 +90,19 @@ var paintingProjection = function(startx, starty, startz, scale)
 	 */
 	self.projectCoordinate = function(length, z)
 	{
-		if (startz == 0)
+		if (self.isPlanar())
 		{
 			return length * scale;
 		}
 		return length / (z + startz) * scale;
+	}
+
+	/**
+	 * Find out if the projection is planar, or has perspective.
+	 */
+	self.isPlanar = function()
+	{
+		return (startz == 0);
 	}
 }
 
@@ -170,6 +184,10 @@ var paintingLayer = function(name, projection, opacity)
 				radius: radius,
 				opacity: opacity,
 		});
+		if (projection.isPlanar())
+		{
+			return;
+		}
 		var center = projection.center(body.position, body.radius);
 		canvas.drawArc( {
 				fillStyle: '#f00',
