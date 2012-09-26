@@ -447,7 +447,7 @@ var gameWorld = function(id)
 		if (size % 2)
 		{
 			robot.start(
-				new vector(distance + 2, 1000, 0),
+				new vector(distance + 2, 10, 0),
 				new vector(1, 0, 0));
 		}
 		else
@@ -455,7 +455,7 @@ var gameWorld = function(id)
 			var orbitingSpeed = Math.sqrt(params.bigG * params.meMass / distance);
 			robot.start(
 				new vector(distance + 2, 0, 0),
-				new vector(0, 100, 0));
+				new vector(0, 1, 0));
 		}
 		return robot;
 	}

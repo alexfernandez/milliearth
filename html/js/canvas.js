@@ -243,9 +243,9 @@ var paintingLayer = function(name, projection, opacity)
 				strokeStyle: "#f00",
 				strokeWidth: 1,
 				x1: ellipse.center.x - s * ellipse.minor,
-				y1: ellipse.center.y - c * ellipse.minor,
+				y1: ellipse.center.y + c * ellipse.minor,
 				x2: ellipse.center.x + s * ellipse.minor,
-				y2: ellipse.center.y + c * ellipse.minor,
+				y2: ellipse.center.y - c * ellipse.minor,
 				rounded: true,
 				opacity: opacity,
 		});
