@@ -91,7 +91,6 @@ var paintingProjection = function(startx, starty, startz, scale)
 			{
 				angle = (Math.PI + atan) / 2;
 			}
-			console.log('angle: ' + angle);
 		}
 		return {
 			center: new planarPoint(cx, cy),
@@ -228,23 +227,25 @@ var paintingLayer = function(name, projection, opacity)
 				radius: 1,
 				opacity: opacity,
 		});
+		var s = Math.sin(ellipse.angle);
+		var c = Math.cos(ellipse.angle);
 		canvas.drawLine( {
 				strokeStyle: "#f00",
 				strokeWidth: 1,
-				x1: ellipse.center.x,
-				y1: ellipse.center.y - ellipse.major,
-				x2: ellipse.center.x,
-				y2: ellipse.center.y + ellipse.major,
+				x1: ellipse.center.x - c * ellipse.major,
+				y1: ellipse.center.y - s * ellipse.major,
+				x2: ellipse.center.x + c * ellipse.major,
+				y2: ellipse.center.y + s * ellipse.major,
 				rounded: true,
 				opacity: opacity,
 		});
 		canvas.drawLine( {
 				strokeStyle: "#f00",
 				strokeWidth: 1,
-				x1: ellipse.center.x - ellipse.minor,
-				y1: ellipse.center.y,
-				x2: ellipse.center.x + ellipse.minor,
-				y2: ellipse.center.y,
+				x1: ellipse.center.x - s * ellipse.minor,
+				y1: ellipse.center.y - c * ellipse.minor,
+				x2: ellipse.center.x + s * ellipse.minor,
+				y2: ellipse.center.y + c * ellipse.minor,
 				rounded: true,
 				opacity: opacity,
 		});
