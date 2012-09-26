@@ -53,6 +53,17 @@ var paintingProjection = function(startx, starty, startz, scale)
 	}
 
 	/**
+	 * Return the center of a projected circle.
+	 */
+	self.center = function(point, radius)
+	{
+		var d = point.x * point.x + point.y * point.y - radius * radius;
+		var cx = startx - point.x * point.z / d;
+		var cy = starty + point.y * point.z / d;
+		return new planarPoint(cx, cy);
+	}
+
+	/**
 	 * Project the x coordinate.
 	 */
 	self.projectX = function(x, z)
@@ -157,6 +168,14 @@ var paintingLayer = function(name, projection, opacity)
 				x: point.x,
 				y: point.y,
 				radius: radius,
+				opacity: opacity,
+		});
+		var center = projection.center(body.position, body.radius);
+		canvas.drawArc( {
+				fillStyle: '#f00',
+				x: center.x,
+				y: center.y,
+				radius: 1,
 				opacity: opacity,
 		});
 	}
