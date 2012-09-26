@@ -21,7 +21,7 @@
 
 
 /**
- * A point in a 2D space. Can be a projection of a vector.
+ * A point in a 2d space. Can be a projection of a vector.
  */
 var planarPoint = function(x, y)
 {
@@ -41,6 +41,16 @@ var paintingProjection = function(startx, starty, startz, scale)
 {
 	// self-reference
 	var self = this;
+
+	/**
+	 * Project a 3d point into the 2d plane.
+	 */
+	self.project = function(point)
+	{
+		var x = self.projectX(point.x, point.z);
+		var y = self.projectY(point.y, point.z);
+		return new planarPoint(x, y);
+	}
 
 	/**
 	 * Project the x coordinate.
@@ -125,10 +135,11 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	self.paintMilliEarth = function(body)
 	{
+		var point = projection.project(body.position);
 		canvas.drawArc( {
 				fillStyle: '#ccc',
-				x: projection.projectX(body.position.x, body.position.z),
-				y: projection.projectY(body.position.y, body.position.z),
+				x: point.x,
+				y: point.y,
 				radius: projection.projectCoordinate(body.radius, body.position.z),
 				opacity: opacity,
 		});
@@ -139,15 +150,15 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	self.paintCircle = function(body)
 	{
+		var point = projection.project(body.position);
 		var radius = Math.max(projection.projectCoordinate(body.radius, body.position.z), 1);
 		canvas.drawArc( {
 				fillStyle: '#000',
-				x: projection.projectX(body.position.x, body.position.z),
-				y: projection.projectY(body.position.y, body.position.z),
+				x: point.x,
+				y: point.y,
 				radius: radius,
 				opacity: opacity,
 		});
-		var 
 	}
 
 	/**
@@ -155,6 +166,8 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	self.paintLine = function(line)
 	{
+		var start = projection.project(line.start);
+		var end = projection.project(line.end);
 		// the drawLine() object
 		var draw = {
 			strokeStyle: "#00f",
@@ -162,10 +175,10 @@ var paintingLayer = function(name, projection, opacity)
 			rounded: true,
 			opacity: opacity,
 		};
-		draw['x1'] = projection.projectX(line.start.x, line.start.z);
-		draw['y1'] = projection.projectY(line.start.y, line.start.z);
-		draw['x2'] = projection.projectX(line.end.x, line.end.z);
-		draw['y2'] = projection.projectY(line.end.y, line.end.z);
+		draw['x1'] = start.x;
+		draw['y1'] = start.y;
+		draw['x2'] = end.x,
+		draw['y2'] = end.y,
 		// Draw the line
 		canvas.drawLine(draw);
 	}
@@ -185,9 +198,9 @@ var paintingLayer = function(name, projection, opacity)
 		// add the points from the array to the object
 		for (var i = 0; i < polygon.points.length; i += 1)
 		{
-			var point = polygon.points[i];
-			draw['x' + (i+1)] = projection.projectX(point.x, point.z);
-			draw['y' + (i+1)] = projection.projectY(point.y, point.z);
+			var point = projection.project(polygon.points[i]);
+			draw['x' + (i+1)] = point.x;
+			draw['y' + (i+1)] = point.y;
 		}
 		// Draw the line
 		canvas.drawLine(draw);
