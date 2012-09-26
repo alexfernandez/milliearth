@@ -71,26 +71,12 @@ var paintingProjection = function(startx, starty, startz, scale)
 		var angle;
 		if (point.x == 0 || point.y == 0)
 		{
-			if (diff < 0)
-			{
-				angle = 0;
-			}
-			else
-			{
-				angle = Math.PI / 2;
-			}
+			angle = 0;
 		}
 		else
 		{
 			var atan = Math.atan(2 * point.x * point.y / diff);
-			if (diff < 0)
-			{
-				angle = atan / 2;
-			}
-			else
-			{
-				angle = (Math.PI + atan) / 2;
-			}
+			angle = atan / 2;
 		}
 		return {
 			center: new planarPoint(cx, cy),
