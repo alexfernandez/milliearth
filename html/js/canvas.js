@@ -53,9 +53,10 @@ var paintingProjection = function(startx, starty, startz, scale)
 	}
 
 	/**
-	 * Return the center of a projected circle.
+	 * Return the ellipse that corresponds a projected circle.
+	 * Contains: center, major axis, minor axis.
 	 */
-	self.center = function(point, radius)
+	self.ellipse = function(point, radius)
 	{
 		var p = Math.sqrt(point.x * point.x + point.y * point.y + point.z * point.z);
 		var h = p - radius;
@@ -63,7 +64,14 @@ var paintingProjection = function(startx, starty, startz, scale)
 		var below = d2 - point.x * point.x - point.y * point.y;
 		var cx = startx + scale * point.x * point.z / below;
 		var cy = starty - scale * point.y * point.z / below;
-		return new planarPoint(cx, cy);
+		var a = scale * radius / Math.sqrt(point.z * point.z - radius * radius);
+		var b = scale * Math.sqrt(d2) * radius / (point.z * point.z - radius * radius);
+		return {
+			center: new planarPoint(cx, cy),
+			major: a,
+			minor: b,
+			angle: 0,
+		}
 	}
 
 	/**
@@ -185,12 +193,32 @@ var paintingLayer = function(name, projection, opacity)
 		{
 			return;
 		}
-		var center = projection.center(body.position, body.radius);
+		var ellipse = projection.ellipse(body.position, body.radius);
 		canvas.drawArc( {
 				fillStyle: '#f00',
-				x: center.x,
-				y: center.y,
+				x: ellipse.center.x,
+				y: ellipse.center.y,
 				radius: 1,
+				opacity: opacity,
+		});
+		canvas.drawLine( {
+				strokeStyle: "#f00",
+				strokeWidth: 1,
+				x1: ellipse.center.x,
+				y1: ellipse.center.y - ellipse.major,
+				x2: ellipse.center.x,
+				y2: ellipse.center.y + ellipse.major,
+				rounded: true,
+				opacity: opacity,
+		});
+		canvas.drawLine( {
+				strokeStyle: "#f00",
+				strokeWidth: 1,
+				x1: ellipse.center.x - ellipse.minor,
+				y1: ellipse.center.y,
+				x2: ellipse.center.x + ellipse.minor,
+				y2: ellipse.center.y,
+				rounded: true,
 				opacity: opacity,
 		});
 	}
