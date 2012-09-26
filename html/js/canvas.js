@@ -21,6 +21,19 @@
 
 
 /**
+ * A point in a 2D space. Can be a projection of a vector.
+ */
+var planarPoint = function(x, y)
+{
+	// self-reference
+	var self = this;
+
+	// attributes
+	self.x = x;
+	self.y = y;
+}
+
+/**
  * A painting projection. Starting coordinates for x and y, start depth and scale.
  * Zero startz means that z is not used to project.
  */
@@ -34,7 +47,7 @@ var paintingProjection = function(startx, starty, startz, scale)
 	 */
 	self.projectX = function(x, z)
 	{
-		return startx + self.project(x, z);
+		return startx + self.projectCoordinate(x, z);
 	}
 
 	/**
@@ -42,13 +55,13 @@ var paintingProjection = function(startx, starty, startz, scale)
 	 */
 	self.projectY = function(y, z)
 	{
-		return starty - self.project(y, z);
+		return starty - self.projectCoordinate(y, z);
 	}
 
 	/**
 	 * Project a length on the z axis.
 	 */
-	self.project = function(length, z)
+	self.projectCoordinate = function(length, z)
 	{
 		if (startz == 0)
 		{
@@ -116,7 +129,7 @@ var paintingLayer = function(name, projection, opacity)
 				fillStyle: '#ccc',
 				x: projection.projectX(body.position.x, body.position.z),
 				y: projection.projectY(body.position.y, body.position.z),
-				radius: projection.project(body.radius, body.position.z),
+				radius: projection.projectCoordinate(body.radius, body.position.z),
 				opacity: opacity,
 		});
 	}
@@ -126,7 +139,7 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	self.paintCircle = function(body)
 	{
-		var radius = Math.max(projection.project(body.radius, body.position.z), 1);
+		var radius = Math.max(projection.projectCoordinate(body.radius, body.position.z), 1);
 		canvas.drawArc( {
 				fillStyle: '#000',
 				x: projection.projectX(body.position.x, body.position.z),
@@ -134,6 +147,7 @@ var paintingLayer = function(name, projection, opacity)
 				radius: radius,
 				opacity: opacity,
 		});
+		var 
 	}
 
 	/**
