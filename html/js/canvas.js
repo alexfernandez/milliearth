@@ -71,12 +71,26 @@ var paintingProjection = function(startx, starty, startz, scale)
 		var angle;
 		if (point.x == 0 || point.y == 0)
 		{
-			angle = 0;
+			if (diff < 0)
+			{
+				angle = 0;
+			}
+			else
+			{
+				angle = Math.PI / 2;
+			}
 		}
 		else
 		{
 			var atan = Math.atan(2 * point.x * point.y / diff);
-			angle = atan / 2;
+			if (diff < 0)
+			{
+				angle = atan / 2;
+			}
+			else
+			{
+				angle = (Math.PI + atan) / 2;
+			}
 		}
 		return {
 			center: new planarPoint(cx, cy),
@@ -160,14 +174,14 @@ var paintingLayer = function(name, projection, opacity)
 	{
 		value = Math.round(value);
 		canvas.drawText( {
-				fillStyle: '#000',
-				// strokeStyle: '#25a',
-				strokeWidth: 1,
-				x: 10, y: textPosition,
-				font: '10pt Helvetica, sans-serif',
-				text: message + ' ' + value + ' ' + units,
-				fromCenter: false,
-				opacity: opacity,
+			fillStyle: '#000',
+			// strokeStyle: '#25a',
+			strokeWidth: 1,
+			x: 10, y: textPosition,
+			font: '10pt Helvetica, sans-serif',
+			text: message + ' ' + value + ' ' + units,
+			fromCenter: false,
+			opacity: opacity,
 		});
 		textPosition += 20
 	}
@@ -179,11 +193,11 @@ var paintingLayer = function(name, projection, opacity)
 	{
 		var point = projection.project(body.position);
 		canvas.drawArc( {
-				fillStyle: '#ccc',
-				x: point.x,
-				y: point.y,
-				radius: projection.projectCoordinate(body.radius, body.position.z),
-				opacity: opacity,
+			fillStyle: '#ccc',
+			x: point.x,
+			y: point.y,
+			radius: projection.projectCoordinate(body.radius, body.position.z),
+			opacity: opacity,
 		});
 	}
 
@@ -195,11 +209,11 @@ var paintingLayer = function(name, projection, opacity)
 		var point = projection.project(body.position);
 		var radius = Math.max(projection.projectCoordinate(body.radius, body.position.z), 1);
 		canvas.drawArc( {
-				fillStyle: '#000',
-				x: point.x,
-				y: point.y,
-				radius: radius,
-				opacity: opacity,
+			fillStyle: '#000',
+			x: point.x,
+			y: point.y,
+			radius: radius,
+			opacity: opacity,
 		});
 		if (projection.isPlanar())
 		{
@@ -207,33 +221,42 @@ var paintingLayer = function(name, projection, opacity)
 		}
 		var ellipse = projection.ellipse(body.position, body.radius);
 		canvas.drawArc( {
-				fillStyle: '#f00',
-				x: ellipse.center.x,
-				y: ellipse.center.y,
-				radius: 1,
-				opacity: opacity,
+			fillStyle: '#f00',
+			x: ellipse.center.x,
+			y: ellipse.center.y,
+			radius: 1,
+			opacity: opacity,
 		});
 		var s = Math.sin(ellipse.angle);
 		var c = Math.cos(ellipse.angle);
-		canvas.drawLine( {
-				strokeStyle: "#f00",
-				strokeWidth: 1,
-				x1: ellipse.center.x - c * ellipse.major,
-				y1: ellipse.center.y - s * ellipse.major,
-				x2: ellipse.center.x + c * ellipse.major,
-				y2: ellipse.center.y + s * ellipse.major,
-				rounded: true,
-				opacity: opacity,
+		canvas.drawEllipse( {
+			fillStyle: '#800',
+			x: ellipse.center.x,
+			y: ellipse.center.y,
+			width: 2 * ellipse.major,
+			height: 2 * ellipse.minor,
+			opacity: opacity,
+			rotate: ellipse.angle * 180 / Math.PI,
 		});
 		canvas.drawLine( {
-				strokeStyle: "#f00",
-				strokeWidth: 1,
-				x1: ellipse.center.x - s * ellipse.minor,
-				y1: ellipse.center.y + c * ellipse.minor,
-				x2: ellipse.center.x + s * ellipse.minor,
-				y2: ellipse.center.y - c * ellipse.minor,
-				rounded: true,
-				opacity: opacity,
+			strokeStyle: "#f00",
+			strokeWidth: 1,
+			x1: ellipse.center.x - c * ellipse.major,
+			y1: ellipse.center.y - s * ellipse.major,
+			x2: ellipse.center.x + c * ellipse.major,
+			y2: ellipse.center.y + s * ellipse.major,
+			rounded: true,
+			opacity: opacity,
+		});
+		canvas.drawLine( {
+			strokeStyle: "#f00",
+			strokeWidth: 1,
+			x1: ellipse.center.x - s * ellipse.minor,
+			y1: ellipse.center.y + c * ellipse.minor,
+			x2: ellipse.center.x + s * ellipse.minor,
+			y2: ellipse.center.y - c * ellipse.minor,
+			rounded: true,
+			opacity: opacity,
 		});
 	}
 
@@ -290,14 +313,14 @@ var paintingLayer = function(name, projection, opacity)
 		var y = projection.projectY(horizon.position.y, horizon.position.z);
 		// the drawLine() object
 		canvas.drawRect({
-				fillStyle: "#ccc",
-				rounded: true,
-				x: 0,
-				y: y,
-				width: canvas.width(),
-				height: canvas.height() - y,
-				fromCenter: false,
-				opacity: opacity,
+			fillStyle: "#ccc",
+			rounded: true,
+			x: 0,
+			y: y,
+			width: canvas.width(),
+			height: canvas.height() - y,
+			fromCenter: false,
+			opacity: opacity,
 		});
 	}
 }
