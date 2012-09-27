@@ -66,16 +66,20 @@ var paintingProjection = function(startx, starty, startz, scale)
 		var p = Math.sqrt(x * x + y * y + z * z);
 		var h = p - r;
 		var d2 = h * h + 2 * h * r;
+		var d = Math.sqrt(d2);
 		var below = d2 - x * x - y * y;
-		var cx = startx + scale * x * z / below;
-		var cy = starty - scale * y * z / below;
-		var a = scale * r / Math.sqrt(z * z - r * r);
-		var b = scale * Math.sqrt(d2) * r / (z * z - r * r);
-		var diff = x * x - y * y;
+		var cx = startx + scale * (- x * z / below);
+		var cy = starty - scale * (- y * z / below);
+		var a = scale * r / Math.sqrt(below);
+		var b = scale * r * d / below;
+		if (object.type == 'milliEarth')
+		{
+			$('#message').text('r: ' + r + ', h: ' + h + ', d: ' + Math.sqrt(d2) + ', a: ' + a + ', b: ' + b);
+		}
 		var angle;
 		if (x == 0 || y == 0)
 		{
-			if (diff < 0)
+			if (x < y)
 			{
 				angle = 0;
 			}
@@ -86,8 +90,8 @@ var paintingProjection = function(startx, starty, startz, scale)
 		}
 		else
 		{
-			var atan = Math.atan(2 * x * y / diff);
-			if (diff < 0)
+			var atan = Math.atan(2 * x * y / (x * x - y * y));
+			if (x < y)
 			{
 				angle = atan / 2;
 			}
@@ -229,6 +233,9 @@ var paintingLayer = function(name, projection, opacity)
 			return;
 		}
 		var ellipse = projection.ellipse(body);
+		if (body.type == 'milliEarth')
+		{
+		}
 		var s = Math.sin(ellipse.angle);
 		var c = Math.cos(ellipse.angle);
 		canvas.drawEllipse( {
