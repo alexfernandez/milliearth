@@ -57,19 +57,23 @@ var paintingProjection = function(startx, starty, startz, scale)
 	 * Contains: center, major axis, minor axis.
 	 * See: http://mathworld.wolfram.com/Ellipse.html
 	 */
-	self.ellipse = function(point, radius)
+	self.ellipse = function(object)
 	{
-		var p = Math.sqrt(point.x * point.x + point.y * point.y + point.z * point.z);
-		var h = p - radius;
-		var d2 = h * h + 2 * h * radius;
-		var below = d2 - point.x * point.x - point.y * point.y;
-		var cx = startx + scale * point.x * point.z / below;
-		var cy = starty - scale * point.y * point.z / below;
-		var a = scale * radius / Math.sqrt(point.z * point.z - radius * radius);
-		var b = scale * Math.sqrt(d2) * radius / (point.z * point.z - radius * radius);
-		var diff = point.x * point.x - point.y * point.y;
+		var x = object.position.x;
+		var y = object.position.y;
+		var z = object.position.z;
+		var r = object.radius;
+		var p = Math.sqrt(x * x + y * y + z * z);
+		var h = p - r;
+		var d2 = h * h + 2 * h * r;
+		var below = d2 - x * x - y * y;
+		var cx = startx + scale * x * z / below;
+		var cy = starty - scale * y * z / below;
+		var a = scale * r / Math.sqrt(z * z - r * r);
+		var b = scale * Math.sqrt(d2) * r / (z * z - r * r);
+		var diff = x * x - y * y;
 		var angle;
-		if (point.x == 0 || point.y == 0)
+		if (x == 0 || y == 0)
 		{
 			if (diff < 0)
 			{
@@ -82,7 +86,7 @@ var paintingProjection = function(startx, starty, startz, scale)
 		}
 		else
 		{
-			var atan = Math.atan(2 * point.x * point.y / diff);
+			var atan = Math.atan(2 * x * y / diff);
 			if (diff < 0)
 			{
 				angle = atan / 2;
@@ -224,7 +228,7 @@ var paintingLayer = function(name, projection, opacity)
 			});
 			return;
 		}
-		var ellipse = projection.ellipse(body.position, body.radius);
+		var ellipse = projection.ellipse(body);
 		var s = Math.sin(ellipse.angle);
 		var c = Math.cos(ellipse.angle);
 		canvas.drawEllipse( {
