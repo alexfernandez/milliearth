@@ -191,7 +191,7 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	self.paintMilliEarth = function(body)
 	{
-		self.paintCircle(body);
+		self.paintCircle(body, '#ccc');
 		return;
 		/*
 		var point = projection.project(body.position);
@@ -208,37 +208,27 @@ var paintingLayer = function(name, projection, opacity)
 	/**
 	 * Paint a circle with position and radius.
 	 */
-	self.paintCircle = function(body)
+	self.paintCircle = function(body, color)
 	{
-		if (body.position.z < 0)
-		{
-			return;
-		}
-		var point = projection.project(body.position);
-		var radius = Math.max(projection.projectCoordinate(body.radius, body.position.z), 1);
-		canvas.drawArc( {
-			fillStyle: '#000',
-			x: point.x,
-			y: point.y,
-			radius: radius,
-			opacity: opacity,
-		});
+		color = color || '#000';
 		if (projection.isPlanar())
 		{
+			var point = projection.project(body.position);
+			var radius = Math.max(projection.projectCoordinate(body.radius, body.position.z), 1);
+			canvas.drawArc( {
+				fillStyle: color,
+				x: point.x,
+				y: point.y,
+				radius: radius,
+				opacity: opacity,
+			});
 			return;
 		}
 		var ellipse = projection.ellipse(body.position, body.radius);
-		canvas.drawArc( {
-			fillStyle: '#f00',
-			x: ellipse.center.x,
-			y: ellipse.center.y,
-			radius: 1,
-			opacity: opacity,
-		});
 		var s = Math.sin(ellipse.angle);
 		var c = Math.cos(ellipse.angle);
 		canvas.drawEllipse( {
-			fillStyle: '#800',
+			fillStyle: color,
 			x: ellipse.center.x,
 			y: ellipse.center.y,
 			width: 2 * ellipse.major,
