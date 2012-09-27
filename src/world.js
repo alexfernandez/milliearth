@@ -130,7 +130,7 @@ function fighterRobot(id, milliEarth)
 		{
 			self.speed.addScaled(horizontalSpeed.unit(), -deceleration);
 		}
-		camera.alignV(differenceUnit.scale(-1));
+		// camera.alignV(differenceUnit.scale(-1));
 	}
 
 	/**
@@ -200,50 +200,59 @@ function fighterRobot(id, milliEarth)
 	 */
 	self.computeSight = function(bodies)
 	{
-		var objects = [self.computeHorizon()].concat(self.computeMarks());
+		var meBody = {
+			id: 'milliEarth',
+			type: 'milliEarth',
+			radius: milliEarth.radius,
+			position: milliEarth.position,
+		};
+		var objects = [meBody, self.computeHorizon()].concat(self.computeMarks());
 		for (var id in bodies)
 		{
-			var position = computePlayerPosition(bodies[id]);
-			if (position)
+			var body = bodies[id];
+			if (isVisible(body))
 			{
-				objects.push(position);
+				var object = {
+					id: body.id,
+					type: 'robot',
+					radius: body.radius,
+					position: computePosition(body),
+				};
+				objects.push(object);
 			}
 		}
 		return { objects: objects };
 	}
 
 	/**
-	 * Compute the position of a player with respect to the line of sight.
+	 * Find out if a body is visible or is behind the horizon.
 	 */
-	function computePlayerPosition(player)
+	function isVisible(body)
 	{
-		// find out if the player is visible
-		var position = player.position.difference(self.position);
+		var position = body.position.difference(self.position);
 		var distance = position.length();
 		var h1 = self.computeHeight();
 		var d1 = Math.sqrt(h1 * h1 + 2 * h1 * milliEarth.radius);
 		if (distance > d1)
 		{
-			var h2 = player.computeHeight() + player.radius;
+			var h2 = body.computeHeight() + body.radius;
 			var d2 = Math.sqrt(h2 * h2 + 2 * h2 * milliEarth.radius);
 			if (d1 + d2 < distance)
 			{
 				// below horizon
-				return null;
+				return false;
 			}
 		}
-		var projected = camera.project(position);
-		if (projected.z < 0)
-		{
-			return null;
-		}
-		// return the projected position
-		return {
-			id: player.id,
-			type: 'robot',
-			radius: player.radius,
-			position: projected,
-		};
+		return true;
+	}
+
+	/**
+	 * Compute the position of a body with respect to the line of sight.
+	 */
+	function computePosition(body)
+	{
+		var position = body.position.difference(self.position);
+		return camera.project(position);
 	}
 
 	/**
