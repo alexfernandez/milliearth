@@ -263,7 +263,7 @@ var clientPlayer = function()
 			}
 			else if (object.type == 'robot')
 			{
-				layer.paintCircle(object);
+				layer.paintBody(object);
 			}
 			else if (object.type == 'milliEarth')
 			{

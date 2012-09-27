@@ -53,6 +53,22 @@ var paintingProjection = function(startx, starty, startz, scale)
 	}
 
 	/**
+	 * Returns the determinant for the object.
+	 * Value < 0 means an ellipse, 0 means a parabola, > 0 a hyperbola.
+	 */
+	self.determinant = function(object)
+	{
+		var x = object.position.x;
+		var y = object.position.y;
+		var z = object.position.z;
+		var r = object.radius;
+		var p = Math.sqrt(x * x + y * y + z * z);
+		var h = p - r;
+		var d2 = h * h + 2 * h * r;
+		return x * x + y * y - d2;
+	}
+
+	/**
 	 * Return the ellipse that corresponds a projected circle.
 	 * Contains: center, major axis, minor axis.
 	 * See: http://mathworld.wolfram.com/Ellipse.html
@@ -200,7 +216,7 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	self.paintMilliEarth = function(body)
 	{
-		self.paintCircle(body, '#ccc');
+		self.paintHyperbola(body, '#ccc');
 		return;
 		/*
 		var point = projection.project(body.position);
@@ -215,59 +231,17 @@ var paintingLayer = function(name, projection, opacity)
 	}
 
 	/**
-	 * Paint a circle with position and radius.
+	 * Paint a body with the given color.
 	 */
-	self.paintCircle = function(body, color)
+	self.paintBody = function(body, color)
 	{
 		color = color || '#000';
 		if (projection.isPlanar())
 		{
-			var point = projection.project(body.position);
-			var radius = Math.max(projection.projectCoordinate(body.radius, body.position.z), 1);
-			canvas.drawArc( {
-				fillStyle: color,
-				x: point.x,
-				y: point.y,
-				radius: radius,
-				opacity: opacity,
-			});
+			paintCircle(body, color);
 			return;
 		}
-		var ellipse = projection.ellipse(body);
-		if (body.type == 'milliEarth')
-		{
-		}
-		var s = Math.sin(ellipse.angle);
-		var c = Math.cos(ellipse.angle);
-		canvas.drawEllipse( {
-			fillStyle: color,
-			x: ellipse.center.x,
-			y: ellipse.center.y,
-			width: 2 * ellipse.major,
-			height: 2 * ellipse.minor,
-			opacity: opacity,
-			rotate: ellipse.angle * 180 / Math.PI,
-		});
-		canvas.drawLine( {
-			strokeStyle: "#f00",
-			strokeWidth: 1,
-			x1: ellipse.center.x - c * ellipse.major,
-			y1: ellipse.center.y - s * ellipse.major,
-			x2: ellipse.center.x + c * ellipse.major,
-			y2: ellipse.center.y + s * ellipse.major,
-			rounded: true,
-			opacity: opacity,
-		});
-		canvas.drawLine( {
-			strokeStyle: "#f00",
-			strokeWidth: 1,
-			x1: ellipse.center.x - s * ellipse.minor,
-			y1: ellipse.center.y + c * ellipse.minor,
-			x2: ellipse.center.x + s * ellipse.minor,
-			y2: ellipse.center.y - c * ellipse.minor,
-			rounded: true,
-			opacity: opacity,
-		});
+		paintEllipse(body, color);
 	}
 
 	/**
@@ -332,6 +306,48 @@ var paintingLayer = function(name, projection, opacity)
 			fromCenter: false,
 			opacity: opacity,
 		});
+	}
+
+	/**
+	 * Paint a circle for an object with position and radius and color.
+	 */
+	function paintCircle(object, color)
+	{
+		var point = projection.project(object.position);
+		var radius = Math.max(projection.projectCoordinate(object.radius, object.position.z), 1);
+		canvas.drawArc( {
+			fillStyle: color,
+			x: point.x,
+			y: point.y,
+			radius: radius,
+			opacity: opacity,
+		});
+	}
+
+	/**
+	 * Paint an ellipse already computed.
+	 */
+	function paintEllipse(object, color)
+	{
+		var ellipse = projection.ellipse(object);
+		var s = Math.sin(ellipse.angle);
+		var c = Math.cos(ellipse.angle);
+		canvas.drawEllipse( {
+			fillStyle: color,
+			x: ellipse.center.x,
+			y: ellipse.center.y,
+			width: 2 * ellipse.major,
+			height: 2 * ellipse.minor,
+			opacity: opacity,
+			rotate: ellipse.angle * 180 / Math.PI,
+		});
+	}
+
+	/**
+	 * Paint a hyperbola for the given object.
+	 */
+	function paintHyperbola(object)
+	{
 	}
 }
 
