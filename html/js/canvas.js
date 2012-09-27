@@ -126,6 +126,29 @@ var paintingProjection = function(startx, starty, startz, scale)
 	}
 
 	/**
+	 * Find the projection for a conic at the given x coordinate.
+	 */
+	self.projectConic = function(object, x)
+	{
+		// first de-project
+		var i = (x - startx) / scale
+		// now compute
+		var x = object.position.x;
+		var y = object.position.y;
+		var z = object.position.z;
+		var r = object.radius;
+		var p = Math.sqrt(x * x + y * y + z * z);
+		var h = p - r;
+		var d2 = h * h + 2 * h * r;
+		var t1 = 2 * x * y * i + 2 * y * z;
+		var t2 = (y * y - d2) * (x * x * i * i + 2 * x * z * i + z * z - d2 * i * i - d2);
+		var sqrt = Math.sqrt(t1 * t1 - 4 * t2);
+		var j1 = (sqrt - 2 * x * y * i - 2 * y * z) / (2 * (y * y - d2));
+		var j2 = (- sqrt - 2 * x * y * i - 2 * y * z) / (2 * (y * y - d2));
+		return new planarPoint(startx + scale * i, starty + scale * j1);
+	}
+
+	/**
 	 * Project the x coordinate.
 	 */
 	self.projectX = function(x, z)
@@ -216,7 +239,12 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	self.paintMilliEarth = function(body)
 	{
-		self.paintHyperbola(body, '#ccc');
+		if (projection.isPlanar())
+		{
+			paintCircle(body, '#ccc');
+			return;
+		}
+		paintHyperbola(body, '#888');
 		return;
 		/*
 		var point = projection.project(body.position);
@@ -346,8 +374,19 @@ var paintingLayer = function(name, projection, opacity)
 	/**
 	 * Paint a hyperbola for the given object.
 	 */
-	function paintHyperbola(object)
+	function paintHyperbola(object, color)
 	{
+		for (var i = 0; i < 400; i += 10)
+		{
+			var point = projection.projectConic(object, i);
+			canvas.drawArc( {
+				fillStyle: color,
+				x: point.x,
+				y: point.y,
+				radius: 2,
+				opacity: opacity,
+			});
+		}
 	}
 }
 
