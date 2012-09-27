@@ -191,6 +191,9 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	self.paintMilliEarth = function(body)
 	{
+		self.paintCircle(body);
+		return;
+		/*
 		var point = projection.project(body.position);
 		canvas.drawArc( {
 			fillStyle: '#ccc',
@@ -199,6 +202,7 @@ var paintingLayer = function(name, projection, opacity)
 			radius: projection.projectCoordinate(body.radius, body.position.z),
 			opacity: opacity,
 		});
+	   */
 	}
 
 	/**
@@ -206,6 +210,10 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	self.paintCircle = function(body)
 	{
+		if (body.position.z < 0)
+		{
+			return;
+		}
 		var point = projection.project(body.position);
 		var radius = Math.max(projection.projectCoordinate(body.radius, body.position.z), 1);
 		canvas.drawArc( {
