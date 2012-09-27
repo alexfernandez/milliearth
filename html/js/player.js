@@ -267,11 +267,11 @@ var clientPlayer = function()
 			}
 			else if (object.type == 'milliEarth')
 			{
-				globalLayer.paintMilliEarth(object);
+				layer.paintMilliEarth(object);
 			}
 			else if (object.type == 'arrow')
 			{
-				globalLayer.paintPolygon(object);
+				layer.paintPolygon(object);
 			}
 			else if (object.type == 'mark')
 			{
