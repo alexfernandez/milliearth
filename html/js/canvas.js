@@ -271,6 +271,7 @@ var paintingLayer = function(name, projection, opacity)
 			paintCircle(body, color);
 			return;
 		}
+		paintCircle(body, '#f00');
 		paintEllipse(body, color);
 	}
 
