@@ -455,12 +455,14 @@ var gameWorld = function(id)
 		var distance = params.meRadius + robot.radius;
 		if (size % 2)
 		{
+			// enemy
 			robot.start(
-				new vector(distance + 2, 10, 0),
+				new vector(distance + 2, 160, 0),
 				new vector(1, 0, 0));
 		}
 		else
 		{
+			// player
 			var orbitingSpeed = Math.sqrt(params.bigG * params.meMass / distance);
 			robot.start(
 				new vector(distance + 2, 0, 0),

@@ -145,7 +145,9 @@ var paintingProjection = function(startx, starty, startz, scale)
 		var sqrt = Math.sqrt(t1 * t1 - 4 * t2);
 		var j1 = (sqrt - 2 * x * y * i - 2 * y * z) / (2 * (y * y - d2));
 		var j2 = (- sqrt - 2 * x * y * i - 2 * y * z) / (2 * (y * y - d2));
-		return new planarPoint(startx + scale * i, starty + scale * j1);
+		var point = new planarPoint(startx + scale * i, starty + scale * j1);
+		point.y2 = starty + scale * j2;
+		return point;
 	}
 
 	/**
@@ -376,13 +378,20 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	function paintHyperbola(object, color)
 	{
-		for (var i = 0; i < 400; i += 10)
+		for (var i = 0; i < canvas.width(); i += 10)
 		{
 			var point = projection.projectConic(object, i);
 			canvas.drawArc( {
 				fillStyle: color,
 				x: point.x,
 				y: point.y,
+				radius: 2,
+				opacity: opacity,
+			});
+			canvas.drawArc( {
+				fillStyle: color,
+				x: point.x,
+				y: point.y2,
 				radius: 2,
 				opacity: opacity,
 			});
