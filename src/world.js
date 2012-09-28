@@ -206,7 +206,7 @@ function fighterRobot(id, milliEarth)
 			radius: milliEarth.radius,
 			position: computePosition(milliEarth),
 		};
-		var objects = [meBody, self.computeHorizon()].concat(self.computeMarks());
+		var objects = [meBody];
 		for (var id in bodies)
 		{
 			var body = bodies[id];
