@@ -158,8 +158,7 @@ var paintingProjection = function(startx, starty, startz, scale)
 		var sqrt = Math.sqrt(t1 * t1 - 4 * t2);
 		var j1 = (sqrt - 2 * x * y * i - 2 * y * z) / (2 * (y * y - d2));
 		var j2 = (- sqrt - 2 * x * y * i - 2 * y * z) / (2 * (y * y - d2));
-		var point = new planarPoint(startx + scale * i, starty + scale * j1);
-		point.y2 = starty + scale * j2;
+		var point = new planarPoint(startx + scale * i, starty + scale * j2);
 		return point;
 	}
 
@@ -268,8 +267,8 @@ var paintingLayer = function(name, projection, opacity)
 		}
 		if (type.determinant < 0)
 		{
-			paintCircle(body, '#f00');
 			paintEllipse(body, color);
+			return;
 		}
 		paintHyperbola(body, '#f00');
 	}
@@ -385,13 +384,6 @@ var paintingLayer = function(name, projection, opacity)
 				fillStyle: color,
 				x: point.x,
 				y: point.y,
-				radius: 2,
-				opacity: opacity,
-			});
-			canvas.drawArc( {
-				fillStyle: color,
-				x: point.x,
-				y: point.y2,
 				radius: 2,
 				opacity: opacity,
 			});
