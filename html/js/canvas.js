@@ -97,8 +97,8 @@ var paintingProjection = function(startx, starty, startz, scale)
 		var d2 = h * h + 2 * h * r;
 		var d = Math.sqrt(d2);
 		var below = d2 - x * x - y * y;
-		var cx = startx + scale * (x * z / below);
-		var cy = starty - scale * (- y * z / below);
+		var cx = scaleX(x * z / below);
+		var cy = scaleY(y * z / below);
 		var a = scale * r / Math.sqrt(below);
 		var b = scale * r * d / below;
 		if (object.type == 'milliEarth')
@@ -145,7 +145,7 @@ var paintingProjection = function(startx, starty, startz, scale)
 	self.projectConic = function(object, x)
 	{
 		// first de-project
-		var i = (x - startx) / scale
+		var i = (x - startx) / scale;
 		// now compute
 		var x = object.position.x;
 		var y = object.position.y;
@@ -159,8 +159,16 @@ var paintingProjection = function(startx, starty, startz, scale)
 		var sqrt = Math.sqrt(t1 * t1 - 4 * t2);
 		var j1 = (sqrt - 2 * x * y * i - 2 * y * z) / (2 * (y * y - d2));
 		var j2 = (- sqrt - 2 * x * y * i - 2 * y * z) / (2 * (y * y - d2));
-		var point = new planarPoint(startx + scale * i, starty + scale * j2);
+		var point = new planarPoint(scaleX(i), scaleY(j2));
 		return point;
+	}
+
+	/**
+	 * Scale a dimension.
+	 */
+	self.scale = function(length)
+	{
+		return scale * length;
 	}
 
 	/**
@@ -168,7 +176,7 @@ var paintingProjection = function(startx, starty, startz, scale)
 	 */
 	self.projectX = function(x, z)
 	{
-		return startx + self.projectCoordinate(x, z);
+		return scaleX(projectCoordinate(x, z));
 	}
 
 	/**
@@ -176,19 +184,35 @@ var paintingProjection = function(startx, starty, startz, scale)
 	 */
 	self.projectY = function(y, z)
 	{
-		return starty + self.projectCoordinate(y, z);
+		return scaleY(projectCoordinate(y, z));
 	}
 
 	/**
 	 * Project a length on the z axis.
 	 */
-	self.projectCoordinate = function(length, z)
+	function projectCoordinate(length, z)
 	{
 		if (self.planar)
 		{
-			return scale * length;
+			return length;
 		}
-		return scale * length / (z + startz);
+		return length / (z + startz);
+	}
+
+	/**
+	 * Scale and center the X coordinate.
+	 */
+	function scaleX(length)
+	{
+		return startx + scale * length;
+	}
+
+	/**
+	 * Scale and center the Y coordinate.
+	 */
+	function scaleY(length)
+	{
+		return starty - scale * length;
 	}
 }
 
@@ -321,7 +345,7 @@ var paintingLayer = function(name, projection, opacity)
 			paintEllipse(body, color);
 			return;
 		}
-		paintHyperbola(body, '#f00');
+		paintHyperbola(body, color);
 	}
 
 	/**
@@ -384,7 +408,7 @@ var paintingLayer = function(name, projection, opacity)
 	function paintCircle(object, color)
 	{
 		var point = projection.project(object.position);
-		var radius = Math.max(projection.projectCoordinate(object.radius, object.position.z), 1);
+		var radius = Math.max(projection.scale(object.radius), 1);
 		canvas.drawArc( {
 			fillStyle: color,
 			x: point.x,
