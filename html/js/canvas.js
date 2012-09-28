@@ -56,11 +56,11 @@ var paintingProjection = function(startx, starty, startz, scale)
 	}
 
 	/**
-	 * Check if an object is visible.
+	 * Compute the type of projection for an object and if it is visible.
 	 * Returns an object with two attributes: visible and determinant.
 	 * Determinant < 0 means an ellipse, 0 means a parabola, > 0 a hyperbola.
 	 */
-	self.checkVisible = function(object)
+	self.computeType = function(object)
 	{
 		var x = object.position.x;
 		var y = object.position.y;
@@ -246,23 +246,8 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	self.paintMilliEarth = function(body)
 	{
-		if (projection.planar)
-		{
-			paintCircle(body, '#ccc');
-			return;
-		}
-		paintHyperbola(body, '#888');
+		self.paintBody(body, '#ccc');
 		return;
-		/*
-		var point = projection.project(body.position);
-		canvas.drawArc( {
-			fillStyle: '#ccc',
-			x: point.x,
-			y: point.y,
-			radius: projection.projectCoordinate(body.radius, body.position.z),
-			opacity: opacity,
-		});
-	   */
 	}
 
 	/**
@@ -276,8 +261,17 @@ var paintingLayer = function(name, projection, opacity)
 			paintCircle(body, color);
 			return;
 		}
-		paintCircle(body, '#f00');
-		paintEllipse(body, color);
+		var type = projection.computeType(body);
+		if (!type.visible)
+		{
+			return;
+		}
+		if (type.determinant < 0)
+		{
+			paintCircle(body, '#f00');
+			paintEllipse(body, color);
+		}
+		paintHyperbola(body, '#f00');
 	}
 
 	/**
