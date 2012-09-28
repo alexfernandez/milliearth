@@ -296,26 +296,16 @@ var paintingLayer = function(name, projection, opacity)
 	}
 
 	/**
-	 * Paint a filled polygon sent by the server.
+	 * Paint an arrow sent by the server.
 	 */
-	self.paintPolygon = function(polygon)
+	self.paintArrow = function(arrow)
 	{
-		// the drawLine() object
-		var draw = {
-			strokeStyle: "#00f",
-			strokeWidth: 1,
-			rounded: true,
-			opacity: opacity,
-		};
-		// add the points from the array to the object
-		for (var i = 0; i < polygon.points.length; i += 1)
+		var points = [];
+		for (var i = 0; i < arrow.points.length; i += 1)
 		{
-			var point = projection.project(polygon.points[i]);
-			draw['x' + (i+1)] = point.x;
-			draw['y' + (i+1)] = point.y;
+			points.push(projection.project(arrow.points[i]));
 		}
-		// Draw the line
-		canvas.drawLine(draw);
+		paintPolygon(points, '#00f');
 	}
 
 	/**
@@ -388,6 +378,29 @@ var paintingLayer = function(name, projection, opacity)
 				opacity: opacity,
 			});
 		}
+	}
+
+	/**
+	 * Paint a planar polygon using the given planar points.
+	 */
+	function paintPolygon(points, color)
+	{
+		// the drawLine() object
+		var draw = {
+			strokeStyle: color,
+			fillStyle: color,
+			strokeWidth: 1,
+			rounded: true,
+			opacity: opacity,
+		};
+		// add the points from the array to the object
+		for (var i = 0; i < points.length; i += 1)
+		{
+			draw['x' + (i+1)] = points[i].x;
+			draw['y' + (i+1)] = points[i].y;
+		}
+		// Draw the line
+		canvas.drawLine(draw);
 	}
 }
 

@@ -272,7 +272,7 @@ var clientPlayer = function()
 			}
 			else if (object.type == 'arrow')
 			{
-				layer.paintPolygon(object);
+				layer.paintArrow(object);
 			}
 			else if (object.type == 'mark')
 			{
