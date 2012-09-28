@@ -367,17 +367,14 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	function paintHyperbola(object, color)
 	{
-		for (var i = 0; i < canvas.width(); i += 10)
+		var points = [new planarPoint(0, canvas.height())];
+		for (var i = 0; i <= canvas.width(); i += 10)
 		{
-			var point = projection.projectConic(object, i);
-			canvas.drawArc( {
-				fillStyle: color,
-				x: point.x,
-				y: point.y,
-				radius: 2,
-				opacity: opacity,
-			});
+			points.push(projection.projectConic(object, i));
 		}
+		points.push(new planarPoint(canvas.width(), canvas.height()));
+		points.push(new planarPoint(0, canvas.height()));
+		paintPolygon(points, '#ccc');
 	}
 
 	/**
