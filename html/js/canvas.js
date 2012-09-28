@@ -56,10 +56,11 @@ var paintingProjection = function(startx, starty, startz, scale)
 	}
 
 	/**
-	 * Returns the determinant for the object.
-	 * Value < 0 means an ellipse, 0 means a parabola, > 0 a hyperbola.
+	 * Check if an object is visible.
+	 * Returns an object with two attributes: visible and determinant.
+	 * Determinant < 0 means an ellipse, 0 means a parabola, > 0 a hyperbola.
 	 */
-	self.determinant = function(object)
+	self.checkVisible = function(object)
 	{
 		var x = object.position.x;
 		var y = object.position.y;
@@ -68,7 +69,16 @@ var paintingProjection = function(startx, starty, startz, scale)
 		var p = Math.sqrt(x * x + y * y + z * z);
 		var h = p - r;
 		var d2 = h * h + 2 * h * r;
-		return x * x + y * y - d2;
+		var determinant = x * x + y * y - d2;
+		var visible = true;
+		if (determinant < 0 && z < 0)
+		{
+			visible = false;
+		}
+		return {
+			visible: visible,
+			determinant: determinant,
+		};
 	}
 
 	/**
@@ -166,7 +176,7 @@ var paintingProjection = function(startx, starty, startz, scale)
 	 */
 	self.projectY = function(y, z)
 	{
-		return starty - self.projectCoordinate(y, z);
+		return starty + self.projectCoordinate(y, z);
 	}
 
 	/**
