@@ -361,7 +361,7 @@ function fighterRobot(id, milliEarth)
 	 */
 	self.turnUp = function(period)
 	{
-		camera.pitch(params.turningAngle * period);
+		camera.pitch(-params.turningAngle * period);
 	}
 
 	/**
@@ -369,7 +369,7 @@ function fighterRobot(id, milliEarth)
 	 */
 	self.turnDown = function(period)
 	{
-		camera.pitch(-params.turningAngle * period);
+		camera.pitch(params.turningAngle * period);
 	}
 
 	/**
