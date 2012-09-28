@@ -140,6 +140,7 @@ var paintingProjection = function(startx, starty, startz, scale)
 
 	/**
 	 * Find the projection for a conic at the given x coordinate.
+	 * Based on: http://www.wolframalpha.com/input/?i=%28a*x+%2B+b*y+%2B+c%29^2%3Dd^2*%28x^2%2By^2%2B1%29.
 	 */
 	self.projectConic = function(object, x)
 	{
