@@ -35,12 +35,15 @@ var planarPoint = function(x, y)
 
 /**
  * A painting projection. Starting coordinates for x and y, start depth and scale.
- * Zero startz means that z is not used to project.
+ * If planar, z is not used to project x and y.
  */
 var paintingProjection = function(startx, starty, startz, scale)
 {
 	// self-reference
 	var self = this;
+
+	// attributes
+	self.planar = false;
 
 	/**
 	 * Project a 3d point into the 2d plane.
@@ -84,7 +87,7 @@ var paintingProjection = function(startx, starty, startz, scale)
 		var d2 = h * h + 2 * h * r;
 		var d = Math.sqrt(d2);
 		var below = d2 - x * x - y * y;
-		var cx = startx + scale * (- x * z / below);
+		var cx = startx + scale * (x * z / below);
 		var cy = starty - scale * (- y * z / below);
 		var a = scale * r / Math.sqrt(below);
 		var b = scale * r * d / below;
@@ -171,19 +174,11 @@ var paintingProjection = function(startx, starty, startz, scale)
 	 */
 	self.projectCoordinate = function(length, z)
 	{
-		if (self.isPlanar())
+		if (self.planar)
 		{
 			return scale * length;
 		}
 		return scale * length / (z + startz);
-	}
-
-	/**
-	 * Find out if the projection is planar, or has perspective.
-	 */
-	self.isPlanar = function()
-	{
-		return (startz == 0);
 	}
 }
 
@@ -241,7 +236,7 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	self.paintMilliEarth = function(body)
 	{
-		if (projection.isPlanar())
+		if (projection.planar)
 		{
 			paintCircle(body, '#ccc');
 			return;
@@ -266,7 +261,7 @@ var paintingLayer = function(name, projection, opacity)
 	self.paintBody = function(body, color)
 	{
 		color = color || '#000';
-		if (projection.isPlanar())
+		if (projection.planar)
 		{
 			paintCircle(body, color);
 			return;
