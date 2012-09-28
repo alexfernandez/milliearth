@@ -207,6 +207,56 @@ var paintingLayer = function(name, projection, opacity)
 	}
 
 	/**
+	 * Paint an array of objects.
+	 */
+	self.paintObjects = function(objects)
+	{
+		self.clear();
+		objects.sort(sort);
+		for (var id in objects)
+		{
+			var object = objects[id];
+			if (object.type == 'horizon')
+			{
+				self.paintHorizon(object);
+			}
+			else if (object.type == 'robot')
+			{
+				self.paintBody(object);
+			}
+			else if (object.type == 'milliEarth')
+			{
+				self.paintMilliEarth(object);
+			}
+			else if (object.type == 'arrow')
+			{
+				self.paintArrow(object);
+			}
+			else if (object.type == 'mark')
+			{
+				self.paintLine(object);
+			}
+			else if (!object.type)
+			{
+				console.error('Object without type: ' + JSON.stringify(object));
+			}
+			else
+			{
+				console.error('Unknown object type ' + object.type);
+			}
+		}
+		self.show();
+	}
+
+	/**
+	 * Sort two objects using their relative depths.
+	 */
+	function sort(object1, object2)
+	{
+		return object2.position.z - object1.position.z;
+	}
+
+	/**
 	 * Clear the layer.
 	 */
 	self.clear = function()

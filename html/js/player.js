@@ -223,7 +223,7 @@ var clientPlayer = function()
 		}
 		countUpdate(message.id);
 		$('#simulation').clearCanvas();
-		paintObjects(message.objects, mainLayer);
+		mainLayer.paintObjects(message.objects);
 		paintGlobalUpdate();
 	}
 
@@ -236,58 +236,9 @@ var clientPlayer = function()
 		{
 			return;
 		}
-		paintObjects(globalMessage.objects, globalLayer);
+		globalLayer.paintObjects(globalMessage.objects);
 		globalLayer.paintText('height:', globalMessage.height, 'm');
 		globalLayer.paintText('speed:', globalMessage.speed, 'm/s');
-	}
-
-	/**
-	 * Paint some objects on a layer.
-	 */
-	function paintObjects(objects, layer)
-	{
-		layer.clear();
-		objects.sort(function(p1, p2) {
-				if (!p1.position || !p2.position)
-				{
-					console.error('Sorting objects without position!');
-					return 0;
-				}
-				return p2.position.z - p1.position.z;
-		});
-		for (var id in objects)
-		{
-			var object = objects[id];
-			if (object.type == 'horizon')
-			{
-				layer.paintHorizon(object);
-			}
-			else if (object.type == 'robot')
-			{
-				layer.paintBody(object);
-			}
-			else if (object.type == 'milliEarth')
-			{
-				layer.paintMilliEarth(object);
-			}
-			else if (object.type == 'arrow')
-			{
-				layer.paintArrow(object);
-			}
-			else if (object.type == 'mark')
-			{
-				layer.paintLine(object);
-			}
-			else if (!object.type)
-			{
-				console.error('Object without type: ' + JSON.stringify(object));
-			}
-			else
-			{
-				console.error('Unknown object type ' + object.type);
-			}
-		}
-		layer.show();
 	}
 
 	/**
