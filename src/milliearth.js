@@ -130,9 +130,14 @@ function serve(request, response)
 		return;
 	}
 	// avoid going out of the home dir
-	if (url.pathname.indexOf('..') != -1)
+	if (url.pathname.contains('..'))
 	{
 		serve_file(404, 'not_found.html', response);
+		return;
+	}
+	if (url.pathname.startsWith('/src/'))
+	{
+		serve_file(200, '..' + url.pathname, response);
 		return;
 	}
 	serve_file(200, url.pathname, response);
