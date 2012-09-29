@@ -101,10 +101,6 @@ var paintingProjection = function(startx, starty, startz, scale)
 		var cy = scaleY(y * z / below);
 		var a = scale * r / Math.sqrt(below);
 		var b = scale * r * d / below;
-		if (object.type == 'pole')
-		{
-			$('#message').text('r: ' + r + ', h: ' + h + ', d: ' + Math.sqrt(d2) + ', a: ' + a + ', b: ' + b + ', x: ' + cx + ', y: ' + cy);
-		}
 		var diff = x * x - y * y;
 		var angle;
 		if (x == 0 || y == 0)
@@ -381,8 +377,22 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	self.paintPole = function(pole)
 	{
-		var ref = new vector().sum(pole.position);
 		self.paintBody(pole, '#0f0');
+		var center = new vector().difference(pole.center).unit();
+		var centerAngles = angles(center);
+		var pos = new vector(pole.position).difference(pole.center).unit();
+		var posAngles = angles(pos);
+		$('#message').text('c-phi: ' + centerAngles.phi + ', c-theta: ' + centerAngles.theta + ', p-phi: ' + posAngles.phi + ', p-theta: ' + posAngles.theta);
+	}
+
+	function angles(point)
+	{
+		var phi = Math.acos(point.z);
+		var theta = Math.acos(point.x / Math.sin(phi));
+		return {
+			phi: phi,
+			theta: theta,
+		}
 	}
 
 	/**
@@ -448,7 +458,6 @@ var paintingLayer = function(name, projection, opacity)
 		{
 			width = 10;
 			height = 10;
-			//$('#message').text('type: ' + JSON.stringify(type));
 		}
 		canvas.drawEllipse( {
 			fillStyle: color,
