@@ -21,6 +21,9 @@
  */
 
 
+/**
+ * Global to hold the exported values.
+ */
 var module = {exports: {}};
 
 /**
