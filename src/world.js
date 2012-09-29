@@ -36,7 +36,7 @@ var extend = util.extend;
 /**
  * A massive body. Mass is given in kg.
  */
-function massiveBody(id, mass, radius)
+function massiveBody(id, mass, radius, position, speed)
 {
 	// self-reference
 	var self = this;
@@ -49,8 +49,8 @@ function massiveBody(id, mass, radius)
 	self.id = id;
 	self.mass = mass;
 	self.radius = radius;
-	self.position = new vector(0, 0, 0);
-	self.speed = new vector(0, 0, 0);
+	self.position = position || new vector(0, 0, 0);
+	self.speed = speed || new vector(0, 0, 0);
 
 	/**
 	 * Compute gravitational attraction by another body in the given period (in seconds).
@@ -67,7 +67,6 @@ function massiveBody(id, mass, radius)
 		}
 		var scaledSpeed = self.speed.scale(period);
 		self.position.add(scaledSpeed);
-		self.modifyMarks(scaledSpeed);
 	}
 }
 
@@ -75,7 +74,7 @@ function massiveBody(id, mass, radius)
 /**
  * A fighter robot.
  */
-function fighterRobot(id, milliEarth)
+function fighterRobot(id, milliEarth, pole)
 {
 	// self-reference
 	var self = this;
@@ -84,7 +83,6 @@ function fighterRobot(id, milliEarth)
 
 	// attributes
 	self.life = params.life;
-	self.mark = 100;
 	var camera = new coordinateSystem(new vector(0, 0, 1), new vector(0, 1, 0), new vector(1, 0, 0));
 
 	/**
@@ -152,7 +150,13 @@ function fighterRobot(id, milliEarth)
 			radius: milliEarth.radius,
 			position: milliEarth.position,
 		};
-		var objects = [meBody];
+		var poleBody = {
+			id: 'pole',
+			type: 'pole',
+			radius: 0,
+			position: pole.position,
+		};
+		var objects = [meBody, poleBody];
 		for (var id in bodies)
 		{
 			var body = bodies[id];
@@ -273,52 +277,6 @@ function fighterRobot(id, milliEarth)
 	}
 
 	/**
-	 * Get the next marks on the ground.
-	 */
-	self.computeMarks = function()
-	{
-		var marks = [];
-		var r = milliEarth.radius;
-		var h = self.computeHeight();
-		var d = Math.sqrt(h * h + 2 * h * r);
-		// distance to the horizon along the surface
-		var sHor = r * Math.acos(r / (r + h));
-		var s = self.mark;
-		var index = 1;
-		while (s < sHor && index < 10)
-		{
-			var theta = s / r;
-			var sin = Math.sin(theta / 2);
-			var cos = Math.cos(theta / 2);
-			var y = - h - 2 * r * sin * sin;
-			var z = 2 * r * sin * cos;
-			var id = 'mark_' + index;
-			marks.push({
-				id: id,
-				type: 'mark',
-				position: new vector(0, y, z),
-				start: new vector(-params.markHalfWidth, y, z),
-				end: new vector(params.markHalfWidth, y, z),
-			});
-			s += params.markDistance;
-			index ++;
-		}
-		return marks;
-	}
-
-	/**
-	 * Modify the marks.
-	 */
-	self.modifyMarks = function(positionChange)
-	{
-		self.mark -= positionChange.length();
-		if (self.mark < 0)
-		{
-			self.mark += 100;
-		}
-	}
-
-	/**
 	 * Accelerate the robot.
 	 */
 	self.accelerate = function(period)
@@ -393,6 +351,7 @@ var gameWorld = function(id)
 	// attributes
 	self.id = id;
 	var milliEarth = new massiveBody('milliEarth', params.meMass, params.meRadius);
+	var pole = new massiveBody('pole', 0, 0, new vector(params.meRadius, 0, 0))
 	var bodies = {};
 	var seconds = 0;
 	self.active = false;
@@ -446,7 +405,7 @@ var gameWorld = function(id)
 	 */
 	self.add = function(id)
 	{
-		var robot = new fighterRobot(id, milliEarth);
+		var robot = new fighterRobot(id, milliEarth, pole);
 		bodies[robot.id] = robot;
 		var size = 0;
 		iterate(function(body) {

@@ -253,6 +253,10 @@ var paintingLayer = function(name, projection, opacity)
 			{
 				self.paintMilliEarth(object);
 			}
+			else if (object.type == 'pole')
+			{
+				self.paintPole(object);
+			}
 			else if (object.type == 'arrow')
 			{
 				self.paintArrow(object);
@@ -350,6 +354,13 @@ var paintingLayer = function(name, projection, opacity)
 	{
 		self.paintBody(body, '#ccc');
 		return;
+	}
+
+	/**
+	 * Paint marks on the ground based on the pole position.
+	 */
+	self.paintPole = function(pole)
+	{
 	}
 
 	/**
