@@ -207,7 +207,7 @@ function fighterRobot(id, milliEarth, pole)
 		var poleBody = {
 			id: 'pole',
 			type: 'pole',
-			radius: 0,
+			radius: pole.radius,
 			position: computePosition(pole),
 			center: computePosition(milliEarth),
 		};
@@ -352,7 +352,7 @@ var gameWorld = function(id)
 	// attributes
 	self.id = id;
 	var milliEarth = new massiveBody('milliEarth', params.meMass, params.meRadius);
-	var pole = new massiveBody('pole', 0, 0.00001, new vector(params.meRadius, 0, 0), 0);
+	var pole = new massiveBody('pole', 0, params.meRadius, new vector(params.meRadius, 0, 0), 0);
 	var bodies = {};
 	var seconds = 0;
 	self.active = false;

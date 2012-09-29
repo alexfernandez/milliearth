@@ -380,9 +380,20 @@ var paintingLayer = function(name, projection, opacity)
 		self.paintBody(pole, '#0f0');
 		var center = new vector().difference(pole.center).unit();
 		var centerAngles = angles(center);
-		var pos = new vector(pole.position).difference(pole.center).unit();
+		var pos = new vector().sum(pole.position).difference(pole.center).unit();
 		var posAngles = angles(pos);
-		$('#message').text('c-phi: ' + centerAngles.phi + ', c-theta: ' + centerAngles.theta + ', p-phi: ' + posAngles.phi + ', p-theta: ' + posAngles.theta);
+		var phi = centerAngles.phi - posAngles.phi;
+		var theta = centerAngles.theta - posAngles.theta;
+		$('#message').text('phi1: ' + centerAngles.phi + ', theta1: ' + centerAngles.theta + ' phi: ' + posAngles.phi + ', theta: ' + posAngles.theta);
+		var phi1 = Math.floor(180 * phi / Math.PI);
+		var phi2 = phi1 + 1;
+		var theta1 = Math.floor(180 * theta / Math.PI);
+		var theta2 = theta1 + 1;
+		var p1 = point(theta1, phi1, pole.radius);
+		var p2 = point(theta1, phi2, pole.radius);
+		var p3 = point(theta2, phi2, pole.radius);
+		var p4 = point(theta2, phi1, pole.radius);
+		paintPolygon([p1, p2, p3, p4, p1], '#0c0');
 	}
 
 	function angles(point)
@@ -393,6 +404,14 @@ var paintingLayer = function(name, projection, opacity)
 			phi: phi,
 			theta: theta,
 		}
+	}
+
+	function point(theta, phi, radius)
+	{
+		var x = radius * Math.cos(theta) * Math.sin(phi);
+		var y = radius * Math.sin(theta) * Math.sin(phi);
+		var z = radius * Math.cos(phi);
+		return projection.project(new vector(x, y, z));
 	}
 
 	/**
@@ -490,6 +509,7 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	function paintPolygon(points, color)
 	{
+		console.log(points);
 		// the drawLine() object
 		var draw = {
 			strokeStyle: color,
