@@ -150,13 +150,7 @@ function fighterRobot(id, milliEarth, pole)
 			radius: milliEarth.radius,
 			position: milliEarth.position,
 		};
-		var poleBody = {
-			id: 'pole',
-			type: 'pole',
-			radius: 0,
-			position: pole.position,
-		};
-		var objects = [meBody, poleBody];
+		var objects = [meBody];
 		for (var id in bodies)
 		{
 			var body = bodies[id];
@@ -210,7 +204,13 @@ function fighterRobot(id, milliEarth, pole)
 			radius: milliEarth.radius,
 			position: computePosition(milliEarth),
 		};
-		var objects = [meBody];
+		var poleBody = {
+			id: 'pole',
+			type: 'pole',
+			radius: 0,
+			position: computePosition(pole),
+		};
+		var objects = [meBody, poleBody];
 		for (var id in bodies)
 		{
 			var body = bodies[id];
@@ -424,7 +424,7 @@ var gameWorld = function(id)
 			// player
 			var orbitingSpeed = Math.sqrt(params.bigG * params.meMass / distance);
 			robot.start(
-				new vector(distance + 2, 0, 0),
+				new vector(distance + 2, -10, 0),
 				new vector(0, 1, 0));
 		}
 		return robot;

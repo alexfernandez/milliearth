@@ -43,9 +43,9 @@ function vector(x, y, z)
 	// self-reference
 	var self = this;
 
-	self.x = x;
-	self.y = y;
-	self.z = z;
+	self.x = x || 0;
+	self.y = y || 0;
+	self.z = z || 0;
 
 	/**
 	 * Return a copy of this vector.

@@ -381,6 +381,8 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	self.paintPole = function(pole)
 	{
+		var ref = new vector().sum(pole.position);
+		console.log(ref);
 	}
 
 	/**
