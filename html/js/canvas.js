@@ -471,7 +471,7 @@ var paintingLayer = function(name, projection, opacity)
 	function paintHyperbola(object, color)
 	{
 		var points = [new planarPoint(0, canvas.height())];
-		for (var i = 0; i <= canvas.width(); i += 10)
+		for (var i = 0; i <= canvas.width(); i += 20)
 		{
 			points.push(projection.projectConic(object, i));
 		}
