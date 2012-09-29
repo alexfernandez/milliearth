@@ -22,11 +22,31 @@
 
 
 /**
- * Prototypes.
+ * Modify javascript prototypes.
  */
-String.prototype.endsWith = function(suffix)
+
+/**
+ * Find out if the string has the argument at the beginning.
+ */
+String.prototype.startsWith = function (str)
 {
-	return this.indexOf(suffix, this.length - suffix.length) !== -1;
+	return this.slice(0, str.length) == str;
+};
+
+/**
+ * Find out if the string has the argument at the end.
+ */
+String.prototype.endsWith = function (str)
+{
+	return this.slice(this.length - str.length) == str;
+};
+
+/**
+ * Find out if the string contains the argument at any position.
+ */
+String.prototype.contains = function(str)
+{
+	return this.indexOf(str) != -1;
 };
 
 /**
@@ -56,15 +76,15 @@ if (process.argv.length > 2)
 }
 var clients = [];
 var server = http.createServer(serve).listen(port, function() {
-		log('Server running at http://127.0.0.1:' + port + '/');
+	log('Server running at http://127.0.0.1:' + port + '/');
 });
 
 /**
  * WebSocket server
  */
 var wsServer = new webSocketServer({
-		// WebSocket server is tied to a HTTP server
-		httpServer: server
+	// WebSocket server is tied to a HTTP server
+	httpServer: server
 });
 
 /**
@@ -72,25 +92,25 @@ var wsServer = new webSocketServer({
  *   tries to connect to the WebSocket server
  */
 wsServer.on('request', function(request) {
-		var url = urlParser.parse(request.resource, true);
-		trace('Connection to ' + url.pathname);
-		if (url.pathname != '/serve')
-		{
-			log('Invalid URL ' + url.pathname);
-			return;
-		}
-		// check client parameters
-		var gameId = url.query.game;
-		var playerId = url.query.player;
-		if (!gameId || !playerId)
-		{
-			log('Invalid parameters: game ' + gameId + ', player ' + playerId);
-			return;
-		}
-		var connection = request.accept(null, request.origin);
-		var game = gameSelector.find(gameId);
-		game.connect(playerId, connection);
-		log('Connection from ' + connection.remoteAddress + ' accepted');
+	var url = urlParser.parse(request.resource, true);
+	trace('Connection to ' + url.pathname);
+	if (url.pathname != '/serve')
+	{
+		log('Invalid URL ' + url.pathname);
+		return;
+	}
+	// check client parameters
+	var gameId = url.query.game;
+	var playerId = url.query.player;
+	if (!gameId || !playerId)
+	{
+		log('Invalid parameters: game ' + gameId + ', player ' + playerId);
+		return;
+	}
+	var connection = request.accept(null, request.origin);
+	var game = gameSelector.find(gameId);
+	game.connect(playerId, connection);
+	log('Connection from ' + connection.remoteAddress + ' accepted');
 });
 
 /**
@@ -131,26 +151,25 @@ function serve_home(request, response)
  */
 function serve_file(status, file, response)
 {
-	fs.readFile('html/' + file, function(err, data)
+	fs.readFile('html/' + file, function(err, data) {
+		if (err)
 		{
-			if (err)
-			{
-				response.writeHead(404, {
-						'Content-Type': 'text/plain'
-				});
-				response.end('Page not found');
-				return;
-			}
-			var type = 'text/html';
-			if (file.endsWith('.js'))
-			{
-				type = 'text/javascript';
-			}
-			response.writeHead(status, {
-					'Content-Length': data.length,
-					'Content-Type': type
+			response.writeHead(404, {
+				'Content-Type': 'text/plain'
 			});
-			response.end(data);
+			response.end('Page not found');
+			return;
+		}
+		var type = 'text/html';
+		if (file.endsWith('.js'))
+		{
+			type = 'text/javascript';
+		}
+		response.writeHead(status, {
+			'Content-Length': data.length,
+			'Content-Type': type
+		});
+		response.end(data);
 	});
 }
 
