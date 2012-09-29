@@ -241,15 +241,7 @@ var paintingLayer = function(name, projection, opacity)
 		for (var id in objects)
 		{
 			var object = objects[id];
-			if (object.type == 'horizon')
-			{
-				self.paintHorizon(object);
-			}
-			else if (object.type == 'robot')
-			{
-				self.paintBody(object);
-			}
-			else if (object.type == 'milliEarth')
+			if (object.type == 'milliEarth')
 			{
 				self.paintMilliEarth(object);
 			}
@@ -257,13 +249,17 @@ var paintingLayer = function(name, projection, opacity)
 			{
 				self.paintPole(object);
 			}
+			else if (object.type == 'robot')
+			{
+				self.paintBody(object);
+			}
 			else if (object.type == 'arrow')
 			{
 				self.paintArrow(object);
 			}
 			else if (object.type == 'mark')
 			{
-				self.paintLine(object);
+				paintLine(object);
 			}
 			else if (!object.type)
 			{
@@ -357,13 +353,6 @@ var paintingLayer = function(name, projection, opacity)
 	}
 
 	/**
-	 * Paint marks on the ground based on the pole position.
-	 */
-	self.paintPole = function(pole)
-	{
-	}
-
-	/**
 	 * Paint a body with the given color.
 	 */
 	self.paintBody = function(body, color)
@@ -388,25 +377,10 @@ var paintingLayer = function(name, projection, opacity)
 	}
 
 	/**
-	 * Paint a line sent by the server, with start and end.
+	 * Paint marks on the ground based on the pole position.
 	 */
-	self.paintLine = function(line)
+	self.paintPole = function(pole)
 	{
-		var start = projection.project(line.start);
-		var end = projection.project(line.end);
-		// the drawLine() object
-		var draw = {
-			strokeStyle: "#00f",
-			strokeWidth: 1,
-			rounded: true,
-			opacity: opacity,
-		};
-		draw['x1'] = start.x;
-		draw['y1'] = start.y;
-		draw['x2'] = end.x,
-		draw['y2'] = end.y,
-		// Draw the line
-		canvas.drawLine(draw);
 	}
 
 	/**
@@ -423,22 +397,25 @@ var paintingLayer = function(name, projection, opacity)
 	}
 
 	/**
-	 * Paint the horizon as a single line.
+	 * Paint a line sent by the server, with start and end.
 	 */
-	self.paintHorizon = function(horizon)
+	function paintLine(line)
 	{
-		var y = projection.projectY(horizon.position.y, horizon.position.z);
+		var start = projection.project(line.start);
+		var end = projection.project(line.end);
 		// the drawLine() object
-		canvas.drawRect({
-			fillStyle: "#ccc",
+		var draw = {
+			strokeStyle: "#00f",
+			strokeWidth: 1,
 			rounded: true,
-			x: 0,
-			y: y,
-			width: canvas.width(),
-			height: canvas.height() - y,
-			fromCenter: false,
 			opacity: opacity,
-		});
+		};
+		draw['x1'] = start.x;
+		draw['y1'] = start.y;
+		draw['x2'] = end.x,
+		draw['y2'] = end.y,
+		// Draw the line
+		canvas.drawLine(draw);
 	}
 
 	/**
