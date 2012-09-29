@@ -384,17 +384,17 @@ var paintingLayer = function(name, projection, opacity)
 		var lAngles = angles(l.unit());
 		var diffPhi = pAngles.phi - lAngles.phi;
 		var roundPhi = Math.floor(diffPhi * 180 / Math.PI);
-		var phi = pAngles.phi + diffPhi - roundPhi * Math.PI / 180;
-		var diffTheta = pAngles.theta - lAngles.theta;
+		var phi = pAngles.phi - diffPhi + roundPhi * Math.PI / 180;
+		var diffTheta = lAngles.theta - lAngles.theta;
 		var roundTheta = Math.floor(diffTheta / Math.PI);
-		var theta = pAngles.theta + diffTheta - roundTheta * Math.PI / 180;
+		var theta = pAngles.theta - diffTheta + roundTheta * Math.PI / 180;
 		var diff = 0.01 * Math.PI / 180;
 		var phi1 = phi + diff;
 		var phi2 = phi - diff;
 		var theta1 = theta + diff;
 		var theta2 = theta - diff;
 		var p1 = point(theta1, phi1, pole);
-		$('#message').text('p-theta: ' + pAngles.theta + ', l-theta: ' + lAngles.theta + ', phi: ' + phi + ', theta: ' + theta + ', vector: ' + p1.x + ', ' + p1.y);
+		$('#message').text('pole-pos: ' + new vector().sum(pole.position) + ', p-theta: ' + pAngles.theta + ', l-theta: ' + lAngles.theta + ', phi: ' + phi + ', theta: ' + theta + ', vector: ' + p1.x + ', ' + p1.y + ', radius: ' + pole.radius);
 		var p2 = point(theta1, phi2, pole);
 		var p3 = point(theta2, phi2, pole);
 		var p4 = point(theta2, phi1, pole);
@@ -416,7 +416,8 @@ var paintingLayer = function(name, projection, opacity)
 		var x = pole.radius * Math.cos(theta) * Math.sin(phi);
 		var y = pole.radius * Math.sin(theta) * Math.sin(phi);
 		var z = pole.radius * Math.cos(phi);
-		var v = new vector(x, y, z).sum(pole.center);
+		var c = new vector().sum(pole.center);
+		var v = c.sum(new vector(x, y, z));
 		return projection.project(v);
 	}
 
