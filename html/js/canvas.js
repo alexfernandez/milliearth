@@ -278,7 +278,36 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	function sort(object1, object2)
 	{
-		return object2.position.z - object1.position.z;
+		return getDepth(object2) - getDepth(object1);
+	}
+
+	/**
+	 * Compute the depth of an object.
+	 */
+	function getDepth(object)
+	{
+		if (object.depth)
+		{
+			return object.depth;
+		}
+		if (object.type == 'milliEarth')
+		{
+			// use depth of horizon
+			var x = object.position.x;
+			var y = object.position.y;
+			var z = object.position.z;
+			var r = object.radius;
+			var p = Math.sqrt(x * x + y * y + z * z);
+			var h = p - r;
+			var d = Math.sqrt(h * h + 2 * h * r);
+			object.depth = - d * (d * z + y * Math.sqrt(y*y + z*z - d*d)) / (y * y + z * z);
+			console.log('y: ' + object.position.x + ', z: ' + z + ', d: ' + d + ', depth: ' + object.depth);
+		}
+		else
+		{
+			object.depth = object.position.z;
+		}
+		return object.depth;
 	}
 
 	/**
