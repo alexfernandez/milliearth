@@ -21,10 +21,15 @@
  */
 
 
+var module = {exports: {}};
+
 /**
  * Adapt the require to import from the browser.
  */
 function require(file)
 {
+	console.log('requiring ' + file);
+	$.getScript('/src/' + file);
+	return module.exports;
 }
 
