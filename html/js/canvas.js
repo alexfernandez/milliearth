@@ -101,9 +101,9 @@ var paintingProjection = function(startx, starty, startz, scale)
 		var cy = scaleY(y * z / below);
 		var a = scale * r / Math.sqrt(below);
 		var b = scale * r * d / below;
-		if (object.type == 'milliEarth')
+		if (object.type == 'pole')
 		{
-			$('#message').text('r: ' + r + ', h: ' + h + ', d: ' + Math.sqrt(d2) + ', a: ' + a + ', b: ' + b);
+			$('#message').text('r: ' + r + ', h: ' + h + ', d: ' + Math.sqrt(d2) + ', a: ' + a + ', b: ' + b + ', x: ' + cx + ', y: ' + cy);
 		}
 		var diff = x * x - y * y;
 		var angle;
@@ -382,7 +382,7 @@ var paintingLayer = function(name, projection, opacity)
 	self.paintPole = function(pole)
 	{
 		var ref = new vector().sum(pole.position);
-		console.log(ref);
+		self.paintBody(pole, '#0f0');
 	}
 
 	/**
@@ -442,14 +442,20 @@ var paintingLayer = function(name, projection, opacity)
 	function paintEllipse(object, color)
 	{
 		var ellipse = projection.ellipse(object);
-		var s = Math.sin(ellipse.angle);
-		var c = Math.cos(ellipse.angle);
+		var width = Math.max(2 * ellipse.major, 2);
+		var height = Math.max(2 * ellipse.minor, 2);
+		if (object.type == 'pole')
+		{
+			width = 10;
+			height = 10;
+			//$('#message').text('type: ' + JSON.stringify(type));
+		}
 		canvas.drawEllipse( {
 			fillStyle: color,
 			x: ellipse.center.x,
 			y: ellipse.center.y,
-			width: 2 * ellipse.major,
-			height: 2 * ellipse.minor,
+			width: width,
+			height: height,
 			opacity: opacity,
 			rotate: ellipse.angle * 180 / Math.PI,
 		});

@@ -351,7 +351,7 @@ var gameWorld = function(id)
 	// attributes
 	self.id = id;
 	var milliEarth = new massiveBody('milliEarth', params.meMass, params.meRadius);
-	var pole = new massiveBody('pole', 0, 0, new vector(params.meRadius, 0, 0))
+	var pole = new massiveBody('pole', 0, 0, new vector(params.meRadius, 0, 0), 0);
 	var bodies = {};
 	var seconds = 0;
 	self.active = false;
