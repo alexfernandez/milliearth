@@ -316,7 +316,7 @@ var paintingLayer = function(name, projection, opacity)
 			{
 				self.paintMilliEarth(object);
 			}
-			else if (object.type == 'robot')
+			else if (object.type == 'robot' || object.type == 'projectile')
 			{
 				self.paintBody(object);
 			}

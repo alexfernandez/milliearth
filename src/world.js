@@ -36,7 +36,7 @@ var extend = util.extend;
 /**
  * A massive body. Mass is given in kg.
  */
-function massiveBody(id, mass, radius, position, speed)
+function massiveBody(id, world, mass, radius, position, speed)
 {
 	// self-reference
 	var self = this;
@@ -69,17 +69,28 @@ function massiveBody(id, mass, radius, position, speed)
 		var scaledSpeed = self.speed.scale(period);
 		self.position.add(scaledSpeed);
 	}
+
+	/**
+	 * Compute the height above the milliEarth, position at (0,0,0).
+	 */
+	self.computeHeight = function()
+	{
+		return self.position.length() - world.milliEarth.radius;
+	}
 }
 
 /**
  * A projectile to be shot.
  */
-function flyingProjectile(id)
+function flyingProjectile(id, world)
 {
 	// self-reference
 	var self = this;
 	// extend massiveBody
-	extend(new massiveBody(id, params.projectileMass, params.projectileRadius), self);
+	extend(new massiveBody(id, world, params.projectileMass, params.projectileRadius), self);
+
+	// attributes
+	self.type = 'projectile';
 
 	/**
 	 * Self-destruct on impact.
@@ -101,14 +112,15 @@ function flyingProjectile(id)
 /**
  * A fighter robot.
  */
-function fighterRobot(id, milliEarth)
+function fighterRobot(id, world)
 {
 	// self-reference
 	var self = this;
 	// extend massiveBody
-	extend(new massiveBody(id, params.robotMass, params.robotRadius), self);
+	extend(new massiveBody(id, world, params.robotMass, params.robotRadius), self);
 
 	// attributes
+	self.type = 'robot';
 	self.life = params.life;
 	self.projectiles = params.projectiles;
 	var camera = new coordinateSystem(new vector(0, 0, 1), new vector(0, 1, 0), new vector(1, 0, 0));
@@ -176,8 +188,8 @@ function fighterRobot(id, milliEarth)
 		var meBody = {
 			id: 'milliEarth',
 			type: 'milliEarth',
-			radius: milliEarth.radius,
-			position: milliEarth.position,
+			radius: world.milliEarth.radius,
+			position: world.milliEarth.position,
 		};
 		var objects = [meBody];
 		for (var id in bodies)
@@ -185,7 +197,7 @@ function fighterRobot(id, milliEarth)
 			var body = bodies[id];
 			objects.push({
 					id: id,
-					type: 'robot',
+					type: body.type,
 					radius: body.radius,
 					position: body.position
 			});
@@ -228,11 +240,11 @@ function fighterRobot(id, milliEarth)
 	 */
 	self.computeViewUpdate = function(bodies)
 	{
-		var center = computePosition(milliEarth);
+		var center = computePosition(world.milliEarth);
 		var meBody = {
 			id: 'milliEarth',
 			type: 'milliEarth',
-			radius: milliEarth.radius,
+			radius: world.milliEarth.radius,
 			position: center,
 		};
 		var objects = [meBody];
@@ -253,7 +265,7 @@ function fighterRobot(id, milliEarth)
 		return {
 			camera: camera,
 			position: self.position,
-			radius: milliEarth.radius,
+			radius: world.milliEarth.radius,
 			objects: objects,
 		};
 	}
@@ -266,11 +278,11 @@ function fighterRobot(id, milliEarth)
 		var position = body.position.difference(self.position);
 		var distance = position.length();
 		var h1 = self.computeHeight();
-		var d1 = Math.sqrt(h1 * h1 + 2 * h1 * milliEarth.radius);
+		var d1 = Math.sqrt(h1 * h1 + 2 * h1 * world.milliEarth.radius);
 		if (distance > d1)
 		{
 			var h2 = body.computeHeight() + body.radius;
-			var d2 = Math.sqrt(h2 * h2 + 2 * h2 * milliEarth.radius);
+			var d2 = Math.sqrt(h2 * h2 + 2 * h2 * world.milliEarth.radius);
 			if (d1 + d2 < distance)
 			{
 				// below horizon
@@ -295,7 +307,7 @@ function fighterRobot(id, milliEarth)
 	self.computeHorizon = function()
 	{
 		var x = 0;
-		var r = milliEarth.radius;
+		var r = world.milliEarth.radius;
 		var h = self.computeHeight();
 		var d = Math.sqrt(h * h + 2 * h * r);
 		var y = r * r / (r + h) - r - h;
@@ -386,16 +398,9 @@ function fighterRobot(id, milliEarth)
 			return;
 		}
 		console.log('Player ' + id + ' shot!');
-		var projectile = new flyingProjectile('projectile.' + id + '.' + self.projectiles);
+		var projectile = new flyingProjectile('projectile.' + id + '.' + self.projectiles, world);
+		world.addObject(projectile);
 		self.projectiles--;
-	}
-
-	/**
-	 * Compute the height above the milliEarth, position at (0,0,0).
-	 */
-	self.computeHeight = function()
-	{
-		return self.position.length() - milliEarth.radius;
 	}
 }
 
@@ -410,7 +415,7 @@ var gameWorld = function(id)
 
 	// attributes
 	self.id = id;
-	var milliEarth = new massiveBody('milliEarth', params.meMass, params.meRadius);
+	self.milliEarth = new massiveBody('milliEarth', self, params.meMass, params.meRadius);
 	var bodies = {};
 	var seconds = 0;
 	self.active = false;
@@ -464,7 +469,7 @@ var gameWorld = function(id)
 	 */
 	self.add = function(id)
 	{
-		var robot = new fighterRobot(id, milliEarth);
+		var robot = new fighterRobot(id, self);
 		bodies[robot.id] = robot;
 		var size = 0;
 		iterate(function(body) {
@@ -492,6 +497,19 @@ var gameWorld = function(id)
 	}
 
 	/**
+	 * Add a new object to the world.
+	 */
+	self.addObject = function(object)
+	{
+		if (object.id in bodies)
+		{
+			log('Error: object ' + object.id + ' already exists');
+			return;
+		}
+		bodies[object.id] = object;
+	}
+
+	/**
 	 * Run a short loop of the world.
 	 */
 	self.shortLoop = function(delay)
@@ -501,7 +519,14 @@ var gameWorld = function(id)
 			return;
 		}
 		iterate(function(body) {
-				body.computeAttraction(milliEarth, delay / 1000);
+				body.computeAttraction(self.milliEarth, delay / 1000);
+		});
+		iterate(function(body) {
+				if (!body.active)
+				{
+					delete bodies[body.id];
+
+				}
 		});
 	}
 
