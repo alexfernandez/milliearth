@@ -177,7 +177,6 @@ var polarPoint = function(r, phi, theta)
 		var y = object.position.y;
 		var z = object.position.z;
 		var r = object.radius;
-		$('#message').text('type: ' + object.type + ', position: ' + new vector(object.position));
 		var p = Math.sqrt(x * x + y * y + z * z);
 		var h = p - r;
 		var d2 = h * h + 2 * h * r;
