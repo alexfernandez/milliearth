@@ -378,30 +378,18 @@ var paintingLayer = function(name, projection, opacity)
 	self.paintPole = function(pole)
 	{
 		self.paintBody(pole, '#0f0');
-		var p = new vector().difference(pole.center);
-		var pAngles = angles(p.unit());
-		var l = new vector().sum(pole.position).difference(pole.center);
-		var lAngles = angles(l.unit());
-		var diffPhi = pAngles.phi - lAngles.phi;
-		var roundPhi = Math.floor(diffPhi * 180 / Math.PI);
-		var phi = pAngles.phi - diffPhi + roundPhi * Math.PI / 180;
-		var diffTheta = lAngles.theta - lAngles.theta;
-		var roundTheta = Math.floor(diffTheta / Math.PI);
-		var theta = pAngles.theta - diffTheta + roundTheta * Math.PI / 180;
-		var diff = 0.01 * Math.PI / 180;
-		var phi1 = phi + diff;
-		var phi2 = phi - diff;
-		var theta1 = theta + diff;
-		var theta2 = theta - diff;
-		var p1 = point(theta1, phi1, pole);
-		$('#message').text('pole-pos: ' + new vector().sum(pole.position) + ', p-theta: ' + pAngles.theta + ', l-theta: ' + lAngles.theta + ', phi: ' + phi + ', theta: ' + theta + ', vector: ' + p1.x + ', ' + p1.y);
-		var p2 = point(theta1, phi2, pole);
-		var p3 = point(theta2, phi2, pole);
-		var p4 = point(theta2, phi1, pole);
-		paintPolygon([p1, p2, p3, p4, p1], '#0c0');
+		var p = new vector().sum(pole.position).difference(pole.center);
+		var angles = computeAngles(p.unit());
+		var phi = angles.phi;
+		var theta = angles.theta;
+		var step = 1 * Math.PI/180;
+		paintMark(theta, phi, pole);
+		paintMark(theta - step, phi, pole);
+		paintMark(theta, phi - step, pole);
+		paintMark(theta - step, phi - step, pole);
 	}
 
-	function angles(point)
+	function computeAngles(point)
 	{
 		var phi = Math.acos(point.z);
 		var theta = Math.atan(point.y / point.x);
@@ -409,6 +397,20 @@ var paintingLayer = function(name, projection, opacity)
 			phi: phi,
 			theta: theta,
 		}
+	}
+
+	function paintMark(theta, phi, pole)
+	{
+		var diff = 0.01 * Math.PI / 180;
+		var phi1 = phi + diff;
+		var phi2 = phi - diff;
+		var theta1 = theta + diff;
+		var theta2 = theta - diff;
+		var p1 = point(theta1, phi1, pole);
+		var p2 = point(theta1, phi2, pole);
+		var p3 = point(theta2, phi2, pole);
+		var p4 = point(theta2, phi1, pole);
+		paintPolygon([p1, p2, p3, p4, p1], '#0c0');
 	}
 
 	function point(theta, phi, pole)
