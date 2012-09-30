@@ -431,8 +431,10 @@ var gameWorld = function(id)
 		{
 			// player
 			var orbitingSpeed = Math.sqrt(params.bigG * params.meMass / distance);
+			var sqrt = Math.sqrt(2 * distance * distance) / 2;
 			robot.start(
-				new vector(distance + 2, -10, 0),
+				//new vector(distance + 2, -10, 0),
+				new vector(sqrt + 2, sqrt + 2, 0),
 				new vector(0, 1, 0));
 		}
 		return robot;
