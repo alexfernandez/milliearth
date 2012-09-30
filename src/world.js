@@ -101,7 +101,7 @@ function flyingProjectile(id)
 /**
  * A fighter robot.
  */
-function fighterRobot(id, milliEarth, pole)
+function fighterRobot(id, milliEarth)
 {
 	// self-reference
 	var self = this;
@@ -411,7 +411,6 @@ var gameWorld = function(id)
 	// attributes
 	self.id = id;
 	var milliEarth = new massiveBody('milliEarth', params.meMass, params.meRadius);
-	var pole = new massiveBody('pole', 0, params.meRadius, new vector(params.meRadius, 0, 0), 0);
 	var bodies = {};
 	var seconds = 0;
 	self.active = false;
@@ -465,7 +464,7 @@ var gameWorld = function(id)
 	 */
 	self.add = function(id)
 	{
-		var robot = new fighterRobot(id, milliEarth, pole);
+		var robot = new fighterRobot(id, milliEarth);
 		bodies[robot.id] = robot;
 		var size = 0;
 		iterate(function(body) {
