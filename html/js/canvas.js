@@ -177,6 +177,7 @@ var polarPoint = function(r, phi, theta)
 		var y = object.position.y;
 		var z = object.position.z;
 		var r = object.radius;
+		$('#message').text('type: ' + object.type + ', position: ' + new vector(object.position));
 		var p = Math.sqrt(x * x + y * y + z * z);
 		var h = p - r;
 		var d2 = h * h + 2 * h * r;
@@ -394,7 +395,7 @@ var paintingLayer = function(name, projection, opacity)
 		{
 			return;
 		}
-		if (type.determinant < 0)
+		if (type.determinant < 0 || body.type != 'milliEarth')
 		{
 			paintEllipse(body, color);
 			return;
@@ -407,7 +408,7 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	self.paintPole = function(pole)
 	{
-		self.paintBody(pole, '#0f0');
+		//self.paintBody(pole, '#0f0');
 		var p = new vector(pole.position).difference(pole.center);
 		var angles = computeAngles(p);
 		var phi = angles.phi;
@@ -415,7 +416,7 @@ var paintingLayer = function(name, projection, opacity)
 		var step = 1 * Math.PI/180;
 		var center = new vector(pole.center);
 		var own = computeAngles(center);
-		$('#message').text('angles: ' + angles + ', own angles: ' + own);
+		//$('#message').text('angles: ' + angles + ', own angles: ' + own);
 		paintMark(theta, phi, pole);
 		paintMark(theta - step, phi, pole);
 		paintMark(theta, phi - step, pole);
