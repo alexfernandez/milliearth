@@ -29,8 +29,10 @@ var keymap = new function()
 	var self = this;
 
 	// current keycode
-	var keycodes = {};
-	var keypresses = {};
+	var keysPressed = {};
+	var keysReleased = {};
+	var notSent = 1;
+	var sent = 2;
 
 	var eventMap = {
 		65: {key: 'a', event: 'accelerate'},
@@ -41,7 +43,7 @@ var keymap = new function()
 		40: {key: '↓', event: 'turnDown'},
 		46: {key: 'Del', event: 'rollLeft'},
 		34: {key: 'Down', event: 'rollRight'},
-		32: {key: 'Space', event: 'shoot'},
+		32: {key: 'Space', event: 'shoot', single: true},
 	};
 
 	/**
@@ -55,12 +57,19 @@ var keymap = new function()
 		{
 			return true;
 		}
-		if (keycode in keycodes)
+		if (keycode in keysPressed)
 		{
 			// already pressed
 			return false;
 		}
-		keycodes[keycode] = event.timeStamp;
+		if (isSinglePress(keycode))
+		{
+			keysPressed[keycode] = notSent;
+		}
+		else
+		{
+			keysPressed[keycode] = event.timeStamp;
+		}
 		return false;
 	}
 
@@ -74,18 +83,21 @@ var keymap = new function()
 		{
 			return false;
 		}
-		var end = event.timeStamp;
-		var start = keycodes[keycode];
-		if (start)
+		if (!isSinglePress(keycode))
 		{
-			var time = end - start;
-			if (!(keycode in keypresses))
+			var end = event.timeStamp;
+			var start = keysPressed[keycode];
+			if (start)
 			{
-				keypresses[keycode] = 0;
+				var time = end - start;
+				if (!(keycode in keysReleased))
+				{
+					keysReleased[keycode] = 0;
+				}
+				keysReleased[keycode] += time;
 			}
-			keypresses[keycode] += time;
 		}
-		delete keycodes[keycode];
+		delete keysPressed[keycode];
 		return true;
 	}
 
@@ -96,16 +108,27 @@ var keymap = new function()
 	{
 		var end = new Date().getTime();
 		var recordedEvents = {};
-		for (var keycode in keycodes)
+		for (var keycode in keysPressed)
 		{
-			var time = end - keycodes[keycode];
-			addKeycode(recordedEvents, keycode, time);
-			keycodes[keycode] = end;
+			if (isSinglePress(keycode))
+			{
+				if (keysPressed[keycode] == notSent)
+				{
+					addKeycode(recordedEvents, keycode, sent);
+					keysPressed[keycode] = sent;
+				}
+			}
+			else
+			{
+				var time = end - keysPressed[keycode];
+				addKeycode(recordedEvents, keycode, time);
+				keysPressed[keycode] = end;
+			}
 		}
-		for (var keycode in keypresses)
+		for (var keycode in keysReleased)
 		{
-			addKeycode(recordedEvents, keycode, keypresses[keycode]);
-			delete keypresses[keycode]
+			addKeycode(recordedEvents, keycode, keysReleased[keycode]);
+			delete keysReleased[keycode]
 		}
 		return recordedEvents;
 	}
@@ -121,12 +144,20 @@ var keymap = new function()
 			return;
 		}
 		var event = eventMap[keycode].event;
-		var start = keycodes[keycode];
+		var start = keysPressed[keycode];
 		if (!(event in recordedEvents))
 		{
 			recordedEvents[event] = 0;
 		}
 		recordedEvents[event] += time;
+	}
+
+	/**
+	 * Find out if the key fires only once when pressed.
+	 */
+	function isSinglePress(keycode)
+	{
+		return eventMap[keycode].single;
 	}
 }
 

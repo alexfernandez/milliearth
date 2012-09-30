@@ -391,7 +391,7 @@ function fighterRobot(id, world)
 	/**
 	 * Shoot a projectile.
 	 */
-	self.shoot = function(period)
+	self.shoot = function()
 	{
 		if (self.projectiles <= 0)
 		{
