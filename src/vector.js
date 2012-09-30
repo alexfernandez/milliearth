@@ -34,6 +34,17 @@ function isNumber(n)
 {
 	return !isNaN(parseFloat(n)) && isFinite(n);
 }
+/**
+ * Round a vector value.
+ */
+function round(value)
+{
+	if (value < 10)
+	{
+		return Math.round(value * 10) / 10;
+	}
+	return Math.round(value);
+}
 
 /**
  * Three-dimensional vector, in meters.
@@ -43,9 +54,19 @@ function vector(x, y, z)
 	// self-reference
 	var self = this;
 
-	self.x = x || 0;
-	self.y = y || 0;
-	self.z = z || 0;
+	if (x && isNumber(x.x))
+	{
+		// initialize using an object
+		self.x = x.x;
+		self.y = x.y;
+		self.z = x.z;
+	}
+	else
+	{
+		self.x = x || 0;
+		self.y = y || 0;
+		self.z = z || 0;
+	}
 
 	/**
 	 * Return a copy of this vector.
@@ -167,18 +188,6 @@ function vector(x, y, z)
 	self.toString = function()
 	{
 		return '(' + round(self.x) + ',' + round(self.y) + ',' + round(self.z) + ')';
-	}
-
-	/**
-	 * Round a vector value.
-	 */
-	function round(value)
-	{
-		if (value < 10)
-		{
-			return Math.round(value * 10) / 10;
-		}
-		return Math.round(value);
 	}
 
 	/**

@@ -34,13 +34,35 @@ var planarPoint = function(x, y)
 }
 
 /**
- * A painting projection. Starting coordinates for x and y, start depth and scale.
- * If planar, z is not used to project x and y.
+ * A point using polar coordinates.
  */
-var paintingProjection = function(startx, starty, startz, scale)
+var polarPoint = function(r, phi, theta)
 {
 	// self-reference
 	var self = this;
+
+	// attributes
+	self.r = r;
+	self.phi = phi;
+	self.theta = theta;
+
+	/**
+	 * Printable representation.
+	 */
+	self.toString = function()
+	{
+		return round(self.r) + '->(' + round(self.phi) + ',' + round(self.theta) + ')';
+	}
+}
+
+/**
+ * A painting projection. Starting coordinates for x and y, start depth and scale.
+ * If planar, z is not used to project x and y.
+ */
+	var paintingProjection = function(startx, starty, startz, scale)
+	{
+		// self-reference
+		var self = this;
 
 	// attributes
 	self.planar = false;
@@ -378,11 +400,14 @@ var paintingLayer = function(name, projection, opacity)
 	self.paintPole = function(pole)
 	{
 		self.paintBody(pole, '#0f0');
-		var p = new vector().sum(pole.position).difference(pole.center);
-		var angles = computeAngles(p.unit());
+		var p = new vector(pole.position).difference(pole.center);
+		var angles = computeAngles(p);
 		var phi = angles.phi;
 		var theta = angles.theta;
 		var step = 1 * Math.PI/180;
+		var center = new vector(pole.center);
+		var own = computeAngles(center);
+		$('#message').text('angles: ' + angles + ', own angles: ' + own);
 		paintMark(theta, phi, pole);
 		paintMark(theta - step, phi, pole);
 		paintMark(theta, phi - step, pole);
@@ -391,12 +416,10 @@ var paintingLayer = function(name, projection, opacity)
 
 	function computeAngles(point)
 	{
-		var phi = Math.acos(point.z);
+		var r = point.length();
+		var phi = Math.acos(point.z / r);
 		var theta = Math.atan(point.y / point.x);
-		return {
-			phi: phi,
-			theta: theta,
-		}
+		return new polarPoint(r, phi, theta);
 	}
 
 	function paintMark(theta, phi, pole)
@@ -418,7 +441,7 @@ var paintingLayer = function(name, projection, opacity)
 		var x = pole.radius * Math.cos(theta) * Math.sin(phi);
 		var y = pole.radius * Math.sin(theta) * Math.sin(phi);
 		var z = pole.radius * Math.cos(phi);
-		var c = new vector().sum(pole.center);
+		var c = new vector(pole.center);
 		var v = c.sum(new vector(x, y, z));
 		return projection.project(v);
 	}
