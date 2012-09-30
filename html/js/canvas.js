@@ -315,10 +315,6 @@ var paintingLayer = function(name, projection, opacity)
 			{
 				self.paintMilliEarth(object);
 			}
-			else if (object.type == 'pole')
-			{
-				self.paintPole(object);
-			}
 			else if (object.type == 'robot')
 			{
 				self.paintBody(object);
@@ -442,50 +438,16 @@ var paintingLayer = function(name, projection, opacity)
 		{
 			return;
 		}
+		if (body.type == 'milliEarth')
+		{
+			$('#message').text(JSON.stringify(type));
+		}
 		if (type.determinant < 0 || body.type != 'milliEarth')
 		{
 			paintEllipse(body, color);
 			return;
 		}
 		paintHyperbola(body, color);
-	}
-
-	/**
-	 * Paint marks on the ground based on the pole position.
-	 */
-	self.paintPole = function(pole)
-	{
-		//self.paintBody(pole, '#0f0');
-		var p = new vector(pole.position).difference(pole.center);
-		var angles = new polarVector(p);
-		var phi = angles.phi;
-		var theta = angles.theta;
-		var step = 1 * Math.PI/180;
-		var center = new vector(pole.center);
-		var own = new polarVector(center);
-		//$('#message').text('angles: ' + angles + ', own angles: ' + own);
-		paintMark(new polarVector(pole.radius, theta, phi), center);
-		paintMark(new polarVector(pole.radius, theta - step, phi), center);
-		paintMark(new polarVector(pole.radius, theta, phi - step), center);
-		paintMark(new polarVector(pole.radius, theta - step, phi - step), center);
-	}
-
-	function paintMark(polar, center)
-	{
-		var diff = 0.01 * Math.PI / 180;
-		polar.phi -= diff;
-		polar.theta -= diff;
-		var p1 = projectPolar(polar, center);
-		polar.phi += 2 * diff;
-		var p2 = projectPolar(polar, center);
-		polar.theta += 2 * diff;
-		var p3 = projectPolar(polar, center);
-		polar.phi -= 2 * diff;
-		var p4 = projectPolar(polar, center);
-		if (p1 && p2 && p3 && p4)
-		{
-			paintPolygon([p1, p2, p3, p4, p1], '#0c0');
-		}
 	}
 
 	function projectPolar(polar, center)
@@ -522,8 +484,6 @@ var paintingLayer = function(name, projection, opacity)
 		}
 		var start = projection.project(line.start);
 		var end = projection.project(line.end);
-		//$('#message').text('start: ' + start + ', end: ' + end);
-		// the drawLine() object
 		var draw = {
 			strokeStyle: "#00f",
 			strokeWidth: 1,
@@ -534,7 +494,6 @@ var paintingLayer = function(name, projection, opacity)
 		draw['y1'] = start.y;
 		draw['x2'] = end.x,
 		draw['y2'] = end.y,
-		// Draw the line
 		canvas.drawLine(draw);
 	}
 

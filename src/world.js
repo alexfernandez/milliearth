@@ -206,14 +206,7 @@ function fighterRobot(id, milliEarth, pole)
 			radius: milliEarth.radius,
 			position: center,
 		};
-		var poleBody = {
-			id: 'pole',
-			type: 'pole',
-			radius: pole.radius,
-			position: computePosition(pole),
-			center: center,
-		};
-		var objects = [meBody, poleBody];
+		var objects = [meBody];
 		for (var id in bodies)
 		{
 			var body = bodies[id];
