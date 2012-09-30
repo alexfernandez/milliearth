@@ -196,10 +196,10 @@ function fighterRobot(id, world)
 		{
 			var body = bodies[id];
 			objects.push({
-					id: id,
-					type: body.type,
-					radius: body.radius,
-					position: body.position
+				id: id,
+				type: body.type,
+				radius: body.radius,
+				position: body.position
 			});
 		}
 		objects.push(self.getArrow());
@@ -473,7 +473,7 @@ var gameWorld = function(id)
 		bodies[robot.id] = robot;
 		var size = 0;
 		iterate(function(body) {
-				size++;
+			size++;
 		});
 		var distance = params.meRadius + robot.radius;
 		if (size % 2)
@@ -519,14 +519,14 @@ var gameWorld = function(id)
 			return;
 		}
 		iterate(function(body) {
-				body.computeAttraction(self.milliEarth, delay / 1000);
+			body.computeAttraction(self.milliEarth, delay / 1000);
 		});
 		iterate(function(body) {
-				if (!body.active)
-				{
-					delete bodies[body.id];
+			if (!body.active)
+			{
+				delete bodies[body.id];
 
-				}
+			}
 		});
 	}
 
@@ -541,8 +541,8 @@ var gameWorld = function(id)
 		}
 		var message = 'World ' + self.id + ', ';
 		iterate(function(body) {
-				var distance = Math.round(body.computeHeight());
-				message += body.id + ' ' + body.position + ': ' + distance + ', ';
+			var distance = Math.round(body.computeHeight());
+			message += body.id + ' ' + body.position + ': ' + distance + ', ';
 		});
 		log(message);
 	}
@@ -565,10 +565,10 @@ var gameWorld = function(id)
 	{
 		var except = {};
 		iterate(function(body) {
-				if (body.id != id)
-				{
-					except[body.id] = body;
-				}
+			if (body.id != id)
+			{
+				except[body.id] = body;
+			}
 		});
 		return except;
 	}
