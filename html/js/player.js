@@ -49,8 +49,8 @@ var clientPlayer = function()
 	// layers
 	var width = $('#simulation').width();
 	var height = $('#simulation').height();
-	var mainProjection = new paintingProjection(width / 2, height / 2, 0, 4/5 * height);
-	var mainLayer = new paintingLayer('main', mainProjection, 0);
+	var viewProjection = new paintingProjection(width / 2, height / 2, 0, 4/5 * height);
+	var viewLayer = new paintingLayer('view', viewProjection, 0);
 	var globalWidth = height / 6;
 	var globalProjection = new paintingProjection(width - globalWidth, globalWidth, 0, 2/3 * globalWidth / 6000);
 	globalProjection.planar = true;
@@ -223,7 +223,7 @@ var clientPlayer = function()
 		}
 		countUpdate(message.id);
 		$('#simulation').clearCanvas();
-		mainLayer.paintUpdate(message);
+		viewLayer.paintUpdate(message);
 		paintGlobalUpdate();
 	}
 
