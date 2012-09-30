@@ -299,7 +299,7 @@ var paintingLayer = function(name, projection, opacity)
 				position: c1,
 				radius: 5,
 			}
-			$('#message').text('c: ' + center + ', p ' + polar + ', m ' + JSON.stringify(mark));
+			// $('#message').text('c: ' + center + ', p ' + polar + ', m ' + JSON.stringify(mark));
 			return [mark];
 		}
 	}
@@ -515,6 +515,10 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	function paintLine(line)
 	{
+		if (line.depth < 0)
+		{
+			return;
+		}
 		var start = projection.project(line.start);
 		var end = projection.project(line.end);
 		//$('#message').text('start: ' + start + ', end: ' + end);
