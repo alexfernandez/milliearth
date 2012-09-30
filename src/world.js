@@ -333,6 +333,22 @@ function fighterRobot(id, milliEarth, pole)
 	}
 
 	/**
+	 * Turn sideways left.
+	 */
+	self.rollLeft = function(period)
+	{
+		camera.roll(params.turningAngle * period);
+	}
+
+	/**
+	 * Turn sideways right.
+	 */
+	self.rollRight = function(period)
+	{
+		camera.roll(-params.turningAngle * period);
+	}
+
+	/**
 	 * Compute the height above the milliEarth, position at (0,0,0).
 	 */
 	self.computeHeight = function()

@@ -39,7 +39,8 @@ var keymap = new function()
 		38: {key: '↑', event: 'turnUp'},
 		39: {key: '→', event: 'turnRight'},
 		40: {key: '↓', event: 'turnDown'},
-
+		46: {key: 'Del', event: 'rollLeft'},
+		34: {key: 'Down', event: 'rollRight'},
 	};
 
 	/**

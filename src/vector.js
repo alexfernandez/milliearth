@@ -355,6 +355,19 @@ function coordinateSystem(u, v, w)
 	}
 
 	/**
+	 * Turn on the roll angle (sideways), radians.
+	 */
+	self.roll = function(angle)
+	{
+		var p = Math.cos(angle / (Math.PI / 2));
+		var q = Math.sin(angle / (Math.PI / 2));
+		var u = self.u.scale(p).sum(self.v.scale(q));
+		var v = self.v.scale(p).sum(self.u.scale(-q));
+		self.u = u;
+		self.v = v;
+	}
+
+	/**
 	 * Printable representation.
 	 */
 	self.toString = function()
