@@ -59,6 +59,12 @@ var params = new function()
 	this.markHalfWidth = 2;
 	// degrees of turn per second, radians
 	this.turningAngle = Math.PI / 2;
+	// number of projectiles available
+	this.projectiles = 20;
+	// mass of projectile
+	this.projectileMass = 3;
+	// radius of projectile
+	this.projectileRadius = 0.2;
 }
 
 module.exports.params = params;

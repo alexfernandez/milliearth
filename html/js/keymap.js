@@ -41,6 +41,7 @@ var keymap = new function()
 		40: {key: '↓', event: 'turnDown'},
 		46: {key: 'Del', event: 'rollLeft'},
 		34: {key: 'Down', event: 'rollRight'},
+		32: {key: 'Space', event: 'shoot'},
 	};
 
 	/**

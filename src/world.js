@@ -51,6 +51,7 @@ function massiveBody(id, mass, radius, position, speed)
 	self.radius = radius;
 	self.position = position || new vector(0, 0, 0);
 	self.speed = speed || new vector(0, 0, 0);
+	self.active = true;
 
 	/**
 	 * Compute gravitational attraction by another body in the given period (in seconds).
@@ -70,6 +71,32 @@ function massiveBody(id, mass, radius, position, speed)
 	}
 }
 
+/**
+ * A projectile to be shot.
+ */
+function flyingProjectile(id)
+{
+	// self-reference
+	var self = this;
+	// extend massiveBody
+	extend(new massiveBody(id, params.projectileMass, params.projectileRadius), self);
+
+	/**
+	 * Self-destruct on impact.
+	 */
+	self.computeCollision = function(attractor, period)
+	{
+		self.active = false;
+	}
+
+	/**
+	 * Explode on a given object.
+	 */
+	self.explode = function(body)
+	{
+	}
+}
+
 
 /**
  * A fighter robot.
@@ -83,6 +110,7 @@ function fighterRobot(id, milliEarth, pole)
 
 	// attributes
 	self.life = params.life;
+	self.projectiles = params.projectiles;
 	var camera = new coordinateSystem(new vector(0, 0, 1), new vector(0, 1, 0), new vector(1, 0, 0));
 
 	/**
@@ -346,6 +374,20 @@ function fighterRobot(id, milliEarth, pole)
 	self.rollRight = function(period)
 	{
 		camera.roll(-params.turningAngle * period);
+	}
+
+	/**
+	 * Shoot a projectile.
+	 */
+	self.shoot = function(period)
+	{
+		if (self.projectiles <= 0)
+		{
+			return;
+		}
+		console.log('Player ' + id + ' shot!');
+		var projectile = new flyingProjectile('projectile.' + id + '.' + self.projectiles);
+		self.projectiles--;
 	}
 
 	/**
