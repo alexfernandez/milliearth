@@ -551,6 +551,10 @@ var paintingLayer = function(name, projection, opacity)
 	{
 		var w = canvas.width();
 		var h = canvas.height();
+		if (object.position.y > 0)
+		{
+			h = 0;
+		}
 		var points = [new planarPoint(0, h)];
 		for (var i = 0; i <= canvas.width(); i += 20)
 		{
