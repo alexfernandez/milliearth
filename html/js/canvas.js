@@ -250,6 +250,7 @@ var paintingLayer = function(name, projection, opacity)
 		var marks = self.computeMarks(new vector(message.position), new coordinateSystem(message.camera), message.radius);
 		message.objects = message.objects.concat(marks);
 		self.paintObjects(message.objects);
+		paintCrosshairs();
 	}
 
 	/**
@@ -485,11 +486,11 @@ var paintingLayer = function(name, projection, opacity)
 			strokeWidth: 1,
 			rounded: true,
 			opacity: opacity,
+			x1: start.x,
+			y1: start.y,
+			x2: end.x,
+			y2: end.y,
 		};
-		draw['x1'] = start.x;
-		draw['y1'] = start.y;
-		draw['x2'] = end.x,
-		draw['y2'] = end.y,
 		canvas.drawLine(draw);
 	}
 
@@ -575,6 +576,42 @@ var paintingLayer = function(name, projection, opacity)
 		}
 		// Draw the line
 		canvas.drawLine(draw);
+	}
+
+	/**
+	 * Paint the cross-hairs to aim.
+	 */
+	function paintCrosshairs()
+	{
+		var color = '#f00';
+		var cx = canvas.width() / 2;
+		var cy = canvas.height() / 2;
+		var l = 5;
+		var draw = {
+			strokeStyle: color,
+			strokeWidth: 1,
+			rounded: true,
+			opacity: opacity,
+			x1: cx,
+			y1: cy - l,
+			x2: cx,
+			y2: cy + l,
+		};
+		canvas.drawLine(draw);
+		draw.x1 = cx - l;
+		draw.y1 = cy;
+		draw.x2 = cx + l;
+		draw.y2 = cy;
+		canvas.drawLine(draw);
+		canvas.drawArc( {
+			strokeStyle: color,
+			strokeWidth: 1,
+			rounded: true,
+			x: cx,
+			y: cy,
+			radius: l,
+			opacity: opacity,
+		});
 	}
 }
 
