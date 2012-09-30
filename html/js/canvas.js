@@ -264,14 +264,12 @@ var paintingLayer = function(name, projection, opacity)
 		var step = 1 * Math.PI/180;
 		var polar = new polarVector(radius, phi * Math.PI / 180, theta * Math.PI / 180);
 		marks = marks.concat(computeMark(polar, camera, position));
-		/*
 		polar.phi += step;
-		marks = marks.concat(computeMark(polar, position));
+		marks = marks.concat(computeMark(polar, camera, position));
 		polar.theta += step;
-		marks = marks.concat(computeMark(polar, position));
+		marks = marks.concat(computeMark(polar, camera, position));
 		polar.phi -= step;
-		marks = marks.concat(computeMark(polar, position));
-	   */
+		marks = marks.concat(computeMark(polar, camera, position));
 		return marks;
 	}
 
@@ -279,29 +277,28 @@ var paintingLayer = function(name, projection, opacity)
 	{
 		var center = position.scale(-1);
 		var diff = 0.01 * Math.PI / 180;
-		polar.phi -= diff;
 		polar.theta -= diff;
-		var p1 = polar.toCartesian(center);
+		var p1t = polar.toCartesian(center);
+		polar.theta += 2* diff;
+		var p2t = polar.toCartesian(center);
+		polar.theta -= diff;
+		polar.phi -= diff;
+		var p1p = polar.toCartesian(center);
 		polar.phi += 2 * diff;
-		var p2 = polar.toCartesian(center);
-		polar.theta += 2 * diff;
-		var p3 = polar.toCartesian(center);
-		polar.phi -= 2 * diff;
-		var p4 = polar.toCartesian(center);
-		if (p1 && p2 && p3 && p4)
-		{
-			var c1 = camera.project(p1);
-			var c3 = camera.project(p3);
-			var mark = {
-				type: 'mark',
-				start: c1,
-				end: c3,
-				position: c1,
-				radius: 5,
-			}
-			// $('#message').text('c: ' + center + ', p ' + polar + ', m ' + JSON.stringify(mark));
-			return [mark];
+		var p2p = polar.toCartesian(center);
+		var markt = {
+			type: 'mark',
+			start: camera.project(p1t),
+			end: camera.project(p2t),
+			radius: 5,
 		}
+		var markp = {
+			type: 'mark',
+			start: camera.project(p1p),
+			end: camera.project(p2p),
+			radius: 5,
+		}
+		return [markt, markp];
 	}
 
 	/**
@@ -374,6 +371,10 @@ var paintingLayer = function(name, projection, opacity)
 			var h = p - r;
 			var d = Math.sqrt(h * h + 2 * h * r);
 			object.depth = - d * (d * z + y * Math.sqrt(y*y + z*z - d*d)) / (y * y + z * z);
+		}
+		else if (object.start)
+		{
+			object.depth = object.start.z;
 		}
 		else
 		{
