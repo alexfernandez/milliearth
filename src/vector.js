@@ -93,6 +93,15 @@ function vector(x, y, z)
 	}
 
 	/**
+	 * Add another vector to this one, scaled, and return the result.
+	 */
+	self.sumScaled = function(point, factor)
+	{
+		var term = point.scale(factor);
+		return self.sum(term);
+	}
+
+	/**
 	 * Add the given vector. Modifies the current vector.
 	 */
 	self.add = function(point)

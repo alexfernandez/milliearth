@@ -278,20 +278,27 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	self.paintUpdate = function(message)
 	{
-		message.objects = message.objects.concat(self.computeMarks(message.position, message.camera));
+		var marks = self.computeMarks(new vector(message.position), new coordinateSystem(message.camera), message.radius);
+		message.objects = message.objects.concat(marks);
 		self.paintObjects(message.objects);
 	}
 
 	/**
 	 * Compute the marks on the ground to paint.
 	 */
-	self.computeMarks = function(position, cameraSystem)
+	self.computeMarks = function(position, camera, radius)
 	{
 		var marks = [];
-		var camera = new coordinateSystem(cameraSystem);
-		var point = new vector(2, 4, 2);
+		var angles = computeAngles(position);
+		var phi = Math.floor(angles.phi * 180 / Math.PI);
+		var theta = Math.floor(angles.theta * 180 / Math.PI);
+		var step = 1 * Math.PI/180;
+		//$('#message').text('angles: ' + angles + ', own angles: ' + own);
+		var polar = new polarPoint(radius, phi, theta);
+		marks.concat(computeMark(polar, position));
+		var point = new vector().sumScaled(camera.w, 10).sumScaled(camera.u, -1);
 		var start = camera.project(new vector(point));
-		point.x += 2;
+		point.addScaled(camera.u, 2);
 		var end = camera.project(new vector(point));
 		var mark = {
 			type: 'mark',
@@ -302,6 +309,31 @@ var paintingLayer = function(name, projection, opacity)
 		}
 		marks.push(mark);
 		return marks;
+	}
+
+	function computeMark(polar, center)
+	{
+		var diff = 0.01 * Math.PI / 180;
+		polar.phi -= diff;
+		polar.theta -= diff;
+		var p1 = point(polar, center);
+		polar.phi += 2 * diff;
+		var p2 = point(polar, center);
+		polar.theta += 2 * diff;
+		var p3 = point(polar, center);
+		polar.phi -= 2 * diff;
+		var p4 = point(polar, center);
+		if (p1 && p2 && p3 && p4)
+		{
+			var mark = {
+				type: 'mark',
+				start: p1,
+				end: p3,
+				position: p1,
+				radius: 5,
+			}
+			return [mark];
+		}
 	}
 
 	/**
@@ -463,10 +495,10 @@ var paintingLayer = function(name, projection, opacity)
 		var center = new vector(pole.center);
 		var own = computeAngles(center);
 		//$('#message').text('angles: ' + angles + ', own angles: ' + own);
-		paintMark(theta, phi, pole);
-		paintMark(theta - step, phi, pole);
-		paintMark(theta, phi - step, pole);
-		paintMark(theta - step, phi - step, pole);
+		paintMark(new polarPoint(pole.radius, theta, phi), center);
+		paintMark(new polarPoint(pole.radius, theta - step, phi), center);
+		paintMark(new polarPoint(pole.radius, theta, phi - step), center);
+		paintMark(new polarPoint(pole.radius, theta - step, phi - step), center);
 	}
 
 	function computeAngles(point)
@@ -477,29 +509,30 @@ var paintingLayer = function(name, projection, opacity)
 		return new polarPoint(r, phi, theta);
 	}
 
-	function paintMark(theta, phi, pole)
+	function paintMark(polar, center)
 	{
 		var diff = 0.01 * Math.PI / 180;
-		var phi1 = phi + diff;
-		var phi2 = phi - diff;
-		var theta1 = theta + diff;
-		var theta2 = theta - diff;
-		var p1 = point(theta1, phi1, pole);
-		var p2 = point(theta1, phi2, pole);
-		var p3 = point(theta2, phi2, pole);
-		var p4 = point(theta2, phi1, pole);
+		polar.phi -= diff;
+		polar.theta -= diff;
+		var p1 = point(polar, center);
+		polar.phi += 2 * diff;
+		var p2 = point(polar, center);
+		polar.theta += 2 * diff;
+		var p3 = point(polar, center);
+		polar.phi -= 2 * diff;
+		var p4 = point(polar, center);
 		if (p1 && p2 && p3 && p4)
 		{
 			paintPolygon([p1, p2, p3, p4, p1], '#0c0');
 		}
 	}
 
-	function point(theta, phi, pole)
+	function point(polar, center)
 	{
-		var x = pole.radius * Math.cos(theta) * Math.sin(phi);
-		var y = pole.radius * Math.sin(theta) * Math.sin(phi);
-		var z = pole.radius * Math.cos(phi);
-		var c = new vector(pole.center);
+		var x = polar.radius * Math.cos(polar.theta) * Math.sin(polar.phi);
+		var y = polar.radius * Math.sin(polar.theta) * Math.sin(polar.phi);
+		var z = polar.radius * Math.cos(polar.phi);
+		var c = new vector(center);
 		var v = c.sum(new vector(x, y, z));
 		if (c.z < 0)
 		{
