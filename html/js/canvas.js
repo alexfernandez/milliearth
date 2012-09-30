@@ -293,21 +293,16 @@ var paintingLayer = function(name, projection, opacity)
 		var phi = Math.floor(angles.phi * 180 / Math.PI);
 		var theta = Math.floor(angles.theta * 180 / Math.PI);
 		var step = 1 * Math.PI/180;
-		//$('#message').text('angles: ' + angles + ', own angles: ' + own);
-		var polar = new polarPoint(radius, phi, theta);
-		marks.concat(computeMark(polar, position));
-		var point = new vector().sumScaled(camera.w, 10).sumScaled(camera.u, -1);
-		var start = camera.project(new vector(point));
-		point.addScaled(camera.u, 2);
-		var end = camera.project(new vector(point));
-		var mark = {
-			type: 'mark',
-			start: start,
-			end: end,
-			depth: start.z,
-			radius: 5,
-		}
-		marks.push(mark);
+		var polar = new polarPoint(radius, phi * Math.PI / 180, theta * Math.PI / 180);
+		marks = marks.concat(computeMark(polar, position));
+		/*
+		polar.phi += step;
+		marks = marks.concat(computeMark(polar, position));
+		polar.theta += step;
+		marks = marks.concat(computeMark(polar, position));
+		polar.phi -= step;
+		marks = marks.concat(computeMark(polar, position));
+	   */
 		return marks;
 	}
 
@@ -316,13 +311,13 @@ var paintingLayer = function(name, projection, opacity)
 		var diff = 0.01 * Math.PI / 180;
 		polar.phi -= diff;
 		polar.theta -= diff;
-		var p1 = point(polar, center);
+		var p1 = toCartesian(polar, center);
 		polar.phi += 2 * diff;
-		var p2 = point(polar, center);
+		var p2 = toCartesian(polar, center);
 		polar.theta += 2 * diff;
-		var p3 = point(polar, center);
+		var p3 = toCartesian(polar, center);
 		polar.phi -= 2 * diff;
-		var p4 = point(polar, center);
+		var p4 = toCartesian(polar, center);
 		if (p1 && p2 && p3 && p4)
 		{
 			var mark = {
@@ -334,6 +329,17 @@ var paintingLayer = function(name, projection, opacity)
 			}
 			return [mark];
 		}
+	}
+
+	function toCartesian(polar, center)
+	{
+		// console.log(polar);
+		var x = polar.radius * Math.cos(polar.theta) * Math.sin(polar.phi);
+		var y = polar.radius * Math.sin(polar.theta) * Math.sin(polar.phi);
+		var z = polar.radius * Math.cos(polar.phi);
+		var c = new vector(center);
+		var v = c.sum(new vector(x, y, z));
+		return v;
 	}
 
 	/**
@@ -514,27 +520,23 @@ var paintingLayer = function(name, projection, opacity)
 		var diff = 0.01 * Math.PI / 180;
 		polar.phi -= diff;
 		polar.theta -= diff;
-		var p1 = point(polar, center);
+		var p1 = projectPolar(polar, center);
 		polar.phi += 2 * diff;
-		var p2 = point(polar, center);
+		var p2 = projectPolar(polar, center);
 		polar.theta += 2 * diff;
-		var p3 = point(polar, center);
+		var p3 = projectPolar(polar, center);
 		polar.phi -= 2 * diff;
-		var p4 = point(polar, center);
+		var p4 = projectPolar(polar, center);
 		if (p1 && p2 && p3 && p4)
 		{
 			paintPolygon([p1, p2, p3, p4, p1], '#0c0');
 		}
 	}
 
-	function point(polar, center)
+	function projectPolar(polar, center)
 	{
-		var x = polar.radius * Math.cos(polar.theta) * Math.sin(polar.phi);
-		var y = polar.radius * Math.sin(polar.theta) * Math.sin(polar.phi);
-		var z = polar.radius * Math.cos(polar.phi);
-		var c = new vector(center);
-		var v = c.sum(new vector(x, y, z));
-		if (c.z < 0)
+		var v = toCartesian(polar, center);
+		if (v.z < 0)
 		{
 			return null;
 		}
