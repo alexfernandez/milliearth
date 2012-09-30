@@ -394,7 +394,7 @@ var paintingLayer = function(name, projection, opacity)
 		var theta1 = theta + diff;
 		var theta2 = theta - diff;
 		var p1 = point(theta1, phi1, pole);
-		$('#message').text('pole-pos: ' + new vector().sum(pole.position) + ', p-theta: ' + pAngles.theta + ', l-theta: ' + lAngles.theta + ', phi: ' + phi + ', theta: ' + theta + ', vector: ' + p1.x + ', ' + p1.y + ', radius: ' + pole.radius);
+		$('#message').text('pole-pos: ' + new vector().sum(pole.position) + ', p-theta: ' + pAngles.theta + ', l-theta: ' + lAngles.theta + ', phi: ' + phi + ', theta: ' + theta + ', vector: ' + p1.x + ', ' + p1.y);
 		var p2 = point(theta1, phi2, pole);
 		var p3 = point(theta2, phi2, pole);
 		var p4 = point(theta2, phi1, pole);
@@ -404,7 +404,7 @@ var paintingLayer = function(name, projection, opacity)
 	function angles(point)
 	{
 		var phi = Math.acos(point.z);
-		var theta = Math.acos(point.x / Math.sin(phi));
+		var theta = Math.atan(point.y / point.x);
 		return {
 			phi: phi,
 			theta: theta,
