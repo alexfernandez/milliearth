@@ -231,6 +231,7 @@ function fighterRobot(id, milliEarth, pole)
 		return {
 			camera: camera,
 			position: self.position,
+			radius: milliEarth.radius,
 			objects: objects,
 		};
 	}

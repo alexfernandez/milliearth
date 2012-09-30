@@ -31,6 +31,15 @@ var planarPoint = function(x, y)
 	// attributes
 	self.x = x;
 	self.y = y;
+
+	/**
+	 * Printable representation.
+	 */
+	self.toString = function()
+	{
+		return 'x: ' + round(self.x) + ', y: ' + round(y);
+	}
+
 }
 
 /**
@@ -269,24 +278,26 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	self.paintUpdate = function(message)
 	{
-		message.objects.concat(self.computeMarks(message.center, message.camera));
+		message.objects = message.objects.concat(self.computeMarks(message.position, message.camera));
 		self.paintObjects(message.objects);
 	}
 
 	/**
 	 * Compute the marks on the ground to paint.
 	 */
-	self.computeMarks = function(center, cameraSystem)
+	self.computeMarks = function(position, cameraSystem)
 	{
 		var marks = [];
 		var camera = new coordinateSystem(cameraSystem);
-		var start = camera.project(new vector(center));
-		var end = new vector(end);
-		end.y += 2;
+		var point = new vector(2, 4, 2);
+		var start = camera.project(new vector(point));
+		point.x += 2;
+		var end = camera.project(new vector(point));
 		var mark = {
 			type: 'mark',
 			start: start,
 			end: end,
+			depth: start.z,
 			radius: 5,
 		}
 		marks.push(mark);
@@ -321,7 +332,6 @@ var paintingLayer = function(name, projection, opacity)
 			}
 			else if (object.type == 'mark')
 			{
-				console.log('mark');
 				paintLine(object);
 			}
 			else if (!object.type)
@@ -518,6 +528,7 @@ var paintingLayer = function(name, projection, opacity)
 	{
 		var start = projection.project(line.start);
 		var end = projection.project(line.end);
+		$('#message').text('start: ' + start + ', end: ' + end);
 		// the drawLine() object
 		var draw = {
 			strokeStyle: "#00f",
