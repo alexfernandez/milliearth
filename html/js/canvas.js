@@ -51,7 +51,15 @@ var polarPoint = function(r, phi, theta)
 	 */
 	self.toString = function()
 	{
-		return round(self.r) + '->(' + round(self.phi) + ',' + round(self.theta) + ')';
+		return round(self.r) + '->(' + round(degrees(self.phi)) + ',' + round(degrees(self.theta)) + ')';
+	}
+
+	/**
+	 * Compute the value in degrees.
+	 */
+	function degrees(angle)
+	{
+		return angle * 180 / Math.PI;
 	}
 }
 
