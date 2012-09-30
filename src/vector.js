@@ -217,6 +217,54 @@ function vector(x, y, z)
 }
 
 /**
+ * A vector using polar coordinates.
+ */
+var polarVector = function(r, phi, theta)
+{
+	// self-reference
+	var self = this;
+
+	// attributes
+	self.r = r;
+	self.phi = phi;
+	self.theta = theta;
+
+	/**
+	 * Convert to cartesian coordinates, return a vector.
+	 * The optional center will be added to the result.
+	 */
+	self.toCartesian = function(center)
+	{
+		var x = self.radius * Math.cos(self.theta) * Math.sin(self.phi);
+		var y = self.radius * Math.sin(self.theta) * Math.sin(self.phi);
+		var z = self.radius * Math.cos(self.phi);
+		var v = new vector(x, y, z);
+		if (center)
+		{
+			v.add(center);
+		}
+		return v;
+	}
+
+	/**
+	 * Printable representation.
+	 */
+	self.toString = function()
+	{
+		return round(self.r) + '->(' + round(degrees(self.phi)) + ',' + round(degrees(self.theta)) + ')';
+	}
+
+	/**
+	 * Compute the value in degrees.
+	 */
+	function degrees(angle)
+	{
+		return angle * 180 / Math.PI;
+	}
+}
+
+
+/**
  * A coordinate system with three axis, each determined by an orthogonal unit vector.
  */
 function coordinateSystem(u, v, w)
@@ -297,6 +345,7 @@ function coordinateSystem(u, v, w)
 }
 
 module.exports.vector = vector;
+module.exports.polarVector = polarVector;
 module.exports.coordinateSystem = coordinateSystem;
 
 module.test = function()
@@ -305,5 +354,4 @@ module.test = function()
 	console.log(a.scalarProduct(new vector(3, 4, 5)));
 	console.log(a.vectorProduct(new vector(3, 4, 5)).toString());
 }
-
 

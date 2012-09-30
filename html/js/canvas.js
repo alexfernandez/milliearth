@@ -39,54 +39,6 @@ var planarPoint = function(x, y)
 	{
 		return 'x: ' + round(self.x) + ', y: ' + round(y);
 	}
-
-}
-
-/**
- * A point using polar coordinates.
- */
-var polarPoint = function(r, phi, theta)
-{
-	// self-reference
-	var self = this;
-
-	// attributes
-	self.r = r;
-	self.phi = phi;
-	self.theta = theta;
-
-	/**
-	 * Convert to cartesian coordinates, return a vector.
-	 * The optional center will be added to the result.
-	 */
-	self.toCartesian = function(center)
-	{
-		var x = self.radius * Math.cos(self.theta) * Math.sin(self.phi);
-		var y = self.radius * Math.sin(self.theta) * Math.sin(self.phi);
-		var z = self.radius * Math.cos(self.phi);
-		var v = new vector(x, y, z);
-		if (center)
-		{
-			v.add(center);
-		}
-		return v;
-	}
-
-	/**
-	 * Printable representation.
-	 */
-	self.toString = function()
-	{
-		return round(self.r) + '->(' + round(degrees(self.phi)) + ',' + round(degrees(self.theta)) + ')';
-	}
-
-	/**
-	 * Compute the value in degrees.
-	 */
-	function degrees(angle)
-	{
-		return angle * 180 / Math.PI;
-	}
 }
 
 /**
@@ -310,7 +262,7 @@ var paintingLayer = function(name, projection, opacity)
 		var phi = Math.floor(angles.phi * 180 / Math.PI);
 		var theta = Math.floor(angles.theta * 180 / Math.PI);
 		var step = 1 * Math.PI/180;
-		var polar = new polarPoint(radius, phi * Math.PI / 180, theta * Math.PI / 180);
+		var polar = new polarVector(radius, phi * Math.PI / 180, theta * Math.PI / 180);
 		marks = marks.concat(computeMark(polar, position));
 		/*
 		polar.phi += step;
@@ -507,10 +459,10 @@ var paintingLayer = function(name, projection, opacity)
 		var center = new vector(pole.center);
 		var own = computeAngles(center);
 		//$('#message').text('angles: ' + angles + ', own angles: ' + own);
-		paintMark(new polarPoint(pole.radius, theta, phi), center);
-		paintMark(new polarPoint(pole.radius, theta - step, phi), center);
-		paintMark(new polarPoint(pole.radius, theta, phi - step), center);
-		paintMark(new polarPoint(pole.radius, theta - step, phi - step), center);
+		paintMark(new polarVector(pole.radius, theta, phi), center);
+		paintMark(new polarVector(pole.radius, theta - step, phi), center);
+		paintMark(new polarVector(pole.radius, theta, phi - step), center);
+		paintMark(new polarVector(pole.radius, theta - step, phi - step), center);
 	}
 
 	function computeAngles(point)
@@ -518,7 +470,7 @@ var paintingLayer = function(name, projection, opacity)
 		var r = point.length();
 		var phi = Math.acos(point.z / r);
 		var theta = Math.atan(point.y / point.x);
-		return new polarPoint(r, phi, theta);
+		return new polarVector(r, phi, theta);
 	}
 
 	function paintMark(polar, center)
