@@ -56,6 +56,23 @@ var polarPoint = function(r, phi, theta)
 	self.theta = theta;
 
 	/**
+	 * Convert to cartesian coordinates, return a vector.
+	 * The optional center will be added to the result.
+	 */
+	self.toCartesian = function(center)
+	{
+		var x = self.radius * Math.cos(self.theta) * Math.sin(self.phi);
+		var y = self.radius * Math.sin(self.theta) * Math.sin(self.phi);
+		var z = self.radius * Math.cos(self.phi);
+		var v = new vector(x, y, z);
+		if (center)
+		{
+			v.add(center);
+		}
+		return v;
+	}
+
+	/**
 	 * Printable representation.
 	 */
 	self.toString = function()
@@ -76,9 +93,9 @@ var polarPoint = function(r, phi, theta)
  * A painting projection. Starting coordinates for x and y, start depth and scale.
  * If planar, z is not used to project x and y.
  */
-	var paintingProjection = function(startx, starty, startz, scale)
-	{
-		// self-reference
+var paintingProjection = function(startx, starty, startz, scale)
+{
+	// self-reference
 		var self = this;
 
 	// attributes
@@ -311,13 +328,13 @@ var paintingLayer = function(name, projection, opacity)
 		var diff = 0.01 * Math.PI / 180;
 		polar.phi -= diff;
 		polar.theta -= diff;
-		var p1 = toCartesian(polar, center);
+		var p1 = polar.toCartesian(center);
 		polar.phi += 2 * diff;
-		var p2 = toCartesian(polar, center);
+		var p2 = polar.toCartesian(center);
 		polar.theta += 2 * diff;
-		var p3 = toCartesian(polar, center);
+		var p3 = polar.toCartesian(center);
 		polar.phi -= 2 * diff;
-		var p4 = toCartesian(polar, center);
+		var p4 = polar.toCartesian(center);
 		if (p1 && p2 && p3 && p4)
 		{
 			var mark = {
@@ -329,17 +346,6 @@ var paintingLayer = function(name, projection, opacity)
 			}
 			return [mark];
 		}
-	}
-
-	function toCartesian(polar, center)
-	{
-		// console.log(polar);
-		var x = polar.radius * Math.cos(polar.theta) * Math.sin(polar.phi);
-		var y = polar.radius * Math.sin(polar.theta) * Math.sin(polar.phi);
-		var z = polar.radius * Math.cos(polar.phi);
-		var c = new vector(center);
-		var v = c.sum(new vector(x, y, z));
-		return v;
 	}
 
 	/**
@@ -535,7 +541,7 @@ var paintingLayer = function(name, projection, opacity)
 
 	function projectPolar(polar, center)
 	{
-		var v = toCartesian(polar, center);
+		var v = polar.toCartesian(center);
 		if (v.z < 0)
 		{
 			return null;
