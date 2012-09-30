@@ -142,7 +142,7 @@ function fighterRobot(id, milliEarth, pole)
 	/**
 	 * Get a global update for the player.
 	 */
-	self.getGlobalUpdate = function(bodies)
+	self.computeGlobalUpdate = function(bodies)
 	{
 		var meBody = {
 			id: 'milliEarth',
@@ -194,22 +194,24 @@ function fighterRobot(id, milliEarth, pole)
 	}
 
 	/**
-	 * Compute the line of sight positions for other players.
+	 * Compute an update of what the current player can view:
+	 * the line of sight positions for other players.
 	 */
-	self.computeSight = function(bodies)
+	self.computeViewUpdate = function(bodies)
 	{
+		var center = computePosition(milliEarth);
 		var meBody = {
 			id: 'milliEarth',
 			type: 'milliEarth',
 			radius: milliEarth.radius,
-			position: computePosition(milliEarth),
+			position: center,
 		};
 		var poleBody = {
 			id: 'pole',
 			type: 'pole',
 			radius: pole.radius,
 			position: computePosition(pole),
-			center: computePosition(milliEarth),
+			center: center,
 		};
 		var objects = [meBody, poleBody];
 		for (var id in bodies)
@@ -226,7 +228,11 @@ function fighterRobot(id, milliEarth, pole)
 				objects.push(object);
 			}
 		}
-		return { objects: objects };
+		return {
+			camera: camera,
+			center: center.scale(-1),
+			objects: objects,
+		};
 	}
 
 	/**
@@ -384,7 +390,7 @@ var gameWorld = function(id)
 			return {};
 		}
 		var player = bodies[id];
-		return player.computeSight(bodiesExcept(id));
+		return player.computeViewUpdate(bodiesExcept(id));
 	}
 
 	/**
@@ -398,7 +404,7 @@ var gameWorld = function(id)
 			return {};
 		}
 		var player = bodies[id];
-		return player.getGlobalUpdate(bodies)
+		return player.computeGlobalUpdate(bodies)
 	}
 
 	/**

@@ -265,6 +265,15 @@ var paintingLayer = function(name, projection, opacity)
 	}
 
 	/**
+	 * Compute the marks on the ground to paint.
+	 */
+	self.computeMarks = function(center, camera)
+	{
+		var marks = [];
+		return marks;
+	}
+
+	/**
 	 * Paint an array of objects.
 	 */
 	self.paintObjects = function(objects)
