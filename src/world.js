@@ -397,15 +397,16 @@ function fighterRobot(id, world)
 		{
 			return;
 		}
-		console.log('Player ' + id + ' shot!');
 		var projectile = new flyingProjectile('projectile.' + id + '.' + self.projectiles, world);
-		projectile.speed = self.speed.sum(camera.v.scale(params.projectileSpeed));
+		projectile.position = self.position.sum(camera.w.scale(self.radius + projectile.radius));
+		projectile.speed = self.speed.sum(camera.w.scale(params.projectileSpeed));
 		// recoil
 		self.mass -= projectile.mass;
 		self.speed.addScaled(projectile.speed, -projectile.mass / self.mass);
 		// add to world
 		world.addObject(projectile);
 		self.projectiles--;
+		log('Player ' + id + ' shot!');
 	}
 }
 
