@@ -245,9 +245,9 @@ var polarVector = function(r, phi, theta)
 	 */
 	self.toCartesian = function(center)
 	{
-		var x = self.radius * Math.cos(self.theta) * Math.sin(self.phi);
-		var y = self.radius * Math.sin(self.theta) * Math.sin(self.phi);
-		var z = self.radius * Math.cos(self.phi);
+		var x = self.r * Math.cos(self.theta) * Math.sin(self.phi);
+		var y = self.r * Math.sin(self.theta) * Math.sin(self.phi);
+		var z = self.r * Math.cos(self.phi);
 		var v = new vector(x, y, z);
 		if (center)
 		{

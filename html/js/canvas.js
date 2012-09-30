@@ -275,8 +275,9 @@ var paintingLayer = function(name, projection, opacity)
 		return marks;
 	}
 
-	function computeMark(polar, camera, center)
+	function computeMark(polar, camera, position)
 	{
+		var center = position.scale(-1);
 		var diff = 0.01 * Math.PI / 180;
 		polar.phi -= diff;
 		polar.theta -= diff;
@@ -298,7 +299,7 @@ var paintingLayer = function(name, projection, opacity)
 				position: c1,
 				radius: 5,
 			}
-			$('#message').text('c: ' + center + ', ' + JSON.stringify(mark));
+			$('#message').text('c: ' + center + ', p ' + polar + ', m ' + JSON.stringify(mark));
 			return [mark];
 		}
 	}
