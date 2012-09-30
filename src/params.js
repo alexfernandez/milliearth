@@ -50,7 +50,7 @@ var params = new function()
 	// mass of MilliEarth: 1 millionth the mass of Earth, in kg
 	this.meMass = 5.97219e18;
 	// robot mass, in kg
-	this.robotMass = 100;
+	this.robotMass = 200;
 	// robot radius, in m
 	this.robotRadius = 2;
 	// set marks every given distance, m
@@ -62,7 +62,7 @@ var params = new function()
 	// number of projectiles available
 	this.projectiles = 20;
 	// mass of projectile, kg
-	this.projectileMass = 3;
+	this.projectileMass = 1;
 	// radius of projectile, m
 	this.projectileRadius = 0.2;
 	// speed of projectile, m/s
