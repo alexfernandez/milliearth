@@ -258,12 +258,12 @@ var paintingLayer = function(name, projection, opacity)
 	self.computeMarks = function(position, camera, radius)
 	{
 		var marks = [];
-		var angles = computeAngles(position);
+		var angles = new polarVector(position);
 		var phi = Math.floor(angles.phi * 180 / Math.PI);
 		var theta = Math.floor(angles.theta * 180 / Math.PI);
 		var step = 1 * Math.PI/180;
 		var polar = new polarVector(radius, phi * Math.PI / 180, theta * Math.PI / 180);
-		marks = marks.concat(computeMark(polar, position));
+		marks = marks.concat(computeMark(polar, camera, position));
 		/*
 		polar.phi += step;
 		marks = marks.concat(computeMark(polar, position));
@@ -275,7 +275,7 @@ var paintingLayer = function(name, projection, opacity)
 		return marks;
 	}
 
-	function computeMark(polar, center)
+	function computeMark(polar, camera, center)
 	{
 		var diff = 0.01 * Math.PI / 180;
 		polar.phi -= diff;
@@ -289,13 +289,16 @@ var paintingLayer = function(name, projection, opacity)
 		var p4 = polar.toCartesian(center);
 		if (p1 && p2 && p3 && p4)
 		{
+			var c1 = camera.project(p1);
+			var c3 = camera.project(p3);
 			var mark = {
 				type: 'mark',
-				start: p1,
-				end: p3,
-				position: p1,
+				start: c1,
+				end: c3,
+				position: c1,
 				radius: 5,
 			}
+			$('#message').text('c: ' + center + ', ' + JSON.stringify(mark));
 			return [mark];
 		}
 	}
@@ -452,25 +455,17 @@ var paintingLayer = function(name, projection, opacity)
 	{
 		//self.paintBody(pole, '#0f0');
 		var p = new vector(pole.position).difference(pole.center);
-		var angles = computeAngles(p);
+		var angles = new polarVector(p);
 		var phi = angles.phi;
 		var theta = angles.theta;
 		var step = 1 * Math.PI/180;
 		var center = new vector(pole.center);
-		var own = computeAngles(center);
+		var own = new polarVector(center);
 		//$('#message').text('angles: ' + angles + ', own angles: ' + own);
 		paintMark(new polarVector(pole.radius, theta, phi), center);
 		paintMark(new polarVector(pole.radius, theta - step, phi), center);
 		paintMark(new polarVector(pole.radius, theta, phi - step), center);
 		paintMark(new polarVector(pole.radius, theta - step, phi - step), center);
-	}
-
-	function computeAngles(point)
-	{
-		var r = point.length();
-		var phi = Math.acos(point.z / r);
-		var theta = Math.atan(point.y / point.x);
-		return new polarVector(r, phi, theta);
 	}
 
 	function paintMark(polar, center)
@@ -521,7 +516,7 @@ var paintingLayer = function(name, projection, opacity)
 	{
 		var start = projection.project(line.start);
 		var end = projection.project(line.end);
-		$('#message').text('start: ' + start + ', end: ' + end);
+		//$('#message').text('start: ' + start + ', end: ' + end);
 		// the drawLine() object
 		var draw = {
 			strokeStyle: "#00f",

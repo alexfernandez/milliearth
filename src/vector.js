@@ -225,9 +225,19 @@ var polarVector = function(r, phi, theta)
 	var self = this;
 
 	// attributes
-	self.r = r;
-	self.phi = phi;
-	self.theta = theta;
+	if (r && r.x)
+	{
+		// convert from cartesian coordinates
+		self.r = r.length();
+		self.phi = Math.acos(r.z / self.r);
+		self.theta = Math.atan(r.y / r.x);
+	}
+	else
+	{
+		self.r = r;
+		self.phi = phi;
+		self.theta = theta;
+	}
 
 	/**
 	 * Convert to cartesian coordinates, return a vector.
