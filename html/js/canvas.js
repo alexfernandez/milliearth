@@ -184,9 +184,16 @@ var polarPoint = function(r, phi, theta)
 		var t1 = 2 * x * y * i + 2 * y * z;
 		var t2 = (y * y - d2) * (x * x * i * i + 2 * x * z * i + z * z - d2 * i * i - d2);
 		var sqrt = Math.sqrt(t1 * t1 - 4 * t2);
-		var j1 = (sqrt - 2 * x * y * i - 2 * y * z) / (2 * (y * y - d2));
-		var j2 = (- sqrt - 2 * x * y * i - 2 * y * z) / (2 * (y * y - d2));
-		var point = new planarPoint(scaleX(i), scaleY(j2));
+		var j;
+		if (y > 0)
+		{
+			j = (sqrt - 2 * x * y * i - 2 * y * z) / (2 * (y * y - d2));
+		}
+		else
+		{
+			j = (- sqrt - 2 * x * y * i - 2 * y * z) / (2 * (y * y - d2));
+		}
+		var point = new planarPoint(scaleX(i), scaleY(j));
 		return point;
 	}
 
@@ -542,13 +549,15 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	function paintHyperbola(object, color)
 	{
-		var points = [new planarPoint(0, canvas.height())];
+		var w = canvas.width();
+		var h = canvas.height();
+		var points = [new planarPoint(0, h)];
 		for (var i = 0; i <= canvas.width(); i += 20)
 		{
 			points.push(projection.projectConic(object, i));
 		}
-		points.push(new planarPoint(canvas.width(), canvas.height()));
-		points.push(new planarPoint(0, canvas.height()));
+		points.push(new planarPoint(w, h));
+		points.push(new planarPoint(0, h));
 		paintPolygon(points, '#ccc');
 	}
 
