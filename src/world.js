@@ -399,6 +399,11 @@ function fighterRobot(id, world)
 		}
 		console.log('Player ' + id + ' shot!');
 		var projectile = new flyingProjectile('projectile.' + id + '.' + self.projectiles, world);
+		projectile.speed = self.speed.sum(camera.v.scale(params.projectileSpeed));
+		// recoil
+		self.mass -= projectile.mass;
+		self.speed.addScaled(projectile.speed, -projectile.mass / self.mass);
+		// add to world
 		world.addObject(projectile);
 		self.projectiles--;
 	}
@@ -486,7 +491,6 @@ var gameWorld = function(id)
 		else
 		{
 			// player
-			var orbitingSpeed = Math.sqrt(params.bigG * params.meMass / distance);
 			var sqrt = Math.sqrt(2 * distance * distance) / 2;
 			robot.start(
 				new vector(distance + 2, -10, 0),
@@ -524,6 +528,7 @@ var gameWorld = function(id)
 		iterate(function(body) {
 			if (!body.active)
 			{
+				log('Removing ' + body.id);
 				delete bodies[body.id];
 
 			}

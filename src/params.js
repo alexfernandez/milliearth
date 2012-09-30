@@ -61,10 +61,12 @@ var params = new function()
 	this.turningAngle = Math.PI / 2;
 	// number of projectiles available
 	this.projectiles = 20;
-	// mass of projectile
+	// mass of projectile, kg
 	this.projectileMass = 3;
-	// radius of projectile
+	// radius of projectile, m
 	this.projectileRadius = 0.2;
+	// speed of projectile, m/s
+	this.projectileSpeed = Math.sqrt(this.bigG * this.meMass / this.meRadius);
 }
 
 module.exports.params = params;
