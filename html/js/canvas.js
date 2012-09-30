@@ -433,7 +433,10 @@ var paintingLayer = function(name, projection, opacity)
 		var p2 = point(theta1, phi2, pole);
 		var p3 = point(theta2, phi2, pole);
 		var p4 = point(theta2, phi1, pole);
-		paintPolygon([p1, p2, p3, p4, p1], '#0c0');
+		if (p1 && p2 && p3 && p4)
+		{
+			paintPolygon([p1, p2, p3, p4, p1], '#0c0');
+		}
 	}
 
 	function point(theta, phi, pole)
@@ -443,6 +446,10 @@ var paintingLayer = function(name, projection, opacity)
 		var z = pole.radius * Math.cos(phi);
 		var c = new vector(pole.center);
 		var v = c.sum(new vector(x, y, z));
+		if (c.z < 0)
+		{
+			return null;
+		}
 		return projection.project(v);
 	}
 
