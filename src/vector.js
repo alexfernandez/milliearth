@@ -299,19 +299,20 @@ function coordinateSystem(u, v, w)
 	/**
 	 * Align the v axis with the given vector.
 	 */
-	self.alignV = function(newV)
+	self.alignV = function(alignment)
 	{
-		var vProduct = self.v.scalarProduct(newV);
+		var v = alignment.unit();
+		var vProduct = self.v.scalarProduct(v);
 		if (vProduct == 0)
 		{
 			log('Cannot align with perpendicular vector');
 			return;
 		}
-		self.v = newV;
-		var uProduct = self.u.scalarProduct(newV);
+		self.v = v;
+		var uProduct = self.u.scalarProduct(v);
 		if (uProduct != 0)
 		{
-			self.u = self.u.sum(newV.scale(-uProduct)).unit();
+			self.u = self.u.sum(v.scale(-uProduct)).unit();
 		}
 		self.w = self.u.vectorProduct(self.v);
 	}
@@ -351,6 +352,14 @@ function coordinateSystem(u, v, w)
 		var w = self.w.scale(p).sum(self.v.scale(-q));
 		self.v = v;
 		self.w = w;
+	}
+
+	/**
+	 * Printable representation.
+	 */
+	self.toString = function()
+	{
+		return '(u: ' + self.u + ', v: ' + self.v + ', w: ' + self.w + ')';
 	}
 }
 

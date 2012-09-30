@@ -438,10 +438,6 @@ var paintingLayer = function(name, projection, opacity)
 		{
 			return;
 		}
-		if (body.type == 'milliEarth')
-		{
-			$('#message').text(JSON.stringify(type));
-		}
 		if (type.determinant < 0 || body.type != 'milliEarth')
 		{
 			paintEllipse(body, color);

@@ -93,6 +93,7 @@ function fighterRobot(id, milliEarth, pole)
 		self.position = position;
 		self.speed = speed;
 		camera = new coordinateSystem(position.vectorProduct(speed), position, speed);
+		camera.alignV(position);
 	}
 
 	/**
