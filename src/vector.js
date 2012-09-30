@@ -215,9 +215,19 @@ function coordinateSystem(u, v, w)
 	// self-reference
 	var self = this;
 
-	self.u = u.unit();
-	self.v = v.unit();
-	self.w = w.unit();
+	if (u && u.u)
+	{
+		// initialize using an object
+		self.u = new vector(u.u).unit();
+		self.v = new vector(u.v).unit();
+		self.w = new vector(u.w).unit();
+	}
+	else
+	{
+		self.u = u.unit();
+		self.v = v.unit();
+		self.w = w.unit();
+	}
 
 	/**
 	 * Align the v axis with the given vector.

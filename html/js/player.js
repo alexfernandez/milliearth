@@ -223,8 +223,7 @@ var clientPlayer = function()
 		}
 		countUpdate(message.id);
 		$('#simulation').clearCanvas();
-		message.objects.concat(mainLayer.computeMarks);
-		mainLayer.paintObjects(message.objects);
+		mainLayer.paintUpdate(message);
 		paintGlobalUpdate();
 	}
 

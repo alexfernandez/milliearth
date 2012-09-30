@@ -230,7 +230,7 @@ function fighterRobot(id, milliEarth, pole)
 		}
 		return {
 			camera: camera,
-			center: center.scale(-1),
+			position: self.position,
 			objects: objects,
 		};
 	}
