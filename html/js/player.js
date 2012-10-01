@@ -90,6 +90,7 @@ var clientPlayer = function()
 			opacity: 0.5,
 			start: new planarPoint(width - globalWidth, 0),
 			end: new planarPoint(width, globalWidth),
+			autoscale: true,
 		};
 		return new paintingLayer(globalParams);
 	}

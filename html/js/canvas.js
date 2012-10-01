@@ -24,13 +24,15 @@
  * A painting projection. Starting coordinates for x, y and z, and scale.
  * If planar, z is not used to project x and y.
  */
-var paintingProjection = function(start, scale)
+var paintingProjection = function(start, initialScale)
 {
 	// self-reference
 		var self = this;
 
 	// attributes
 	self.planar = false;
+	var scale = initialScale;
+	resetScale();
 
 	/**
 	 * Project a 3d point into the 2d plane.
@@ -204,6 +206,14 @@ var paintingProjection = function(start, scale)
 	{
 		return start.y - scale * length;
 	}
+
+	/**
+	 * Reset scale to initial value.
+	 */
+	function resetScale()
+	{
+		scale = initialScale;
+	}
 }
 
 /**
@@ -219,6 +229,9 @@ var paintingLayer = function(params)
 	var canvas = params.canvas;
 	var projection = params.projection;
 	var opacity = params.opacity || 1.0;
+	var start = params.start || new planarPoint(0, 0);
+	var end = params.end || new planarPoint(canvas.width(), canvas.height());
+	var autoscale = params.autoscale || false;
 
 	/**
 	 * Paint an update.
@@ -231,6 +244,9 @@ var paintingLayer = function(params)
 			message.objects = message.objects.concat(marks);
 		}
 		message.objects.sort(byDepth);
+		if (autoscale)
+		{
+		}
 		self.clear();
 		paintObjects(message.objects);
 		paintCrosshairs();
@@ -271,15 +287,19 @@ var paintingLayer = function(params)
 		var p1p = polar.toCartesian(center);
 		polar.phi += 2 * diff;
 		var p2p = polar.toCartesian(center);
+		var start = camera.project(p1t);
 		var markt = {
 			type: 'mark',
-			start: camera.project(p1t),
+			position: start,
+			start: start,
 			end: camera.project(p2t),
 			radius: 5,
 		}
+		start = camera.project(p1p);
 		var markp = {
 			type: 'mark',
-			start: camera.project(p1p),
+			position: start,
+			start: start,
 			end: camera.project(p2p),
 			radius: 5,
 		}
@@ -334,10 +354,6 @@ var paintingLayer = function(params)
 	 */
 	function getDepth(object)
 	{
-		if (object.depth)
-		{
-			return object.depth;
-		}
 		if (object.type == 'milliEarth' && !projection.planar)
 		{
 			// use depth of horizon
@@ -348,17 +364,9 @@ var paintingLayer = function(params)
 			var p = Math.sqrt(x * x + y * y + z * z);
 			var h = p - r;
 			var d = Math.sqrt(h * h + 2 * h * r);
-			object.depth = - d * (d * z + y * Math.sqrt(y*y + z*z - d*d)) / (y * y + z * z);
+			return - d * (d * z + y * Math.sqrt(y*y + z*z - d*d)) / (y * y + z * z);
 		}
-		else if (object.start)
-		{
-			object.depth = object.start.z;
-		}
-		else
-		{
-			object.depth = object.position.z;
-		}
-		return object.depth;
+		return object.position.z;
 	}
 
 	/**
@@ -452,16 +460,20 @@ var paintingLayer = function(params)
 	}
 
 	/**
-	 * Paint a line sent by the server, with start and end.
+	 * Paint a line with start and end.
 	 */
 	function paintLine(line)
 	{
-		if (line.depth < 0)
+		if (line.position.z < 0)
 		{
 			return;
 		}
 		var start = projection.project(line.start);
 		var end = projection.project(line.end);
+		if (!withinBounds(start) && !withinBounds(end))
+		{
+			return;
+		}
 		var draw = {
 			strokeStyle: "#00f",
 			strokeWidth: 1,
@@ -597,6 +609,30 @@ var paintingLayer = function(params)
 			radius: l,
 			opacity: opacity,
 		});
+	}
+
+	/**
+	 * Find out if the given point is within bounds.
+	 */
+	function withinBounds(point)
+	{
+		if (point.x < start.x)
+		{
+			return false;
+		}
+		if (point.y < start.y)
+		{
+			return false;
+		}
+		if (point.x > end.x)
+		{
+			return false;
+		}
+		if (point.y > end.y)
+		{
+			return false;
+		}
+		return true;
 	}
 }
 
