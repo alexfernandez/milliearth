@@ -62,11 +62,13 @@ var globalParams = new function()
 	// degrees of turn per second, radians
 	this.turningAngle = Math.PI / 2;
 	// number of projectiles available
-	this.projectiles = 20;
+	this.projectiles = 200;
 	// mass of projectile, kg
 	this.projectileMass = 1;
 	// radius of projectile, m
 	this.projectileRadius = 0.2;
+	// charge of projectile, joules
+	this.projectileCharge = 4e8;
 	// speed of projectile, m/s
 	this.projectileSpeed = Math.sqrt(this.bigG * this.meMass / this.meRadius);
 	// distance at which objects are lost, m

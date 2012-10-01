@@ -72,8 +72,15 @@ function massiveBody(params)
 		self.speed.addScaled(difference, factor * period);
 		if (distance < self.radius + attractor.radius)
 		{
-			self.computeCollision(attractor, period);
+			self.computeMilliEarthCollision(attractor, period);
 		}
+	}
+
+	/**
+	 * Move following the current speed.
+	 */
+	self.move = function(period)
+	{
 		var scaledSpeed = self.speed.scale(period);
 		self.position.add(scaledSpeed);
 	}
@@ -92,6 +99,18 @@ function massiveBody(params)
 	self.substractDamage = function(energy)
 	{
 		self.life -= energy;
+		if (self.life <= 0)
+		{
+			self.active = false;
+		}
+	}
+
+	/**
+	 * Compute a collision with the milliEarth, go to the general case of a collision.
+	 */
+	self.computeMilliEarthCollision = function(body, period)
+	{
+		self.computeCollision(body, period);
 	}
 }
 
@@ -105,6 +124,7 @@ function flyingProjectile(params)
 	// extend massiveBody
 	params.mass = globalParams.projectileMass;
 	params.radius = globalParams.projectileRadius;
+	params.life = 0;
 	extend(new massiveBody(params), self);
 
 	// attributes
@@ -112,18 +132,12 @@ function flyingProjectile(params)
 	self.color = '#f00';
 
 	/**
-	 * Self-destruct on impact.
+	 * Self-destruct on impact, damage body.
 	 */
-	self.computeCollision = function(attractor, period)
+	self.computeCollision = function(body, period)
 	{
 		self.active = false;
-	}
-
-	/**
-	 * Explode on a given object.
-	 */
-	self.explode = function(body)
-	{
+		body.substractDamage(globalParams.projectileCharge);
 	}
 }
 
@@ -160,9 +174,9 @@ function fighterRobot(params)
 	}
 
 	/**
-	 * Compute a collision with a body: rebound, apply friction.
+	 * Compute a collision with the milliEarth: rebound, apply friction.
 	 */
-	self.computeCollision = function(body, period)
+	self.computeMilliEarthCollision = function(body, period)
 	{
 		var differenceUnit = body.position.difference(self.position).unit();
 		var collisionSpeed = self.speed.scalarProduct(differenceUnit);
@@ -556,6 +570,9 @@ var gameWorld = function(id)
 		}
 		iterate(function(body) {
 			body.computeAttraction(self.milliEarth, delay / 1000);
+		});
+		iterate(function(body) {
+			body.move(delay / 1000);
 		});
 		iterate(function(body) {
 			if (!body.active || body.position.length() > globalParams.lostDistance)
