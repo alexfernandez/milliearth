@@ -49,12 +49,15 @@ var clientPlayer = function()
 	// layers and projections
 	var width = $('#simulation').width();
 	var height = $('#simulation').height();
-	var viewProjection = new paintingProjection(width / 2, height / 2, 0, 4/5 * height);
-	var viewLayer = new paintingLayer('view', viewProjection, 0);
+	var viewStart = new vector(width / 2, height / 2, 0);
+	var viewDimensions = new planarPoint(width, height);
+	var viewProjection = new paintingProjection(viewStart, 4/5 * height, viewDimensions);
+	var viewLayer = new paintingLayer($('#simulation'), 'view', viewProjection, 0);
 	var globalWidth = height / 6;
-	var globalProjection = new paintingProjection(width - globalWidth, globalWidth, 0, 2/3 * globalWidth / 6000);
+	var globalStart = new vector(width - globalWidth, globalWidth, 0);
+	var globalProjection = new paintingProjection(globalStart, 2/3 * globalWidth / 6000);
 	globalProjection.planar = true;
-	var globalLayer = new paintingLayer('global', globalProjection, 0.5);
+	var globalLayer = new paintingLayer($('#simulation'), 'global', globalProjection, 0.5);
 	// player id sent to the server: random
 	var playerId = Math.floor(Math.random() * 0x100000000).toString(16);
 	// game id: random

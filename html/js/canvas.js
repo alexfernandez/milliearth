@@ -21,10 +21,10 @@
 
 
 /**
- * A painting projection. Starting coordinates for x and y, start depth and scale.
+ * A painting projection. Starting coordinates for x, y and z, and scale.
  * If planar, z is not used to project x and y.
  */
-var paintingProjection = function(startx, starty, startz, scale)
+var paintingProjection = function(start, scale)
 {
 	// self-reference
 		var self = this;
@@ -128,7 +128,7 @@ var paintingProjection = function(startx, starty, startz, scale)
 	self.projectConic = function(object, x)
 	{
 		// first de-project
-		var i = (x - startx) / scale;
+		var i = (x - start.x) / scale;
 		// now compute
 		var x = object.position.x;
 		var y = object.position.y;
@@ -186,7 +186,7 @@ var paintingProjection = function(startx, starty, startz, scale)
 		{
 			return length;
 		}
-		return length / (z + startz);
+		return length / (z + start.z);
 	}
 
 	/**
@@ -194,7 +194,7 @@ var paintingProjection = function(startx, starty, startz, scale)
 	 */
 	function scaleX(length)
 	{
-		return startx + scale * length;
+		return start.x + scale * length;
 	}
 
 	/**
@@ -202,19 +202,18 @@ var paintingProjection = function(startx, starty, startz, scale)
 	 */
 	function scaleY(length)
 	{
-		return starty - scale * length;
+		return start.y - scale * length;
 	}
 }
 
 /**
  * A painting layer.
  */
-var paintingLayer = function(name, projection, opacity)
+var paintingLayer = function(canvas, name, projection, opacity)
 {
 	// self-reference
 	var self = this;
 
-	var canvas = $('#simulation');
 	var textPosition = 0;
 	if (opacity == 0)
 	{
