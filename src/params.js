@@ -67,6 +67,8 @@ var params = new function()
 	this.projectileRadius = 0.2;
 	// speed of projectile, m/s
 	this.projectileSpeed = Math.sqrt(this.bigG * this.meMass / this.meRadius);
+	// distance at which objects are lost, m
+	this.lostDistance = 3 * this.meRadius;
 }
 
 module.exports.params = params;

@@ -527,7 +527,7 @@ var gameWorld = function(id)
 			body.computeAttraction(self.milliEarth, delay / 1000);
 		});
 		iterate(function(body) {
-			if (!body.active)
+			if (!body.active || body.position.length() > params.lostDistance)
 			{
 				log('Removing ' + body.id);
 				delete bodies[body.id];
