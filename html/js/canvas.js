@@ -56,7 +56,22 @@ var screenProjection = function(params)
 		var point = self.project(object.position);
 		if (!self.withinBounds(point))
 		{
-			console.log(object.id + ' out of bounds');
+			if (point.x < start.x)
+			{
+				scale *= (start.x - origin.x) / (point.x - origin.x);
+			}
+			else if (point.x > start.x)
+			{
+				scale *= (end.x - origin.x) / (point.x - origin.x);
+			}
+			if (point.y < start.y)
+			{
+				scale *= (start.y + origin.y) / (point.y + origin.y);
+			}
+			else if (point.y > start.y)
+			{
+				scale *= (end.y + origin.y) / (point.y + origin.y);
+			}
 		}
 	}
 
