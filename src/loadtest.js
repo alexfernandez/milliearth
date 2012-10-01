@@ -42,7 +42,7 @@ var trace = util.trace;
  */
 var concurrency = 10;
 var requestsSecond = 20;
-var secondsMeasured = 10;
+var secondsMeasured = 5;
 var server = 'localhost:80';
 if (process.argv.length > 2)
 {
