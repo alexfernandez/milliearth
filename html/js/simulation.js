@@ -27,11 +27,6 @@ $(function () {
 
 		$('#status').html('Starting');
 
-		// player id sent to the server
-		var playerId = 'dddddd';
-		// game id
-		var gameId = 'pppp';
-
 		// if user is running mozilla then use it's built-in WebSocket
 		window.WebSocket = window.WebSocket || window.MozWebSocket;
 

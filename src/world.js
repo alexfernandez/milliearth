@@ -545,12 +545,6 @@ var gameWorld = function(id)
 		{
 			return;
 		}
-		var message = 'World ' + self.id + ', ';
-		iterate(function(body) {
-			var distance = Math.round(body.computeHeight());
-			message += body.id + ' ' + body.position + ': ' + distance + ', ';
-		});
-		log(message);
 	}
 
 	/**

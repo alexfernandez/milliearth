@@ -46,7 +46,7 @@ var clientPlayer = function()
 	// latency total and map
 	var latencies = 0;
 	var latencyMap = {};
-	// layers
+	// layers and projections
 	var width = $('#simulation').width();
 	var height = $('#simulation').height();
 	var viewProjection = new paintingProjection(width / 2, height / 2, 0, 4/5 * height);
@@ -55,6 +55,11 @@ var clientPlayer = function()
 	var globalProjection = new paintingProjection(width - globalWidth, globalWidth, 0, 2/3 * globalWidth / 6000);
 	globalProjection.planar = true;
 	var globalLayer = new paintingLayer('global', globalProjection, 0.5);
+	// player id sent to the server: random
+	var playerId = Math.floor(Math.random() * 0x100000000).toString(16);
+	// game id: random
+	var gameId = Math.floor(Math.random() * 0x100000000).toString(16);
+
 
 	$('#status').html('Press connect');
 
@@ -79,8 +84,6 @@ var clientPlayer = function()
 	function connect()
 	{
 		console.log('connecting player ');
-		var gameId = 'simulation';
-		var playerId = 'human';
 		// open websocket
 		var wsUrl = 'ws://' + location.host + '/serve?game=' + gameId + '&player=' + playerId;
 		websocket = new WebSocket(wsUrl);
