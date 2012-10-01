@@ -112,6 +112,13 @@ function massiveBody(params)
 	{
 		self.computeCollision(body, period);
 	}
+
+	/**
+	 * Compute a collision with another body.
+	 */
+	self.computeCollision = function(body, period)
+	{
+	}
 }
 
 /**
@@ -609,19 +616,17 @@ var gameWorld = function(id)
 		var distance = body1.radius + body2.radius;
 		// quick check
 		var d = p1.difference(p2);
-		var pd = d.scalarProduct(p1);
 		var ds = s1.difference(s2);
 		if (d.squaredLength() - ds.squaredLength() * period > distance)
 		{
 			// no way they are going to collide
 			return false;
 		}
+		// detailed check
 		if (d.squaredLength() < distance)
 		{
-			console.log('gosh');
 			return true;
 		}
-		// detailed check
 		return false;
 	}
 
