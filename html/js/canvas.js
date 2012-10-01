@@ -209,16 +209,16 @@ var paintingProjection = function(start, scale)
 /**
  * A painting layer.
  */
-var paintingLayer = function(canvas, name, projection, opacity)
+var paintingLayer = function(params)
 {
 	// self-reference
 	var self = this;
 
+	// attributes
 	var textPosition = 0;
-	if (opacity == 0)
-	{
-		opacity = opacity | 1.0;
-	}
+	var canvas = params.canvas;
+	var projection = params.projection;
+	var opacity = params.opacity || 1.0;
 
 	/**
 	 * Paint an update.

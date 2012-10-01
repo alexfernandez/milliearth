@@ -47,17 +47,8 @@ var clientPlayer = function()
 	var latencies = 0;
 	var latencyMap = {};
 	// layers and projections
-	var width = $('#simulation').width();
-	var height = $('#simulation').height();
-	var viewStart = new vector(width / 2, height / 2, 0);
-	var viewDimensions = new planarPoint(width, height);
-	var viewProjection = new paintingProjection(viewStart, 4/5 * height, viewDimensions);
-	var viewLayer = new paintingLayer($('#simulation'), 'view', viewProjection, 0);
-	var globalWidth = height / 6;
-	var globalStart = new vector(width - globalWidth, globalWidth, 0);
-	var globalProjection = new paintingProjection(globalStart, 2/3 * globalWidth / 6000);
-	globalProjection.planar = true;
-	var globalLayer = new paintingLayer($('#simulation'), 'global', globalProjection, 0.5);
+	var viewLayer = createViewLayer($('#simulation'));
+	var globalLayer = createGlobalLayer($('#simulation'));
 	// player id sent to the server: random
 	var playerId = Math.floor(Math.random() * 0x100000000).toString(16);
 	// game id: random
@@ -65,6 +56,43 @@ var clientPlayer = function()
 
 
 	$('#status').html('Press connect');
+
+	/**
+	 * Create the view layer.
+	 */
+	function createViewLayer(canvas)
+	{
+		var width = canvas.width();
+		var height = canvas.height();
+		var viewStart = new vector(width / 2, height / 2, 0);
+		var viewProjection = new paintingProjection(viewStart, 4/5 * height);
+		var viewParams = {
+			canvas: canvas,
+			name: 'view',
+			projection: viewProjection,
+			opacity: 1.0,
+		};
+		return new paintingLayer(viewParams);
+	}
+
+	function createGlobalLayer(canvas)
+	{
+		var width = canvas.width();
+		var height = canvas.height();
+		var globalWidth = height / 3;
+		var globalStart = new vector(width - globalWidth / 2, globalWidth / 2, 0);
+		var globalProjection = new paintingProjection(globalStart, 1/3 * globalWidth / 6312);
+		globalProjection.planar = true;
+		var globalParams = {
+			canvas: $('#simulation'),
+			name: 'global',
+			projection: globalProjection,
+			opacity: 0.5,
+			start: new planarPoint(width - globalWidth, 0),
+			end: new planarPoint(width, globalWidth),
+		};
+		return new paintingLayer(globalParams);
+	}
 
 	/**
 	 * Click on the connect or disconnect button.
