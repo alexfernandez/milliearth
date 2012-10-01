@@ -159,5 +159,22 @@ var keymap = new function()
 	{
 		return eventMap[keycode].single;
 	}
+
+	/**
+	 * Display the key map.
+	 */
+	self.display = function(element)
+	{
+		var table = $('<table>').attr('id', 'keymap-table');
+		for (var keycode in eventMap)
+		{
+			var event = eventMap[keycode];
+			var row = $('<tr>');
+			row.append($('<td>').text(event.key));
+			row.append($('<td>').text(event.event));
+			table.append(row);
+		}
+		element.append(table);
+	}
 }
 

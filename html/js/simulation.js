@@ -44,6 +44,8 @@ $(function () {
 		$(document).keydown(keymap.keydown);
 		$(document).keyup(keymap.keyup);
 
+		keymap.display($('#keymap'));
+
 		var player = new clientPlayer();
 		player.click();
 });

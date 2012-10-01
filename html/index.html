@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+<meta charset='utf-8'>
 <title>MilliEarth</title>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 <script src="js/require.js"></script>
@@ -13,7 +14,8 @@
 <style>
 * { font-family:tahoma; }
 div.message { border: 1px solid #ccc; }
-canvas { border:1px solid #000000; }
+canvas { display: inline-block; border:1px solid #000000; vertical-align: top; }
+.keymap { display: inline-block; border:1px solid #000000; vertical-align: top; }
 </style>
 </head>
 <body>
@@ -31,8 +33,11 @@ Keycode: <span id="keycode">n/a</span>
 </p>
 <canvas id="simulation" width="800" height="500">
 </canvas>
+<div id="keymap" class="keymap">
+	Keymap:
+</div>
 <div id="message" class="message">
 no messages at this time
-<div>
+</div>
 </body>
 </html>
