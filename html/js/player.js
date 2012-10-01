@@ -239,7 +239,7 @@ var clientPlayer = function()
 		{
 			return;
 		}
-		globalLayer.paintObjects(globalMessage.objects);
+		globalLayer.paintUpdate(globalMessage);
 		globalLayer.paintText('height:', globalMessage.height, 'm');
 		globalLayer.paintText('speed:', globalMessage.speed, 'm/s');
 	}

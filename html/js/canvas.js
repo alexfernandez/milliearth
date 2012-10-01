@@ -21,27 +21,6 @@
 
 
 /**
- * A point in a 2d space. Can be a projection of a vector.
- */
-var planarPoint = function(x, y)
-{
-	// self-reference
-	var self = this;
-
-	// attributes
-	self.x = x;
-	self.y = y;
-
-	/**
-	 * Printable representation.
-	 */
-	self.toString = function()
-	{
-		return 'x: ' + round(self.x) + ', y: ' + round(y);
-	}
-}
-
-/**
  * A painting projection. Starting coordinates for x and y, start depth and scale.
  * If planar, z is not used to project x and y.
  */
@@ -247,10 +226,16 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	self.paintUpdate = function(message)
 	{
-		var marks = self.computeMarks(new vector(message.position), new coordinateSystem(message.camera), message.radius);
-		message.objects = message.objects.concat(marks);
-		self.paintObjects(message.objects);
+		if (!projection.planar)
+		{
+			var marks = self.computeMarks(new vector(message.position), new coordinateSystem(message.camera), message.radius);
+			message.objects = message.objects.concat(marks);
+		}
+		message.objects.sort(byDepth);
+		self.clear();
+		paintObjects(message.objects);
 		paintCrosshairs();
+		self.show();
 	}
 
 	/**
@@ -305,10 +290,8 @@ var paintingLayer = function(name, projection, opacity)
 	/**
 	 * Paint an array of objects.
 	 */
-	self.paintObjects = function(objects)
+	function paintObjects (objects)
 	{
-		self.clear();
-		objects.sort(sort);
 		for (var id in objects)
 		{
 			var object = objects[id];
@@ -337,13 +320,12 @@ var paintingLayer = function(name, projection, opacity)
 				console.error('Unknown object type ' + object.type);
 			}
 		}
-		self.show();
 	}
 
 	/**
 	 * Sort two objects using their relative depths.
 	 */
-	function sort(object1, object2)
+	function byDepth(object1, object2)
 	{
 		return getDepth(object2) - getDepth(object1);
 	}
@@ -583,6 +565,10 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	function paintCrosshairs()
 	{
+		if (projection.planar)
+		{
+			return;
+		}
 		var color = '#f00';
 		var cx = canvas.width() / 2;
 		var cy = canvas.height() / 2;
