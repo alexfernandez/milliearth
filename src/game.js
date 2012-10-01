@@ -23,7 +23,6 @@
 /**
  * Requirements.
  */
-var params = require('./params.js').params;
 var gameWorld = require('./world.js').gameWorld;
 var util = require('./util.js');
 var parser = util.parser;

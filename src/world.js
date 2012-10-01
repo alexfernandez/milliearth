@@ -23,7 +23,7 @@
 /**
  * Requirements.
  */
-var params = require('./params.js').params;
+var globalParams = require('./params.js').globalParams;
 var vector = require('./vector.js').vector;
 var coordinateSystem = require('./vector.js').coordinateSystem;
 var util = require('./util.js');
@@ -34,9 +34,15 @@ var extend = util.extend;
 
 
 /**
- * A massive body. Mass is given in kg.
+ * A massive body. Params:
+ * - id: unique identifier.
+ * - mass: the mass of the body, kg.
+ * - radius: body size, m.
+ * - position: a vector, m3.
+ * - speed: a vector, m3.
+ * - life: the amount of life.
  */
-function massiveBody(id, world, mass, radius, position, speed)
+function massiveBody(params)
 {
 	// self-reference
 	var self = this;
@@ -46,11 +52,13 @@ function massiveBody(id, world, mass, radius, position, speed)
 	}
 
 	// attributes
-	self.id = id;
-	self.mass = mass;
-	self.radius = radius;
-	self.position = position || new vector(0, 0, 0);
-	self.speed = speed || new vector(0, 0, 0);
+	self.world = params.world;
+	self.id = params.id;
+	self.mass = params.mass;
+	self.radius = params.radius;
+	self.position = params.position || new vector(0, 0, 0);
+	self.speed = params.speed || new vector(0, 0, 0);
+	self.life = params.life;
 	self.active = true;
 
 	/**
@@ -60,7 +68,7 @@ function massiveBody(id, world, mass, radius, position, speed)
 	{
 		var difference = attractor.position.difference(self.position);
 		var distance = difference.length();
-		var factor = params.bigG * attractor.mass / Math.pow(distance, 3);
+		var factor = globalParams.bigG * attractor.mass / Math.pow(distance, 3);
 		self.speed.addScaled(difference, factor * period);
 		if (distance < self.radius + attractor.radius)
 		{
@@ -75,19 +83,29 @@ function massiveBody(id, world, mass, radius, position, speed)
 	 */
 	self.computeHeight = function()
 	{
-		return self.position.length() - world.milliEarth.radius;
+		return self.position.length() - self.world.milliEarth.radius;
+	}
+
+	/**
+	 * Substract the given damage, in joules
+	 */
+	self.substractDamage = function(energy)
+	{
+		self.life -= energy;
 	}
 }
 
 /**
  * A projectile to be shot.
  */
-function flyingProjectile(id, world)
+function flyingProjectile(params)
 {
 	// self-reference
 	var self = this;
 	// extend massiveBody
-	extend(new massiveBody(id, world, params.projectileMass, params.projectileRadius), self);
+	params.mass = globalParams.projectileMass;
+	params.radius = globalParams.projectileRadius;
+	extend(new massiveBody(params), self);
 
 	// attributes
 	self.type = 'projectile';
@@ -113,17 +131,19 @@ function flyingProjectile(id, world)
 /**
  * A fighter robot.
  */
-function fighterRobot(id, world)
+function fighterRobot(params)
 {
 	// self-reference
 	var self = this;
 	// extend massiveBody
-	extend(new massiveBody(id, world, params.robotMass, params.robotRadius), self);
+	params.mass = globalParams.robotMass;
+	params.radius = globalParams.robotRadius;
+	extend(new massiveBody(params), self);
 
 	// attributes
 	self.type = 'robot';
 	self.life = params.life;
-	self.projectiles = params.projectiles;
+	self.projectiles = globalParams.projectiles;
 	self.color = '#080';
 	var camera = new coordinateSystem(new vector(0, 0, 1), new vector(0, 1, 0), new vector(1, 0, 0));
 
@@ -132,6 +152,7 @@ function fighterRobot(id, world)
 	 */
 	self.start = function(position, speed)
 	{
+		console.log('started: ' + position + speed);
 		self.position = position;
 		self.speed = speed;
 		camera = new coordinateSystem(position.vectorProduct(speed), position, speed);
@@ -147,14 +168,14 @@ function fighterRobot(id, world)
 		var collisionSpeed = self.speed.scalarProduct(differenceUnit);
 		var verticalSpeed = differenceUnit.scale(collisionSpeed);
 		var horizontalSpeed = self.speed.difference(verticalSpeed);
-		if (collisionSpeed > params.minHarmSpeed)
+		if (collisionSpeed > globalParams.minHarmSpeed)
 		{
 			self.substractDamage(collisionSpeed * collisionSpeed * self.mass / 2);
 		}
 		if (collisionSpeed > 0)
 		{
 			// rebound with a little dampen
-			self.speed.addScaled(verticalSpeed, -(2 - params.verticalDampening)) * collisionSpeed;
+			self.speed.addScaled(verticalSpeed, -(2 - globalParams.verticalDampening)) * collisionSpeed;
 		}
 		if (horizontalSpeed.length() < 0)
 		{
@@ -162,7 +183,7 @@ function fighterRobot(id, world)
 			return;
 		}
 		// dampen horizontal speed
-		var deceleration = (params.frictionDeceleration + self.speed.length() * params.frictionPeriod) * period;
+		var deceleration = (globalParams.frictionDeceleration + self.speed.length() * globalParams.frictionPeriod) * period;
 		if (deceleration * period > horizontalSpeed.length())
 		{
 			self.speed.addScaled(horizontalSpeed, -1);
@@ -175,14 +196,6 @@ function fighterRobot(id, world)
 	}
 
 	/**
-	 * Substract the given damage, in joules
-	 */
-	self.substractDamage = function(energy)
-	{
-		self.life -= energy;
-	}
-
-	/**
 	 * Get a global update for the player.
 	 */
 	self.computeGlobalUpdate = function(bodies)
@@ -190,8 +203,8 @@ function fighterRobot(id, world)
 		var meBody = {
 			id: 'milliEarth',
 			type: 'milliEarth',
-			radius: world.milliEarth.radius,
-			position: world.milliEarth.position,
+			radius: self.world.milliEarth.radius,
+			position: self.world.milliEarth.position,
 		};
 		var objects = [meBody];
 		for (var id in bodies)
@@ -243,11 +256,11 @@ function fighterRobot(id, world)
 	 */
 	self.computeViewUpdate = function(bodies)
 	{
-		var center = computePosition(world.milliEarth);
+		var center = computePosition(self.world.milliEarth);
 		var meBody = {
 			id: 'milliEarth',
 			type: 'milliEarth',
-			radius: world.milliEarth.radius,
+			radius: self.world.milliEarth.radius,
 			position: center,
 		};
 		var objects = [meBody];
@@ -269,7 +282,7 @@ function fighterRobot(id, world)
 		return {
 			camera: camera,
 			position: self.position,
-			radius: world.milliEarth.radius,
+			radius: self.world.milliEarth.radius,
 			objects: objects,
 		};
 	}
@@ -282,11 +295,11 @@ function fighterRobot(id, world)
 		var position = body.position.difference(self.position);
 		var distance = position.length();
 		var h1 = self.computeHeight();
-		var d1 = Math.sqrt(h1 * h1 + 2 * h1 * world.milliEarth.radius);
+		var d1 = Math.sqrt(h1 * h1 + 2 * h1 * self.world.milliEarth.radius);
 		if (distance > d1)
 		{
 			var h2 = body.computeHeight() + body.radius;
-			var d2 = Math.sqrt(h2 * h2 + 2 * h2 * world.milliEarth.radius);
+			var d2 = Math.sqrt(h2 * h2 + 2 * h2 * self.world.milliEarth.radius);
 			if (d1 + d2 < distance)
 			{
 				// below horizon
@@ -312,7 +325,7 @@ function fighterRobot(id, world)
 	self.computeHorizon = function()
 	{
 		var x = 0;
-		var r = world.milliEarth.radius;
+		var r = self.world.milliEarth.radius;
 		var h = self.computeHeight();
 		var d = Math.sqrt(h * h + 2 * h * r);
 		var y = r * r / (r + h) - r - h;
@@ -328,7 +341,7 @@ function fighterRobot(id, world)
 	 */
 	self.accelerate = function(period)
 	{
-		self.speed.addScaled(camera.w, params.motorAcceleration * period);
+		self.speed.addScaled(camera.w, globalParams.motorAcceleration * period);
 	}
 
 	/**
@@ -336,7 +349,7 @@ function fighterRobot(id, world)
 	 */
 	self.brake = function(period)
 	{
-		var deceleration = params.brakeDeceleration * period;
+		var deceleration = globalParams.brakeDeceleration * period;
 		if (self.speed.length() < deceleration)
 		{
 			self.speed = new vector(0, 0, 0);
@@ -350,7 +363,7 @@ function fighterRobot(id, world)
 	 */
 	self.turnLeft = function(period)
 	{
-		camera.yaw(params.turningAngle * period);
+		camera.yaw(globalParams.turningAngle * period);
 	}
 
 	/**
@@ -358,7 +371,7 @@ function fighterRobot(id, world)
 	 */
 	self.turnRight = function(period)
 	{
-		camera.yaw(-params.turningAngle * period);
+		camera.yaw(-globalParams.turningAngle * period);
 	}
 
 	/**
@@ -366,7 +379,7 @@ function fighterRobot(id, world)
 	 */
 	self.turnUp = function(period)
 	{
-		camera.pitch(-params.turningAngle * period);
+		camera.pitch(-globalParams.turningAngle * period);
 	}
 
 	/**
@@ -374,7 +387,7 @@ function fighterRobot(id, world)
 	 */
 	self.turnDown = function(period)
 	{
-		camera.pitch(params.turningAngle * period);
+		camera.pitch(globalParams.turningAngle * period);
 	}
 
 	/**
@@ -382,7 +395,7 @@ function fighterRobot(id, world)
 	 */
 	self.rollLeft = function(period)
 	{
-		camera.roll(params.turningAngle * period);
+		camera.roll(globalParams.turningAngle * period);
 	}
 
 	/**
@@ -390,7 +403,7 @@ function fighterRobot(id, world)
 	 */
 	self.rollRight = function(period)
 	{
-		camera.roll(-params.turningAngle * period);
+		camera.roll(-globalParams.turningAngle * period);
 	}
 
 	/**
@@ -402,14 +415,17 @@ function fighterRobot(id, world)
 		{
 			return;
 		}
-		var projectile = new flyingProjectile('projectile.' + id + '.' + self.projectiles, world);
+		var projectile = new flyingProjectile({
+			id: 'projectile.' + id + '.' + self.projectiles,
+			world: self.world,
+		});
 		projectile.position = self.position.sum(camera.w.scale(self.radius + projectile.radius));
-		projectile.speed = self.speed.sum(camera.w.scale(params.projectileSpeed));
+		projectile.speed = self.speed.sum(camera.w.scale(globalParams.projectileSpeed));
 		// recoil
 		self.mass -= projectile.mass;
 		self.speed.addScaled(projectile.speed, -projectile.mass / self.mass);
 		// add to world
-		world.addObject(projectile);
+		self.world.addObject(projectile);
 		self.projectiles--;
 		log('Player ' + id + ' shot!');
 	}
@@ -426,7 +442,12 @@ var gameWorld = function(id)
 
 	// attributes
 	self.id = id;
-	self.milliEarth = new massiveBody('milliEarth', self, params.meMass, params.meRadius);
+	self.milliEarth = new massiveBody({
+		id: 'milliEarth',
+	   world: self,
+	   mass: globalParams.meMass,
+	   radius: globalParams.meRadius
+	});
 	var bodies = {};
 	var seconds = 0;
 	self.active = false;
@@ -480,13 +501,17 @@ var gameWorld = function(id)
 	 */
 	self.add = function(id)
 	{
-		var robot = new fighterRobot(id, self);
+		var robot = new fighterRobot({
+			id: id,
+			world: self,
+		});
 		bodies[robot.id] = robot;
 		var size = 0;
 		iterate(function(body) {
 			size++;
 		});
-		var distance = params.meRadius + robot.radius;
+		var distance = globalParams.meRadius + robot.radius;
+		console.log('distance: ' + distance);
 		if (size % 2)
 		{
 			// enemy
@@ -532,7 +557,7 @@ var gameWorld = function(id)
 			body.computeAttraction(self.milliEarth, delay / 1000);
 		});
 		iterate(function(body) {
-			if (!body.active || body.position.length() > params.lostDistance)
+			if (!body.active || body.position.length() > globalParams.lostDistance)
 			{
 				log('Removing ' + body.id);
 				delete bodies[body.id];

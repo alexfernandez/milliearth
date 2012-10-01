@@ -61,7 +61,7 @@ var webSocketServer = require('websocket').server;
 var http = require('http');
 var urlParser = require('url');
 var fs = require('fs');
-var params = require('./params.js').params;
+var globalParams = require('./params.js').globalParams;
 var log = require('./util.js').log;
 var trace = require('./util.js').trace;
 var gameSelector = require('./game.js').gameSelector;
@@ -69,7 +69,7 @@ var gameSelector = require('./game.js').gameSelector;
 /**
  * Globals.
  */
-var port = params.port;
+var port = globalParams.port;
 if (process.argv.length > 2)
 {
 	port = process.argv[2];

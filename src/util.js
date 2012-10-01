@@ -27,8 +27,6 @@ String.prototype.endsWith = function(suffix)
 	return this.indexOf(suffix, this.length - suffix.length) !== -1;
 };
 
-var params = require('./params.js').params;
-
 /**
  * Parser for JSON or compact messages.
  */

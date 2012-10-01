@@ -23,11 +23,11 @@
 /**
  * Return an object with constants.
  */
-var params = new function()
+var globalParams = new function()
 {
 	// the default port
 	this.port = 80;
-	// starting life for players, in energy (joules)
+	// starting life for players in energy, joules
 	this.life = 1e9;
 	// min speed to cause harm, m/s
 	this.minHarmSpeed = 100;
@@ -49,6 +49,8 @@ var params = new function()
 	this.meRadius = 6312.32;
 	// mass of MilliEarth: 1 millionth the mass of Earth, in kg
 	this.meMass = 5.97219e18;
+	// life of MilliEarth in energy, joules
+	this.meLife = 1e18;
 	// robot mass, in kg
 	this.robotMass = 200;
 	// robot radius, in m
@@ -71,6 +73,6 @@ var params = new function()
 	this.lostDistance = 3 * this.meRadius;
 }
 
-module.exports.params = params;
+module.exports.globalParams = globalParams;
 
 
