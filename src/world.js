@@ -52,8 +52,8 @@ function massiveBody(params)
 	}
 
 	// attributes
-	self.world = params.world;
 	self.id = params.id;
+	self.world = params.world;
 	self.mass = params.mass;
 	self.radius = params.radius;
 	self.position = params.position || new vector(0, 0, 0);
@@ -416,7 +416,7 @@ function fighterRobot(params)
 			return;
 		}
 		var projectile = new flyingProjectile({
-			id: 'projectile.' + id + '.' + self.projectiles,
+			id: 'projectile.' + self.id + '.' + self.projectiles,
 			world: self.world,
 		});
 		projectile.position = self.position.sum(camera.w.scale(self.radius + projectile.radius));
@@ -427,7 +427,7 @@ function fighterRobot(params)
 		// add to world
 		self.world.addObject(projectile);
 		self.projectiles--;
-		log('Player ' + id + ' shot!');
+		log('Player ' + self.id + ' shot!');
 	}
 }
 
@@ -444,9 +444,10 @@ var gameWorld = function(id)
 	self.id = id;
 	self.milliEarth = new massiveBody({
 		id: 'milliEarth',
-	   world: self,
-	   mass: globalParams.meMass,
-	   radius: globalParams.meRadius
+ 		world: self,
+ 		mass: globalParams.meMass,
+ 		radius: globalParams.meRadius,
+		life: globalParams.meLife,
 	});
 	var bodies = {};
 	var seconds = 0;
