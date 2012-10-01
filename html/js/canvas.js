@@ -473,6 +473,8 @@ var paintingLayer = function(params)
 		rect.fillStyle = "#fff";
 		rect.fromCenter = false;
 		rect.opacity = opacity;
+		rect.strokeStyle = '#aaa';
+		rect.strokeWidth = 1;
 		canvas.drawRect(rect);
 	}
 
@@ -491,7 +493,6 @@ var paintingLayer = function(params)
 		value = Math.round(value);
 		canvas.drawText( {
 			fillStyle: '#000',
-			// strokeStyle: '#25a',
 			strokeWidth: 1,
 			x: 10, y: textPosition,
 			font: '10pt Helvetica, sans-serif',
