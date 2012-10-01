@@ -441,7 +441,7 @@ function fighterRobot(params)
 		// add to world
 		self.world.addObject(projectile);
 		self.projectiles--;
-		log('Player ' + self.id + ' shot!');
+		log('Player ' + self.id + ' has fired a shot!');
 	}
 }
 
@@ -568,11 +568,24 @@ var gameWorld = function(id)
 		{
 			return;
 		}
+		var period = delay / 1000;
 		iterate(function(body) {
-			body.computeAttraction(self.milliEarth, delay / 1000);
+			body.computeAttraction(self.milliEarth, period);
 		});
 		iterate(function(body) {
-			body.move(delay / 1000);
+			var others = bodiesExcept(body.id);
+			for (var id in others)
+			{
+				var other = others[id];
+				if (checkCollision(body, other, period))
+				{
+					other.computeCollision(body, period);
+					body.computeCollision(other, period);
+				}
+			}
+		});
+		iterate(function(body) {
+			body.move(period);
 		});
 		iterate(function(body) {
 			if (!body.active || body.position.length() > globalParams.lostDistance)
@@ -582,6 +595,34 @@ var gameWorld = function(id)
 
 			}
 		});
+	}
+
+	/**
+	 * Check if the two bodies suffer a collision during the given period.
+	 */
+	function checkCollision(body1, body2, period)
+	{
+		var p1 = body1.position;
+		var s1 = body1.speed;
+		var p2 = body2.position;
+		var s2 = body2.speed;
+		var distance = body1.radius + body2.radius;
+		// quick check
+		var d = p1.difference(p2);
+		var pd = d.scalarProduct(p1);
+		var ds = s1.difference(s2);
+		if (d.squaredLength() - ds.squaredLength() * period > distance)
+		{
+			// no way they are going to collide
+			return false;
+		}
+		if (d.squaredLength() < distance)
+		{
+			console.log('gosh');
+			return true;
+		}
+		// detailed check
+		return false;
 	}
 
 	/**
