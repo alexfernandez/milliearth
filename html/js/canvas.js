@@ -54,25 +54,35 @@ var screenProjection = function(params)
 	self.adjustScale = function(object)
 	{
 		var point = self.project(object.position);
-		if (!self.withinBounds(point))
+		if (self.withinBounds(point))
 		{
-			if (point.x < start.x)
-			{
-				scale *= (start.x - origin.x) / (point.x - origin.x);
-			}
-			else if (point.x > start.x)
-			{
-				scale *= (end.x - origin.x) / (point.x - origin.x);
-			}
-			if (point.y < start.y)
-			{
-				scale *= (start.y + origin.y) / (point.y + origin.y);
-			}
-			else if (point.y > start.y)
-			{
-				scale *= (end.y + origin.y) / (point.y + origin.y);
-			}
+			return;
 		}
+		var factorx = 1;
+		var factory = 1;
+		if (point.x < start.x)
+		{
+			factorx = (start.x - origin.x) / (point.x - origin.x);
+		}
+		else if (point.x > end.x)
+		{
+			factorx = (end.x - origin.x) / (point.x - origin.x);
+		}
+		if (point.y < start.y)
+		{
+			factory = (start.y - origin.y) / (point.y - origin.y);
+		}
+		else if (point.y > end.y)
+		{
+			factory = (end.y - origin.y) / (point.y - origin.y);
+		}
+		if (factorx == 1 && factory == 1)
+		{
+			console.error('Out of bounds?');
+			return;
+		}
+		$('#message').text('fx: ' + factorx + ', fy: ' + factory);
+		scale *= Math.min(factorx, factory);
 	}
 
 	/**
@@ -301,7 +311,6 @@ var paintingLayer = function(params)
 			message.objects = message.objects.concat(marks);
 		}
 		message.objects.sort(byDepth);
-		projection.resetScale();
 		adjustScale(message.objects);
 		self.clear();
 		paintObjects(message.objects);
@@ -314,6 +323,7 @@ var paintingLayer = function(params)
 	 */
 	function adjustScale(objects)
 	{
+		projection.resetScale();
 		if (!autoscale)
 		{
 			return;
