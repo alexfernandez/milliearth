@@ -489,6 +489,11 @@ var gameSelector = new function()
 	 */
 	function longLoop(delay)
 	{
+		var count = self.count();
+		if (count > 0)
+		{
+			log('games in progress: ' + count);
+		}
 		for (var id in games)
 		{
 			games[id].world.longLoop(delay);
