@@ -64,12 +64,11 @@ var clientPlayer = function()
 	{
 		var width = canvas.width();
 		var height = canvas.height();
-		var viewStart = new vector(width / 2, height / 2, 0);
-		var viewProjection = new paintingProjection(viewStart, 4/5 * height);
 		var viewParams = {
 			canvas: canvas,
 			name: 'view',
-			projection: viewProjection,
+			origin: new vector(width / 2, height / 2, 0),
+			scale: 4/5 * height,
 			opacity: 1.0,
 		};
 		return new paintingLayer(viewParams);
@@ -80,17 +79,16 @@ var clientPlayer = function()
 		var width = canvas.width();
 		var height = canvas.height();
 		var globalWidth = height / 3;
-		var globalStart = new vector(width - globalWidth / 2, globalWidth / 2, 0);
-		var globalProjection = new paintingProjection(globalStart, 1/3 * globalWidth / 6312);
-		globalProjection.planar = true;
 		var globalParams = {
-			canvas: $('#simulation'),
+			canvas: canvas,
 			name: 'global',
-			projection: globalProjection,
-			opacity: 0.5,
+			origin: new vector(width - globalWidth / 2, globalWidth / 2, 0),
+			scale: 1/3 * globalWidth / 6312,
+			planar: true,
 			start: new planarPoint(width - globalWidth, 0),
 			end: new planarPoint(width, globalWidth),
 			autoscale: true,
+			opacity: 0.5,
 		};
 		return new paintingLayer(globalParams);
 	}

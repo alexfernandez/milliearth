@@ -21,18 +21,68 @@
 
 
 /**
- * A painting projection. Starting coordinates for x, y and z, and scale.
- * If planar, z is not used to project x and y.
+ * A screen projection. Parameters:
+ * - origin: a 3D vector with origin coordinates.
+ * - scale: the initial scale.
+ * - start: the upper left corner.
+ * - end: the lower right corner.
+ * - planar: if true, z is not used to project x and y.
  */
-var paintingProjection = function(start, initialScale)
+var screenProjection = function(params)
 {
 	// self-reference
 		var self = this;
 
 	// attributes
-	self.planar = false;
-	var scale = initialScale;
-	resetScale();
+	var origin = params.origin;
+	var start = params.start;
+	var end = params.end;
+	var scale = params.scale;
+	self.planar = params.planar || false;
+
+	/**
+	 * Reset scale to initial value.
+	 */
+	self.resetScale = function()
+	{
+		scale = params.scale;
+	}
+
+	/**
+	 * Adjust the scale to fit the given object.
+	 */
+	self.adjustScale = function(object)
+	{
+		var point = self.project(object.position);
+		if (!self.withinBounds(point))
+		{
+			console.log(object.id + ' out of bounds');
+		}
+	}
+
+	/**
+	 * Find out if the given point is within bounds.
+	 */
+	self.withinBounds = function(point)
+	{
+		if (point.x < start.x)
+		{
+			return false;
+		}
+		if (point.y < start.y)
+		{
+			return false;
+		}
+		if (point.x > end.x)
+		{
+			return false;
+		}
+		if (point.y > end.y)
+		{
+			return false;
+		}
+		return true;
+	}
 
 	/**
 	 * Project a 3d point into the 2d plane.
@@ -130,7 +180,7 @@ var paintingProjection = function(start, initialScale)
 	self.projectConic = function(object, x)
 	{
 		// first de-project
-		var i = (x - start.x) / scale;
+		var i = (x - origin.x) / scale;
 		// now compute
 		var x = object.position.x;
 		var y = object.position.y;
@@ -188,7 +238,7 @@ var paintingProjection = function(start, initialScale)
 		{
 			return length;
 		}
-		return length / (z + start.z);
+		return length / (z + origin.z);
 	}
 
 	/**
@@ -196,7 +246,7 @@ var paintingProjection = function(start, initialScale)
 	 */
 	function scaleX(length)
 	{
-		return start.x + scale * length;
+		return origin.x + scale * length;
 	}
 
 	/**
@@ -204,15 +254,7 @@ var paintingProjection = function(start, initialScale)
 	 */
 	function scaleY(length)
 	{
-		return start.y - scale * length;
-	}
-
-	/**
-	 * Reset scale to initial value.
-	 */
-	function resetScale()
-	{
-		scale = initialScale;
+		return origin.y - scale * length;
 	}
 }
 
@@ -227,10 +269,10 @@ var paintingLayer = function(params)
 	// attributes
 	var textPosition = 0;
 	var canvas = params.canvas;
-	var projection = params.projection;
+	params.start = params.start || new planarPoint(0, 0);
+	params.end = params.end || new planarPoint(canvas.width(), canvas.height());
+	var projection = new screenProjection(params);
 	var opacity = params.opacity || 1.0;
-	var start = params.start || new planarPoint(0, 0);
-	var end = params.end || new planarPoint(canvas.width(), canvas.height());
 	var autoscale = params.autoscale || false;
 
 	/**
@@ -244,13 +286,27 @@ var paintingLayer = function(params)
 			message.objects = message.objects.concat(marks);
 		}
 		message.objects.sort(byDepth);
-		if (autoscale)
-		{
-		}
+		projection.resetScale();
+		adjustScale(message.objects);
 		self.clear();
 		paintObjects(message.objects);
 		paintCrosshairs();
 		self.show();
+	}
+
+	/**
+	 * Adjust the scale of the projection to fit all objects.
+	 */
+	function adjustScale(objects)
+	{
+		if (!autoscale)
+		{
+			return;
+		}
+		for (var id in objects)
+		{
+			projection.adjustScale(objects[id]);
+		}
 	}
 
 	/**
@@ -470,7 +526,7 @@ var paintingLayer = function(params)
 		}
 		var start = projection.project(line.start);
 		var end = projection.project(line.end);
-		if (!withinBounds(start) && !withinBounds(end))
+		if (!projection.withinBounds(start) && !projection.withinBounds(end))
 		{
 			return;
 		}
@@ -609,30 +665,6 @@ var paintingLayer = function(params)
 			radius: l,
 			opacity: opacity,
 		});
-	}
-
-	/**
-	 * Find out if the given point is within bounds.
-	 */
-	function withinBounds(point)
-	{
-		if (point.x < start.x)
-		{
-			return false;
-		}
-		if (point.y < start.y)
-		{
-			return false;
-		}
-		if (point.x > end.x)
-		{
-			return false;
-		}
-		if (point.y > end.y)
-		{
-			return false;
-		}
-		return true;
 	}
 }
 
