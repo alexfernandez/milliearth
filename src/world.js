@@ -301,7 +301,8 @@ function fighterRobot(id, world)
 	 */
 	function computePosition(body)
 	{
-		var position = body.position.difference(self.position);
+		var origin = self.position.sumScaled(camera.v, self.radius);
+		var position = body.position.difference(origin);
 		return camera.project(position);
 	}
 
