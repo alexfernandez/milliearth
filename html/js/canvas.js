@@ -281,6 +281,19 @@ var screenProjection = function(params)
 	{
 		return origin.y - scale * length;
 	}
+
+	/**
+	 * Get a big rectangle that spans the screen.
+	 */
+	self.getRect = function()
+	{
+		return {
+			x: start.x,
+			y: start.y,
+			width: end.x - start.x,
+			height: end.y - start.y,
+		};
+	}
 }
 
 /**
@@ -456,6 +469,11 @@ var paintingLayer = function(params)
 	self.clear = function()
 	{
 		textPosition = 10;
+		var rect = projection.getRect();
+		rect.fillStyle = "#fff";
+		rect.fromCenter = false;
+		rect.opacity = opacity;
+		canvas.drawRect(rect);
 	}
 
 	/**

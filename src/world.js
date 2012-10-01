@@ -499,8 +499,8 @@ var gameWorld = function(id)
 			// player
 			var sqrt = Math.sqrt(2 * distance * distance) / 2;
 			robot.start(
-				// new vector(distance + 2, -10, 0),
-				new vector(0, distance + 6000, 0),
+				new vector(distance + 2, -10, 0),
+				//new vector(0, distance + 6000, 0),
 				new vector(1, 0, 0));
 		}
 		return robot;
