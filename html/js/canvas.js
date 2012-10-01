@@ -312,13 +312,13 @@ var paintingLayer = function(name, projection, opacity)
 		for (var id in objects)
 		{
 			var object = objects[id];
-			if (object.type == 'milliEarth')
+			if (!object.type)
+			{
+				console.error('Object without type: ' + JSON.stringify(object));
+			}
+			else if (object.type == 'milliEarth')
 			{
 				self.paintMilliEarth(object);
-			}
-			else if (object.type == 'robot' || object.type == 'projectile')
-			{
-				self.paintBody(object);
 			}
 			else if (object.type == 'arrow')
 			{
@@ -328,9 +328,9 @@ var paintingLayer = function(name, projection, opacity)
 			{
 				paintLine(object);
 			}
-			else if (!object.type)
+			else if (object.type == 'robot' || object.type == 'projectile')
 			{
-				console.error('Object without type: ' + JSON.stringify(object));
+				self.paintBody(object);
 			}
 			else
 			{
@@ -428,7 +428,7 @@ var paintingLayer = function(name, projection, opacity)
 	 */
 	self.paintBody = function(body, color)
 	{
-		color = color || '#000';
+		color = color || body.color || '#000';
 		if (projection.planar)
 		{
 			paintCircle(body, color);

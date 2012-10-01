@@ -91,6 +91,7 @@ function flyingProjectile(id, world)
 
 	// attributes
 	self.type = 'projectile';
+	self.color = '#f00';
 
 	/**
 	 * Self-destruct on impact.
@@ -123,6 +124,7 @@ function fighterRobot(id, world)
 	self.type = 'robot';
 	self.life = params.life;
 	self.projectiles = params.projectiles;
+	self.color = '#080';
 	var camera = new coordinateSystem(new vector(0, 0, 1), new vector(0, 1, 0), new vector(1, 0, 0));
 
 	/**
@@ -199,7 +201,8 @@ function fighterRobot(id, world)
 				id: id,
 				type: body.type,
 				radius: body.radius,
-				position: body.position
+				position: body.position,
+				color: body.color,
 			});
 		}
 		objects.push(self.getArrow());
@@ -258,6 +261,7 @@ function fighterRobot(id, world)
 					type: 'robot',
 					radius: body.radius,
 					position: computePosition(body),
+					color: body.color,
 				};
 				objects.push(object);
 			}
