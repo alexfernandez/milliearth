@@ -23,6 +23,7 @@
 /**
  * Requirements.
  */
+var fs = require('fs');
 var globalParams = require('./params.js').globalParams;
 var vector = require('./vector.js').vector;
 var util = require('./util.js');
@@ -31,6 +32,106 @@ var log = util.log;
 var trace = util.trace;
 var extend = util.extend;
 
+
+/**
+ * Object to assist in parsing a text: keeps the current position.
+ */
+function parsePosition(text)
+{
+	// self-reference
+	var self = this;
+
+	// attributes
+	var pos = 0;
+
+	/**
+	 * Skip any blank characters at pos.
+	 */
+	self.skipBlank = function()
+	{
+		while (isBlank())
+		{
+			pos++;
+		}
+	}
+
+	/**
+	 * Parse the next token: alphanumeric or symbol.
+	 */
+	self.parseToken = function()
+	{
+		self.skipBlank();
+		if (/\w/.test(current()))
+		{
+			return parseWord();
+		}
+		return currentSkip();
+	}
+
+	/**
+	 * Skipt text until after the given character is found.
+	 */
+	self.skipPast = function(end)
+	{
+		var s = '';
+		while (current() != end && !self.finished())
+		{
+			s += currentSkip();
+		}
+		return s;
+	}
+
+	/**
+	 * Identify a blank character at pos.
+	 */
+	function isBlank()
+	{
+		return /\s/.test(current());
+	}
+
+	/**
+	 * Parse a complete word.
+	 */
+	function parseWord()
+	{
+		var w = '';
+		while (/\w/.test(current()) && !self.finished())
+		{
+			w += currentSkip();
+		}
+		return w;
+	}
+
+	/**
+	 * Get the current character.
+	 */
+	function current()
+	{
+		if (self.finished())
+		{
+			return '';
+		}
+		return text.charAt(pos);
+	}
+
+	/**
+	 * Get the current character, skip it.
+	 */
+	function currentSkip()
+	{
+		var c = current();
+		pos++;
+		return c;
+	}
+
+	/**
+	 * Return true if the text is finished.
+	 */
+	self.finished = function()
+	{
+		return pos >= text.length;
+	}
+}
 
 /**
  * A scripting engine.
@@ -43,7 +144,13 @@ function scriptingEngine(params)
 	// attributes
 	self.file = params.file;
 	self.robot = params.robot;
+	var instructions = []
 
+	readScript(self.file);
+
+	/**
+	 * Read a script file and interpret it.
+	 */
 	function readScript(file)
 	{
 		fs.readFile('src/script/' + file, function(err, data) {
@@ -52,7 +159,46 @@ function scriptingEngine(params)
 				log('Invalid script file ' + file);
 				return;
 			}
+			prepare(data.toString());
 		});
 	}
+
+	/**
+	 * Prepare a text file for interpretation.
+	 */
+	function prepare(text)
+	{
+		var pos = new parsePosition(text);
+		var sentence = [];
+		while (!pos.finished())
+		{
+			var t = pos.parseToken();
+			if (t == '#')
+			{
+				pos.skipPast('\n');
+			}
+			else if (/[\;\,\.\:]/.test(t))
+			{
+				sentence.push(t);
+				instructions.push(sentence);
+				sentence = [];
+			}
+			else
+			{
+				sentence.push(t);
+			}
+		}
+		console.log(instructions);
+	}
 }
+
+module.test = function()
+{
+	var engine = new scriptingEngine({
+		file: 'basic-enemy.8s',
+		robot: {},
+	});
+}
+
+module.test();
 
