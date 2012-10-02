@@ -118,14 +118,19 @@ function massiveBody(params)
 	 */
 	self.computeCollision = function(body, period)
 	{
+		var ds = self.speed.difference(body.speed);
+		var momentum = ds.scale(self.mass);
+		self.transferMomentum(momentum, body);
+		console.log('Transferred ' + momentum.length());
 	}
 
 	/**
-	 * Return the momentum as a vector, m·v.
+	 * Transfer some momentum to another body.
 	 */
-	self.getMomentum = function()
+	self.transferMomentum = function(momentum, body)
 	{
-		return self.speed.scale(self.mass);
+		self.substractMomentum(momentum);
+		body.addMomentum(momentum);
 	}
 
 	/**
@@ -133,7 +138,17 @@ function massiveBody(params)
 	 */
 	self.addMomentum = function(momentum)
 	{
+		var l = self.speed.length();
 		self.speed.addScaled(momentum, 1/self.mass);
+		console.log('Added speed: ' + (self.speed.length() - l));
+	}
+
+	/**
+	 * Substract some momentum from self, as a vector.
+	 */
+	self.substractMomentum = function(momentum)
+	{
+		self.speed.addScaled(momentum, -1/self.mass);
 	}
 
 	/**
@@ -469,8 +484,7 @@ function fighterRobot(params)
 		var momentum = camera.w.scale(globalParams.projectileSpeed * projectile.mass);
 		self.mass -= projectile.mass;
 		// speed and recoil
-		projectile.addMomentum(momentum);
-		self.addMomentum(momentum.scale(-1));
+		self.transferMomentum(momentum, projectile);
 		// add to world
 		self.world.addObject(projectile);
 		self.projectiles--;
@@ -629,11 +643,6 @@ var gameWorld = function(id)
 				body.move(period);
 			}
 		}
-		iterate(function(body) {
-			{
-
-			}
-		});
 	}
 
 	/**
