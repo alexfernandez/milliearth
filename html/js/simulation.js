@@ -25,28 +25,28 @@
  */
 $(function () {
 
-		$('#status').html('Starting');
+	$('#status').html('Starting');
 
-		// if user is running mozilla then use it's built-in WebSocket
-		window.WebSocket = window.WebSocket || window.MozWebSocket;
+	// if user is running mozilla then use it's built-in WebSocket
+	window.WebSocket = window.WebSocket || window.MozWebSocket;
 
-		// if browser doesn't support WebSocket, just show some notification and exit
-		if (!window.WebSocket)
-		{
-			$('#status1').html('Browser error');
-			$('#status2').html('Browser error');
-			$('#message').html('<p>Sorry, but your browser doesn\'t support WebSockets.</p>' );
-			$('#submit').hide();
-			$('input').hide();
-			return;
-		}
+	// if browser doesn't support WebSocket, just show some notification and exit
+	if (!window.WebSocket)
+	{
+		$('#status1').html('Browser error');
+		$('#status2').html('Browser error');
+		$('#message').html('<p>Sorry, but your browser doesn\'t support WebSockets.</p>' );
+		$('#submit').hide();
+		$('input').hide();
+		return;
+	}
 
-		$(document).keydown(keymap.keydown);
-		$(document).keyup(keymap.keyup);
+	$(document).keydown(keymap.keydown);
+	$(document).keyup(keymap.keyup);
 
-		keymap.display($('#keymap'));
+	keymap.display($('#keymap'));
 
-		var player = new clientPlayer();
-		player.click();
+	var player = new clientPlayer();
+	player.click();
 });
 
