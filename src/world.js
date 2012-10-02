@@ -661,6 +661,7 @@ var gameWorld = function(id)
 		var u2 = body2.speed.difference(u0);
 		var ec = 1/2 * body1.mass * u1.squaredLength() + 1/2 * body2.mass * u2.squaredLength();
 		var ec2 = - (body1.mass + body2.mass) * u1.scalarProduct(u2) / 2;
+		// each object may (or not) transfer its part of momentum
 		var m1 = u1.scale(body1.mass);
 		body1.computeCollision(body2, m1);
 		var m2 = u2.scale(body2.mass);
