@@ -81,7 +81,6 @@ var screenProjection = function(params)
 			console.error('Out of bounds?');
 			return;
 		}
-		$('#message').text('fx: ' + factorx + ', fy: ' + factory);
 		scale *= Math.min(factorx, factory);
 	}
 
