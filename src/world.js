@@ -59,7 +59,6 @@ function massiveBody(params)
 	self.position = params.position || new vector(0, 0, 0);
 	self.speed = params.speed || new vector(0, 0, 0);
 	self.life = params.life;
-	console.log('life: ' + self.life);
 	self.active = true;
 
 	/**
