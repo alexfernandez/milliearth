@@ -123,6 +123,7 @@ function massiveBody(params)
 	 */
 	self.computeCollision = function(body, period)
 	{
+		console.log('colliding');
 		var ds = self.speed.difference(body.speed);
 		var momentum = ds.scale(self.mass);
 		self.transferMomentum(momentum, body);
@@ -143,9 +144,9 @@ function massiveBody(params)
 	 */
 	self.addMomentum = function(momentum)
 	{
-		var l = self.speed.length();
+		var s = self.speed.copy();
 		self.speed.addScaled(momentum, 1/self.mass);
-		console.log('Added speed: ' + (self.speed.length() - l));
+		console.log('Added speed: ' + s + ' + ' + momentum + ' / ' + (1/self.mass) + ' = ' + self.speed);
 	}
 
 	/**
@@ -660,33 +661,34 @@ var gameWorld = function(id)
 	 */
 	function checkCollision(body1, body2, period)
 	{
-		// quickest check
+		// quick position check
 		var p1 = body1.position;
 		var p2 = body2.position;
 		var d = p2.difference(p1);
-		var min = body1.radius + body2.radius;
-		var min2 = min * min;
-		if (d.squaredLength() > 10)
+		var d2 = d.squaredLength();
+		if (d2 > globalParams.maxCollisionSpeed * period)
 		{
-			// we do not support speeds of 500 m/s
+			// we do not consider higher speeds
 			return false;
 		}
-		// quick check
+		// detailed position check
+		var min = body1.radius + body2.radius;
+		var min2 = min * min;
+		var safety = globalParams.safetyDistance * globalParams.safetyDistance;
+		if (d2 + safety < min2)
+		{
+			console.log("Direct collision: " + d2 + ' < ' + min2);
+			return true;
+		}
+		// quick trajectory check
 		var s1 = body1.speed;
 		var s2 = body2.speed;
 		var ds = s2.difference(s1);
-		var d2 = d.squaredLength();
 		var ds2 = ds.squaredLength();
 		if (d2 - ds2 * period > min2)
 		{
 			// no way they are going to collide
 			return false;
-		}
-		// detailed check
-		if (d2 < min2)
-		{
-			console.log("Direct collision: " + d2 + ' < ' + min2);
-			return true;
 		}
 		// most detailed checks
 		// d: position vector from 1 to 2
@@ -701,7 +703,7 @@ var gameWorld = function(id)
 		}
 		// min distance: mind = sqrt(d2 - q^2 / (4 ds2))
 		var mind = d2 - q*q/(4*ds2);
-		if (mind < min2)
+		if (mind + safety < min2)
 		{
 			console.log("Speeding collision: " + mind + ' < ' + min2 + ' from ' + d2 + ' at ' + tm);
 			return true;

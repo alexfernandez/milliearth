@@ -35,7 +35,7 @@ var globalParams = new function()
 	this.frictionDeceleration = 2;
 	// forward acceleration using the motor, m/s^2
 	this.motorAcceleration = 9;
-	// max speed, m/s
+	// max speed from motor acceleration, m/s
 	this.maxSpeed = 200
 	// friction due to speed, 1/s
 	this.frictionPeriod = (this.motorAcceleration - this.frictionDeceleration ) / this.maxSpeed;
@@ -73,6 +73,10 @@ var globalParams = new function()
 	this.projectileSpeed = Math.sqrt(this.bigG * this.meMass / this.meRadius);
 	// distance at which objects are lost, m
 	this.lostDistance = 3 * this.meRadius;
+	// safety distance before a close encounter is a collision, m
+	this.safetyDistance = 0.01;
+	// max speed to consider in collisions, m/s
+	this.maxCollisionSpeed = 1000;
 }
 
 module.exports.globalParams = globalParams;
