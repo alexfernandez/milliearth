@@ -609,21 +609,40 @@ var gameWorld = function(id)
 	 */
 	function checkCollision(body1, body2, period)
 	{
+		// quickest check
 		var p1 = body1.position;
-		var s1 = body1.speed;
 		var p2 = body2.position;
-		var s2 = body2.speed;
-		var distance = body1.radius + body2.radius;
+		var d = p2.difference(p1);
+		var min = body1.radius + body2.radius;
+		var min2 = min * min;
+		if (d.squaredLength() > 10)
+		{
+			// we do not support speeds of 500 m/s
+			return false;
+		}
 		// quick check
-		var d = p1.difference(p2);
-		var ds = s1.difference(s2);
-		if (d.squaredLength() - ds.squaredLength() * period > distance)
+		var s1 = body1.speed;
+		var s2 = body2.speed;
+		var ds = s2.difference(s1);
+		var d2 = d.squaredLength();
+		var ds2 = ds.squaredLength();
+		if (d2 - ds2 * period > min2)
 		{
 			// no way they are going to collide
 			return false;
 		}
 		// detailed check
-		if (d.squaredLength() < distance)
+		if (d2 < min2)
+		{
+			return true;
+		}
+		// most detailed check
+		// d: position vector from 1 to 2
+		// ds: speed difference between 1 and 2
+		// d2 = d · d, ds2 = ds · ds, q = d · ds
+		// min distance: D^2 = sqrt(d2 - q^2 / (4 ds2))
+		var q = d.scalarProduct(ds);
+		if (d2 - q*q/(4*ds2) < min2)
 		{
 			return true;
 		}
