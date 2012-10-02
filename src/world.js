@@ -135,6 +135,14 @@ function massiveBody(params)
 	{
 		self.speed.addScaled(momentum, 1/self.mass);
 	}
+
+	/**
+	 * Check if the body is out of bounds.
+	 */
+	self.checkOutOfBounds = function()
+	{
+		return self.position.length() > globalParams.lostDistance;
+	}
 }
 
 /**
@@ -594,29 +602,35 @@ var gameWorld = function(id)
 			return;
 		}
 		var period = delay / 1000;
+		var bodiesArray = [];
 		iterate(function(body) {
-			body.computeAttraction(self.milliEarth, period);
+			bodiesArray.push(body);
 		});
-		iterate(function(body) {
-			var others = bodiesExcept(body.id);
-			for (var id in others)
+		for (var i = 0; i < bodiesArray.length; i++)
+		{
+			var body = bodiesArray[i];
+			body.computeAttraction(self.milliEarth, period);
+			for (var j = i + 1; j < bodiesArray.length; j++)
 			{
-				var other = others[id];
+				var other = bodiesArray[j];
 				if (checkCollision(body, other, period))
 				{
-					other.computeCollision(body, period);
 					body.computeCollision(other, period);
+					other.computeCollision(body, period);
 				}
 			}
-		});
-		iterate(function(body) {
-			body.move(period);
-		});
-		iterate(function(body) {
-			if (!body.active || body.position.length() > globalParams.lostDistance)
+			if (!body.active || body.checkOutOfBounds())
 			{
 				log('Removing ' + body.id);
 				delete bodies[body.id];
+			}
+			else
+			{
+				body.move(period);
+			}
+		}
+		iterate(function(body) {
+			{
 
 			}
 		});
