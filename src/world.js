@@ -342,7 +342,7 @@ function fighterRobot(params)
 		}
 		return {
 			camera: camera,
-			position: self.position,
+			position: computeViewPosition(),
 			radius: self.world.milliEarth.radius,
 			objects: objects,
 		};
@@ -371,11 +371,19 @@ function fighterRobot(params)
 	}
 
 	/**
+	 * Compute the position of the view origin.
+	 */
+	function computeViewPosition()
+	{
+		return self.position.sumScaled(camera.v, self.radius);
+	}
+
+	/**
 	 * Compute the position of a body with respect to the line of sight.
 	 */
 	function computePosition(body)
 	{
-		var origin = self.position.sumScaled(camera.v, self.radius);
+		var origin = computeViewPosition();
 		var position = body.position.difference(origin);
 		return camera.project(position);
 	}
