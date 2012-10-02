@@ -102,7 +102,7 @@ var clientPlayer = function()
 			connect();
 			return;
 		}
-		disconnect();
+		disconnect(false);
 		websocket = null;
 	}
 	$('#connect').click(self.click);
@@ -162,7 +162,7 @@ var clientPlayer = function()
 		websocket.onclose = function(message)
 		{
 			$('#status').text('Disconnected');
-			disconnect();
+			disconnect(true);
 		}
 		$('#connect').val('Disconnect');
 	}
@@ -170,7 +170,7 @@ var clientPlayer = function()
 	/**
 	 * Disconnect from the game.
 	 */
-	function disconnect()
+	function disconnect(reconnect)
 	{
 		if (websocket == null)
 		{
@@ -183,11 +183,13 @@ var clientPlayer = function()
 		{
 			clearInterval(updateIntervalId);
 			clearInterval(globalIntervalId);
-			// automatic reconnect
-			setTimeout(connect, 100);
 			running = false;
+			if (reconnect)
+			{
+				// automatic reconnect
+				setTimeout(connect, 100);
+			}
 		}
-		running = false;
 	}
 
 	/**
