@@ -134,6 +134,65 @@ function parsePosition(text)
 }
 
 /**
+ * Provide the context for the scripting engine.
+ */
+function scriptingContext()
+{
+	// self-reference
+	var self = this;
+
+	// attributes
+	var index = 0;
+	var sentences = [];
+	self.it = null;
+
+	/**
+	 * Add a new sentence.
+	 */
+	self.add = function(sentence)
+	{
+		sentences.push(sentence);
+	}
+
+	/**
+	 * Get the current sentence.
+	 */
+	self.current = function()
+	{
+		return sentences[index];
+	}
+
+	/**
+	 * Go to the next sentence.
+	 */
+	self.next = function()
+	{
+		index ++;
+	}
+
+	/**
+	 * Find out if the context has been exhausted.
+	 */
+	self.finished = function()
+	{
+		return index >= sentences.length;
+	}
+}
+
+/**
+ * A sentence (or statement) in the language.
+ */
+function scriptingSentence()
+{
+	// self-reference
+	var self = this;
+
+	// attributes
+	var index = 0;
+	var tokens = [];
+}
+
+/**
  * A scripting engine.
  */
 function scriptingEngine(params)
@@ -144,7 +203,7 @@ function scriptingEngine(params)
 	// attributes
 	self.file = params.file;
 	self.robot = params.robot;
-	var instructions = []
+	var context = new scriptingContext(sentences);
 
 	readScript(self.file);
 
@@ -168,6 +227,7 @@ function scriptingEngine(params)
 	 */
 	function prepare(text)
 	{
+		var sentences = [];
 		var pos = new parsePosition(text);
 		var sentence = [];
 		while (!pos.finished())
@@ -180,7 +240,7 @@ function scriptingEngine(params)
 			else if (/[\;\,\.\:]/.test(t))
 			{
 				sentence.push(t);
-				instructions.push(sentence);
+				sentences.push(sentence);
 				sentence = [];
 			}
 			else
@@ -188,7 +248,22 @@ function scriptingEngine(params)
 				sentence.push(t);
 			}
 		}
-		console.log(instructions);
+	}
+
+	/**
+	 * Run the script for a number of lines.
+	 */
+	self.run = function(lines)
+	{
+		var sentence = context.current();
+		for (var index in sentence)
+		{
+			var t = sentence[index];
+			if (t == 'if')
+			{
+				checkConditional(sentence);
+			}
+		}
 	}
 }
 
@@ -196,7 +271,26 @@ module.test = function()
 {
 	var engine = new scriptingEngine({
 		file: 'basic-enemy.8s',
-		robot: {},
+		robot: {
+			view: {
+				id: {
+					enemy: true,
+					dead: true,
+				},
+			},
+			map: {
+				id: {
+					enemy: false,
+				},
+				od: {
+					enemy: true,
+				},
+			},
+			pointAt: function(object) { },
+			shoot: function() { },
+			accelerateTowards: function(object) { },
+
+		},
 	});
 }
 

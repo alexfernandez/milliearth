@@ -18,11 +18,11 @@
 # along with MilliEarth.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-if enemies in view:
-  point at closest enemy;
+if enemy in view:
+  point at it;
   shoot until it is dead;
   repeat.
 
-if enemies in map:
-  accelerate towards closest enemy.
+if enemy in map:
+  accelerate towards it.
 
