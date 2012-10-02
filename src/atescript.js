@@ -93,6 +93,14 @@ function storage(contents)
 	{
 		return index >= contents.length;
 	}
+
+	/**
+	 * Printable representation.
+	 */
+	self.toString = function()
+	{
+		return contents;
+	}
 }
 
 /**
@@ -227,6 +235,7 @@ function scriptingEngine(params)
 	 */
 	function prepare(text)
 	{
+		console.log('prepare');
 		var pos = new parsePosition(text);
 		var sentence = new scriptingSentence();
 		while (!pos.finished())
@@ -247,6 +256,7 @@ function scriptingEngine(params)
 				sentence.add(t);
 			}
 		}
+		console.log('context: ' + context);
 	}
 
 	/**
@@ -254,8 +264,9 @@ function scriptingEngine(params)
 	 */
 	self.run = function(lines)
 	{
+		console.log('run');
 		var sentence = context.current();
-		while (!sentence.finished())
+		while (sentence && !sentence.finished())
 		{
 			var t = sentence.current();
 			if (t == 'if')
