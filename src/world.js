@@ -541,6 +541,10 @@ var gameWorld = function(id)
 			return {};
 		}
 		var player = bodies[id];
+		if (!player || !player.active)
+		{
+			return {};
+		}
 		return player.computeViewUpdate(bodiesExcept(id));
 	}
 
@@ -555,13 +559,17 @@ var gameWorld = function(id)
 			return {};
 		}
 		var player = bodies[id];
+		if (!player || !player.active)
+		{
+			return {};
+		}
 		return player.computeGlobalUpdate(bodies)
 	}
 
 	/**
 	 * Add the robot for a new player.
 	 */
-	self.add = function(id)
+	self.addRobot = function(id)
 	{
 		var robot = new fighterRobot({
 			id: id,
@@ -697,17 +705,6 @@ var gameWorld = function(id)
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Run a long loop of the world.
-	 */
-	self.longLoop = function(delay)
-	{
-		if (!self.active)
-		{
-			return;
-		}
 	}
 
 	/**

@@ -28,6 +28,7 @@ var util = require('./util.js');
 var parser = util.parser;
 var log = util.log;
 var trace = util.trace;
+var extend = util.extend;
 
 
 /**
@@ -70,17 +71,62 @@ function timer(delay, callback)
 
 
 /**
+ * One of the players in a game.
+ */
+function gamePlayer(id)
+{
+	// self-reference
+	var self = this;
+	self.setSelf = function(that)
+	{
+		self = that;
+	}
+
+	// attributes
+	self.id = id;
+	self.robot = null;
+
+	/**
+	 * Keep a message for the auto player.
+	 */
+	self.send = function(message)
+	{
+		trace('Auto: ' + parser.convert(message));
+	}
+
+	/**
+	 * Disconnect the player.
+	 */
+	self.disconnect = function()
+	{
+		console.log('Disconnected ' + self.id);
+	}
+
+	/**
+	 * Check if the player has lost.
+	 */
+	self.hasLost = function()
+	{
+		if (!self.robot || !self.robot.active)
+		{
+			return true;
+		}
+	}
+}
+
+
+/**
  * One of the players connected to a game.
  */
 function connectedPlayer(id, connection)
 {
 	// self-reference
 	var self = this;
+	// extend gamePlayer
+	extend(new gamePlayer(id), self);
 
-	self.id = id;
-	self.life = 100;
+	// attributes
 	self.connection = connection;
-	self.robot = null;
 
 	/**
 	 * Send a message to the player.
@@ -121,24 +167,8 @@ function autoPlayer(id)
 {
 	// self-reference
 	var self = this;
-
-	self.id = id;
-	self.life = 100;
-
-	/**
-	 * Keep a message for the auto player.
-	 */
-	self.send = function(message)
-	{
-		trace('Auto: ' + parser.convert(message));
-	}
-
-	/**
-	 * Disconnect the player.
-	 */
-	self.disconnect = function()
-	{
-	}
+	// extend gamePlayer
+	extend(new gamePlayer(id), self);
 }
 
 /**
@@ -158,7 +188,7 @@ function meGame(id)
 	 */
 	self.add = function(player)
 	{
-		player.robot = self.world.add(player.id);
+		player.robot = self.world.addRobot(player.id);
 		players.push(player);
 		log('Player ' + player.id + ' connected to game ' + self.id + '; ' + players.length + ' connected');
 	}
@@ -344,22 +374,25 @@ function meGame(id)
 	}
 
 	/**
-	 * Send finish information to all players.
+	 * Tell a player that they lost.
 	 */
-	self.sendFinish = function(message, player, rival)
+	self.sendLost = function(player)
+	{
+		var lose = {
+			type: 'lose',
+		};
+		player.send(lose);
+	}
+
+	/**
+	 * Tell a player that they won, finish.
+	 */
+	self.sendWon = function(player)
 	{
 		var win = {
 			type: 'win',
-			life1: player.life,
-			hit: message,
 		};
 		player.send(win);
-		var lose = {
-			type: 'lose',
-			life2: player.life,
-			hit: message,
-		};
-		rival.send(lose);
 		self.finish();
 	}
 
@@ -420,6 +453,34 @@ function meGame(id)
 			players[index].send(message);
 		}
 	}
+
+	/**
+	 * Do a short loop on the world.
+	 */
+	self.shortLoop = function(delay)
+	{
+		self.world.shortLoop(delay);
+		for (var index in players)
+		{
+			if (players[index].hasLost())
+			{
+				self.sendLost();
+				delete players[index];
+			}
+		}
+	}
+
+	/**
+	 * Run a long loop of the world.
+	 */
+	self.longLoop = function(delay)
+	{
+		if (!self.world.active)
+		{
+			return;
+		}
+	}
+
 }
 
 
@@ -460,26 +521,13 @@ var gameSelector = new function()
 	}
 
 	/**
-	 * Count the number of games in progress.
-	 */
-	self.count = function()
-	{
-		var count = 0;
-		for (var id in games)
-		{
-			count++;
-		}
-		return count;
-	}
-
-	/**
 	 * Short loop all worlds.
 	 */
 	function shortLoop(delay)
 	{
 		for (var id in games)
 		{
-			games[id].world.shortLoop(delay);
+			games[id].shortLoop(delay);
 		}
 	}
 
@@ -488,14 +536,15 @@ var gameSelector = new function()
 	 */
 	function longLoop(delay)
 	{
-		var count = self.count();
+		var count = 0;
+		for (var id in games)
+		{
+			games[id].longLoop(delay);
+			count++;
+		}
 		if (count > 0)
 		{
 			log('games in progress: ' + count);
-		}
-		for (var id in games)
-		{
-			games[id].world.longLoop(delay);
 		}
 	}
 
