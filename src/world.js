@@ -652,16 +652,25 @@ var gameWorld = function(id)
 		// detailed check
 		if (d2 < min2)
 		{
+			console.log("Direct collision: " + d2 + ' < ' + min2);
 			return true;
 		}
-		// most detailed check
+		// most detailed checks
 		// d: position vector from 1 to 2
 		// ds: speed difference between 1 and 2
 		// d2 = d · d, ds2 = ds · ds, q = d · ds
-		// min distance: D^2 = sqrt(d2 - q^2 / (4 ds2))
+		// min distance time: tm = -q/ds2
 		var q = d.scalarProduct(ds);
-		if (d2 - q*q/(4*ds2) < min2)
+		var tm = -q/ds2;
+		if (tm < 0 || tm > period)
 		{
+			return false;
+		}
+		// min distance: mind = sqrt(d2 - q^2 / (4 ds2))
+		var mind = d2 - q*q/(4*ds2);
+		if (mind < min2)
+		{
+			console.log("Speeding collision: " + mind + ' < ' + min2 + ' from ' + d2 + ' at ' + tm);
 			return true;
 		}
 		return false;
