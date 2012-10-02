@@ -694,7 +694,7 @@ var gameWorld = function(id)
 			// no way they are going to collide
 			return false;
 		}
-		// most detailed checks
+		// detailed trajectory check
 		// d: position vector from 1 to 2
 		// ds: speed difference between 1 and 2
 		// d2 = d · d, ds2 = ds · ds, q = d · ds
