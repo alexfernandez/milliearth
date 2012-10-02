@@ -81,6 +81,11 @@ function massiveBody(params)
 	 */
 	self.move = function(period)
 	{
+		if (self.checkOutOfBounds())
+		{
+			self.active = false;
+			return;
+		}
 		var scaledSpeed = self.speed.scale(period);
 		self.position.add(scaledSpeed);
 	}
@@ -641,14 +646,11 @@ var gameWorld = function(id)
 					other.computeCollision(body, period);
 				}
 			}
-			if (!body.active || body.checkOutOfBounds())
+			body.move(period);
+			if (!body.active)
 			{
 				log('Removing ' + body.id);
 				delete bodies[body.id];
-			}
-			else
-			{
-				body.move(period);
 			}
 		}
 	}

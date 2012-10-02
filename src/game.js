@@ -382,6 +382,7 @@ function meGame(id)
 			type: 'lose',
 		};
 		player.send(lose);
+		player.disconnect();
 	}
 
 	/**
@@ -462,11 +463,16 @@ function meGame(id)
 		self.world.shortLoop(delay);
 		for (var index in players)
 		{
-			if (players[index].hasLost())
+			var player = players[index];
+			if (player.hasLost())
 			{
-				self.sendLost();
+				self.sendLost(player);
 				delete players[index];
 			}
+		}
+		if (players.length == 1)
+		{
+			self.sendWon(players[0]);
 		}
 	}
 
