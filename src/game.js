@@ -327,13 +327,13 @@ function meGame(id)
 	 */
 	self.close = function(player)
 	{
+		if (!self.world.active)
+		{
+			return;
+		}
 		if (!remove(player))
 		{
 			log('Could not remove ' + player.id + ' from players list');
-			return;
-		}
-		if (!self.world.active)
-		{
 			return;
 		}
 		self.world.stop();
@@ -383,6 +383,7 @@ function meGame(id)
 		};
 		player.send(lose);
 		player.disconnect();
+		remove(player);
 	}
 
 	/**
@@ -390,6 +391,7 @@ function meGame(id)
 	 */
 	self.sendWon = function(player)
 	{
+		console.log('Won ' + player.id);
 		var win = {
 			type: 'win',
 		};
@@ -461,13 +463,13 @@ function meGame(id)
 	self.shortLoop = function(delay)
 	{
 		self.world.shortLoop(delay);
-		for (var index in players)
+		var playersCopy = players.slice();
+		for (var index in playersCopy)
 		{
-			var player = players[index];
+			var player = playersCopy[index];
 			if (player.hasLost())
 			{
 				self.sendLost(player);
-				delete players[index];
 			}
 		}
 		if (players.length == 1)
