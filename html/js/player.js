@@ -112,7 +112,6 @@ var clientPlayer = function()
 	 */
 	function connect()
 	{
-		console.log('connecting player ');
 		var gameId = Math.floor(Math.random() * 0x100000000).toString(16);
 		// open websocket
 		var wsUrl = 'ws://' + location.host + '/serve?game=' + gameId + '&player=' + playerId;
@@ -165,8 +164,6 @@ var clientPlayer = function()
 			$('#status').text('Disconnected');
 			disconnect();
 		}
-
-		console.log('connected player ');
 		$('#connect').val('Disconnect');
 	}
 
@@ -175,6 +172,10 @@ var clientPlayer = function()
 	 */
 	function disconnect()
 	{
+		if (websocket == null)
+		{
+			return;
+		}
 		websocket.close();
 		$('#connect').val('Connect');
 		websocket = null;
