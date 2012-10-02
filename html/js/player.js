@@ -261,6 +261,22 @@ var clientPlayer = function()
 	}
 
 	/**
+	 * Player wins.
+	 */
+	self.win = function(message)
+	{
+		alert('Player wins! :)');
+	}
+
+	/**
+	 * Player loses.
+	 */
+	self.lose = function(message)
+	{
+		alert('Player loses :(');
+	}
+
+	/**
 	 * Paint the latest global update we have."
 	 */
 	function paintGlobalUpdate()
