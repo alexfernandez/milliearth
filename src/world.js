@@ -128,6 +128,10 @@ function massiveBody(params)
 		var momentum = ds.scale(self.mass);
 		self.transferMomentum(momentum, body);
 		console.log('Transferred ' + momentum.length());
+		if (self.computeDamage)
+		{
+			self.computeDamage(body, period);
+		}
 	}
 
 	/**
@@ -184,9 +188,9 @@ function flyingProjectile(params)
 	self.color = '#f00';
 
 	/**
-	 * Self-destruct on impact, damage body.
+	 * Self-destruct on impact, damage colliding body.
 	 */
-	self.computeCollision = function(body, period)
+	self.computeDamage = function(body, period)
 	{
 		self.active = false;
 		body.substractDamage(globalParams.projectileCharge);
