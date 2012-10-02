@@ -34,15 +34,76 @@ var extend = util.extend;
 
 
 /**
+ * Created a generic storage of an array of things.
+ */
+function storage(contents)
+{
+	// self-reference
+	var self = this;
+	self.setSelf = function(that)
+	{
+		self = that;
+	}
+
+	// attributes
+	var index = 0;
+
+	/**
+	 * Add a new element.
+	 */
+	self.add = function(element)
+	{
+		contents.push(element);
+	}
+
+	/**
+	 * Get the current element.
+	 */
+	self.current = function()
+	{
+		if (self.finished())
+		{
+			return null;
+		}
+		return contents[index];
+	}
+
+	/**
+	 * Get the current element, skip it.
+	 */
+	self.currentSkip = function()
+	{
+		var c = self.current();
+		self.skip();
+		return c;
+	}
+
+	/**
+	 * Skip the current element.
+	 */
+	self.skip = function()
+	{
+		index++;
+	}
+
+	/**
+	 * Return true if the text is finished.
+	 */
+	self.finished = function()
+	{
+		return index >= contents.length;
+	}
+}
+
+/**
  * Object to assist in parsing a text: keeps the current position.
  */
 function parsePosition(text)
 {
 	// self-reference
 	var self = this;
-
-	// attributes
-	var pos = 0;
+	// extend storage
+	extend(new storage(text), self);
 
 	/**
 	 * Skip any blank characters at pos.
@@ -51,7 +112,7 @@ function parsePosition(text)
 	{
 		while (isBlank())
 		{
-			pos++;
+			self.skip();
 		}
 	}
 
@@ -61,11 +122,11 @@ function parsePosition(text)
 	self.parseToken = function()
 	{
 		self.skipBlank();
-		if (/\w/.test(current()))
+		if (/\w/.test(self.current()))
 		{
 			return parseWord();
 		}
-		return currentSkip();
+		return self.currentSkip();
 	}
 
 	/**
@@ -74,9 +135,9 @@ function parsePosition(text)
 	self.skipPast = function(end)
 	{
 		var s = '';
-		while (current() != end && !self.finished())
+		while (self.current() != end && !self.finished())
 		{
-			s += currentSkip();
+			s += self.currentSkip();
 		}
 		return s;
 	}
@@ -86,7 +147,7 @@ function parsePosition(text)
 	 */
 	function isBlank()
 	{
-		return /\s/.test(current());
+		return /\s/.test(self.current());
 	}
 
 	/**
@@ -95,88 +156,27 @@ function parsePosition(text)
 	function parseWord()
 	{
 		var w = '';
-		while (/\w/.test(current()) && !self.finished())
+		while (/\w/.test(self.current()) && !self.finished())
 		{
-			w += currentSkip();
+			w += self.currentSkip();
 		}
 		return w;
-	}
-
-	/**
-	 * Get the current character.
-	 */
-	function current()
-	{
-		if (self.finished())
-		{
-			return '';
-		}
-		return text.charAt(pos);
-	}
-
-	/**
-	 * Get the current character, skip it.
-	 */
-	function currentSkip()
-	{
-		var c = current();
-		pos++;
-		return c;
-	}
-
-	/**
-	 * Return true if the text is finished.
-	 */
-	self.finished = function()
-	{
-		return pos >= text.length;
 	}
 }
 
 /**
  * Provide the context for the scripting engine.
+ * Contains an array of sentences.
  */
 function scriptingContext()
 {
 	// self-reference
 	var self = this;
+	// extend storage
+	extend(new storage([]), self);
 
 	// attributes
-	var index = 0;
-	var sentences = [];
 	self.it = null;
-
-	/**
-	 * Add a new sentence.
-	 */
-	self.add = function(sentence)
-	{
-		sentences.push(sentence);
-	}
-
-	/**
-	 * Get the current sentence.
-	 */
-	self.current = function()
-	{
-		return sentences[index];
-	}
-
-	/**
-	 * Go to the next sentence.
-	 */
-	self.next = function()
-	{
-		index ++;
-	}
-
-	/**
-	 * Find out if the context has been exhausted.
-	 */
-	self.finished = function()
-	{
-		return index >= sentences.length;
-	}
 }
 
 /**
@@ -186,10 +186,10 @@ function scriptingSentence()
 {
 	// self-reference
 	var self = this;
+	// extend storage
+	extend(new storage([]), self);
 
 	// attributes
-	var index = 0;
-	var tokens = [];
 }
 
 /**
@@ -203,7 +203,7 @@ function scriptingEngine(params)
 	// attributes
 	self.file = params.file;
 	self.robot = params.robot;
-	var context = new scriptingContext(sentences);
+	var context = new scriptingContext();
 
 	readScript(self.file);
 
@@ -227,9 +227,8 @@ function scriptingEngine(params)
 	 */
 	function prepare(text)
 	{
-		var sentences = [];
 		var pos = new parsePosition(text);
-		var sentence = [];
+		var sentence = new scriptingSentence();
 		while (!pos.finished())
 		{
 			var t = pos.parseToken();
@@ -239,13 +238,13 @@ function scriptingEngine(params)
 			}
 			else if (/[\;\,\.\:]/.test(t))
 			{
-				sentence.push(t);
-				sentences.push(sentence);
-				sentence = [];
+				sentence.add(t);
+				context.add(sentence);
+				sentence = new scriptingSentence();
 			}
 			else
 			{
-				sentence.push(t);
+				sentence.add(t);
 			}
 		}
 	}
@@ -256,9 +255,9 @@ function scriptingEngine(params)
 	self.run = function(lines)
 	{
 		var sentence = context.current();
-		for (var index in sentence)
+		while (!sentence.finished())
 		{
-			var t = sentence[index];
+			var t = sentence.current();
 			if (t == 'if')
 			{
 				checkConditional(sentence);
@@ -292,6 +291,7 @@ module.test = function()
 
 		},
 	});
+	engine.run();
 }
 
 module.test();
