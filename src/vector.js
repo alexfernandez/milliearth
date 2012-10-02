@@ -188,11 +188,13 @@ function vector(x, y, z)
 		 */
 		self.scalarProduct = function(value)
 		{
+			/*
 			if (!isVector(value))
 			{
 				log('Vector product value ' + value + ' is not a vector');
 				return 0;
 			}
+			*/
 			return self.x * value.x + self.y * value.y + self.z * value.z;
 		}
 
@@ -201,11 +203,13 @@ function vector(x, y, z)
 		 */
 		self.vectorProduct = function(value)
 		{
+			/*
 			if (!isVector(value))
 			{
 				log('Vector product value ' + value + ' is not a vector');
 				return new vector(0, 0, 0);
 			}
+			*/
 			var x = self.y * value.z - self.z * value.y;
 			var y = self.z * value.x - self.x * value.z;
 			var z = self.x * value.y - self.y * value.x;
