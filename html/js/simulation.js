@@ -43,6 +43,7 @@ $(function () {
 
 	$(document).keydown(keymap.keydown);
 	$(document).keyup(keymap.keyup);
+	$(document).blur(keymap.blur);
 
 	keymap.display($('#keymap'));
 

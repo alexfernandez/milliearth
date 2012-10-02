@@ -102,6 +102,20 @@ var keymap = new function()
 	}
 
 	/**
+	 * Lose focus; depress all pressed keys.
+	 */
+	self.blur = function()
+	{
+		for (var keycode in keysPressed)
+		{
+			self.keyup({
+				which: keycode,
+				timeStamp: new Date().getTime(),
+			});
+		}
+	}
+
+	/**
 	 * Get all keys pressed since last time.
 	 */
 	self.getKeys = function()
