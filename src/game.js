@@ -99,7 +99,7 @@ function gamePlayer(id)
 	 */
 	self.disconnect = function()
 	{
-		console.log('Disconnected ' + self.id);
+		log(self.id + ' disconnected');
 	}
 
 	/**
@@ -391,7 +391,6 @@ function meGame(id)
 	 */
 	self.sendWon = function(player)
 	{
-		console.log('Won ' + player.id);
 		var win = {
 			type: 'win',
 		};
