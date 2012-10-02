@@ -59,6 +59,7 @@ function massiveBody(params)
 	self.position = params.position || new vector(0, 0, 0);
 	self.speed = params.speed || new vector(0, 0, 0);
 	self.life = params.life;
+	console.log('life: ' + self.life);
 	self.active = true;
 
 	/**
@@ -104,6 +105,7 @@ function massiveBody(params)
 	self.substractDamage = function(energy)
 	{
 		self.life -= energy;
+		log(self.id + ' damaged: ' + energy + ', life: ' + self.life);
 		if (self.life <= 0)
 		{
 			self.active = false;
@@ -123,9 +125,7 @@ function massiveBody(params)
 	 */
 	self.computeCollision = function(body, momentum)
 	{
-		console.log('colliding ' + self.id + ' with ' + body.id);
 		self.transferMomentum(body, momentum);
-		console.log('Transferred ' + momentum.length());
 	}
 
 	/**
@@ -144,7 +144,6 @@ function massiveBody(params)
 	{
 		var s = self.speed.copy();
 		self.speed.addScaled(momentum, 1/self.mass);
-		console.log('Added speed: ' + s + ' + ' + momentum + ' / ' + (1/self.mass) + ' = ' + self.speed);
 	}
 
 	/**
@@ -202,11 +201,11 @@ function fighterRobot(params)
 	// extend massiveBody
 	params.mass = globalParams.robotMass;
 	params.radius = globalParams.robotRadius;
+	params.life = globalParams.robotLife;
 	extend(new massiveBody(params), self);
 
 	// attributes
 	self.type = 'robot';
-	self.life = params.life;
 	self.projectiles = globalParams.projectiles;
 	self.color = '#080';
 	var camera = new coordinateSystem(new vector(0, 0, 1), new vector(0, 1, 0), new vector(1, 0, 0));
@@ -216,7 +215,6 @@ function fighterRobot(params)
 	 */
 	self.start = function(position, speed)
 	{
-		console.log('started: ' + position + speed);
 		self.position = position;
 		self.speed = speed;
 		camera = new coordinateSystem(position.vectorProduct(speed), position, speed);
@@ -585,7 +583,6 @@ var gameWorld = function(id)
 			size++;
 		});
 		var distance = globalParams.meRadius + robot.radius;
-		console.log('distance: ' + distance);
 		if (size % 2)
 		{
 			// enemy
@@ -692,7 +689,7 @@ var gameWorld = function(id)
 		var safety = globalParams.safetyDistance * globalParams.safetyDistance;
 		if (d2 + safety < min2)
 		{
-			console.log("Direct collision: " + d2 + ' < ' + min2);
+			trace("Direct collision: " + d2 + ' < ' + min2);
 			return true;
 		}
 		// quick trajectory check
@@ -720,7 +717,7 @@ var gameWorld = function(id)
 		var mind = d2 - q*q/(4*ds2);
 		if (mind + safety < min2)
 		{
-			console.log("Speeding collision: " + mind + ' < ' + min2 + ' from ' + d2 + ' at ' + tm);
+			trace("Speeding collision: " + mind + ' < ' + min2 + ' from ' + d2 + ' at ' + tm);
 			return true;
 		}
 		return false;

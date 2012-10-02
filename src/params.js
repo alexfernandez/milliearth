@@ -27,8 +27,6 @@ var globalParams = new function()
 {
 	// the default port
 	this.port = 80;
-	// starting life for players in energy, joules
-	this.life = 1e9;
 	// min speed to cause harm, m/s
 	this.minHarmSpeed = 100;
 	// friction deceleration, m/s^2
@@ -55,6 +53,8 @@ var globalParams = new function()
 	this.robotMass = 200;
 	// robot radius, in m
 	this.robotRadius = 2;
+	// starting life for players in energy, joules
+	this.robotLife = 1e9;
 	// set marks every given distance, m
 	this.markDistance = 100;
 	// half-width of the speed marks, m
