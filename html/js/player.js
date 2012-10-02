@@ -51,8 +51,6 @@ var clientPlayer = function()
 	var globalLayer = createGlobalLayer($('#simulation'));
 	// player id sent to the server: random
 	var playerId = Math.floor(Math.random() * 0x100000000).toString(16);
-	// game id: random
-	var gameId = Math.floor(Math.random() * 0x100000000).toString(16);
 
 
 	$('#status').html('Press connect');
@@ -110,11 +108,12 @@ var clientPlayer = function()
 	$('#connect').click(self.click);
 
 	/**
-	 * Connect using a websocket.
+	 * Connect using a websocket using a random game id.
 	 */
 	function connect()
 	{
 		console.log('connecting player ');
+		var gameId = Math.floor(Math.random() * 0x100000000).toString(16);
 		// open websocket
 		var wsUrl = 'ws://' + location.host + '/serve?game=' + gameId + '&player=' + playerId;
 		websocket = new WebSocket(wsUrl);
