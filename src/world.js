@@ -113,31 +113,25 @@ function massiveBody(params)
 	/**
 	 * Compute a collision with the milliEarth, go to the general case of a collision.
 	 */
-	self.computeMilliEarthCollision = function(body, period)
+	self.computeMilliEarthCollision = function(milliEarth, period)
 	{
-		self.computeCollision(body, period);
+		self.computeCollision(milliEarth, self.speed.scale(self.mass));
 	}
 
 	/**
-	 * Compute a collision with another body.
+	 * Compute a collision with another body, given the momentum transfer.
 	 */
-	self.computeCollision = function(body, period)
+	self.computeCollision = function(body, momentum)
 	{
-		console.log('colliding');
-		var ds = self.speed.difference(body.speed);
-		var momentum = ds.scale(self.mass);
-		self.transferMomentum(momentum, body);
+		console.log('colliding ' + self.id + ' with ' + body.id);
+		self.transferMomentum(body, momentum);
 		console.log('Transferred ' + momentum.length());
-		if (self.computeDamage)
-		{
-			self.computeDamage(body, period);
-		}
 	}
 
 	/**
 	 * Transfer some momentum to another body.
 	 */
-	self.transferMomentum = function(momentum, body)
+	self.transferMomentum = function(body, momentum)
 	{
 		self.substractMomentum(momentum);
 		body.addMomentum(momentum);
@@ -190,7 +184,7 @@ function flyingProjectile(params)
 	/**
 	 * Self-destruct on impact, damage colliding body.
 	 */
-	self.computeDamage = function(body, period)
+	self.computeCollision = function(body, momentum)
 	{
 		self.active = false;
 		body.substractDamage(globalParams.projectileCharge);
@@ -232,9 +226,9 @@ function fighterRobot(params)
 	/**
 	 * Compute a collision with the milliEarth: rebound, apply friction.
 	 */
-	self.computeMilliEarthCollision = function(body, period)
+	self.computeMilliEarthCollision = function(milliEarth, period)
 	{
-		var differenceUnit = body.position.difference(self.position).unit();
+		var differenceUnit = milliEarth.position.difference(self.position).unit();
 		var collisionSpeed = self.speed.scalarProduct(differenceUnit);
 		var verticalSpeed = differenceUnit.scale(collisionSpeed);
 		var horizontalSpeed = self.speed.difference(verticalSpeed);
@@ -494,7 +488,7 @@ function fighterRobot(params)
 		var momentum = camera.w.scale(globalParams.projectileSpeed * projectile.mass);
 		self.mass -= projectile.mass;
 		// speed and recoil
-		self.transferMomentum(momentum, projectile);
+		self.transferMomentum(projectile, momentum);
 		// add to world
 		self.world.addObject(projectile);
 		self.projectiles--;
@@ -644,12 +638,7 @@ var gameWorld = function(id)
 			body.computeAttraction(self.milliEarth, period);
 			for (var j = i + 1; j < bodiesArray.length; j++)
 			{
-				var other = bodiesArray[j];
-				if (checkCollision(body, other, period))
-				{
-					body.computeCollision(other, period);
-					other.computeCollision(body, period);
-				}
+				computeCollision(body, bodiesArray[j]);
 			}
 			body.move(period);
 			if (!body.active)
@@ -658,6 +647,28 @@ var gameWorld = function(id)
 				delete bodies[body.id];
 			}
 		}
+	}
+
+	/**
+	 * Compute a potential collision between two bodies for a given period.
+	 */
+	function computeCollision(body1, body2, period)
+	{
+		if (!checkCollision(body1, body2, period))
+		{
+			return;
+		}
+		// compute center of momentum frame
+		var tm = body1.speed.scale(body1.mass).sum(body2.speed.scale(body2.mass));
+		var u0 = tm.scale(1/(body1.mass + body2.mass));
+		var u1 = body1.speed.difference(u0);
+		var u2 = body2.speed.difference(u0);
+		var ec = 1/2 * body1.mass * u1.squaredLength() + 1/2 * body2.mass * u2.squaredLength();
+		var ec2 = - (body1.mass + body2.mass) * u1.scalarProduct(u2) / 2;
+		var m1 = u1.scale(body1.mass);
+		body1.computeCollision(body2, m1);
+		var m2 = u2.scale(body2.mass);
+		body2.computeCollision(body1, m2);
 	}
 
 	/**
