@@ -455,9 +455,11 @@ var paintingLayer = function(params)
 			var z = object.position.z;
 			var r = object.radius;
 			var p = Math.sqrt(x * x + y * y + z * z);
-			var h = p - r;
+			// remove spurious negative heights
+			var h = Math.max(p - r, 0);
 			var d = Math.sqrt(h * h + 2 * h * r);
-			return - d * (d * z + y * Math.sqrt(y*y + z*z - d*d)) / (y * y + z * z);
+			console.log('h: ' + h + ', horizon: ' + d);
+			return d;
 		}
 		return object.position.z;
 	}
