@@ -119,6 +119,22 @@ function massiveBody(params)
 	self.computeCollision = function(body, period)
 	{
 	}
+
+	/**
+	 * Return the momentum as a vector, m·v.
+	 */
+	self.getMomentum = function()
+	{
+		return self.speed.scale(self.mass);
+	}
+
+	/**
+	 * Transfer some momentum from another body, as a vector.
+	 */
+	self.addMomentum = function(momentum)
+	{
+		self.speed.addScaled(momentum, 1/self.mass);
+	}
 }
 
 /**
@@ -441,10 +457,12 @@ function fighterRobot(params)
 			world: self.world,
 		});
 		projectile.position = self.position.sum(camera.w.scale(self.radius + projectile.radius));
-		projectile.speed = self.speed.sum(camera.w.scale(globalParams.projectileSpeed));
-		// recoil
+		projectile.speed = self.speed.copy();
+		var momentum = camera.w.scale(globalParams.projectileSpeed * projectile.mass);
 		self.mass -= projectile.mass;
-		self.speed.addScaled(projectile.speed, -projectile.mass / self.mass);
+		// speed and recoil
+		projectile.addMomentum(momentum);
+		self.addMomentum(momentum.scale(-1));
 		// add to world
 		self.world.addObject(projectile);
 		self.projectiles--;
