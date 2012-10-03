@@ -19,9 +19,10 @@
 #
 
 if enemy in view:
-  point at it;
-  shoot until it is dead;
-  repeat.
+	repeat:
+		point at it;
+		shoot;
+		until it is dead.
 
 if enemy in map:
   accelerate towards it.
