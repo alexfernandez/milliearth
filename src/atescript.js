@@ -201,6 +201,7 @@ function scriptingContext(robot, it)
 	// attributes
 	var deferred = 0;
 	var pendingBlocks = 0;
+	var subcontext = null;
 
 	/**
 	 * Run any deferred lines pending.
@@ -230,32 +231,39 @@ function scriptingContext(robot, it)
 	 */
 	self.run = function(lines)
 	{
-		var sentence = self.current();
-		while (sentence && !self.finished())
+		var linesRun = 0;
+		while (!self.finished() && linesRun < lines)
 		{
-			var token = sentence.current();
-			if (token == 'if')
-			{
-				doIf(sentence);
-			}
-			else if (token == 'repeat')
-			{
-				doRepeat(sentence);
-			}
-			else if (token == 'until')
-			{
-				doUntil(sentence);
-			}
-			else if (checkCommand(token))
-			{
-				doCommand(sentence);
-			}
-			else
-			{
-				log('Invalid sentence ' + sentence + '; skipping');
-				self.skip();
-			}
-			sentence = self.current();
+			runSentence();
+			linesRun++;
+		}
+		log('Run ' + linesRun + ' lines');
+	}
+
+	function runSentence()
+	{
+		var sentence = self.current();
+		var token = sentence.current();
+		if (token == 'if')
+		{
+			doIf(sentence);
+		}
+		else if (token == 'repeat')
+		{
+			doRepeat(sentence);
+		}
+		else if (token == 'until')
+		{
+			doUntil(sentence);
+		}
+		else if (checkCommand(token))
+		{
+			doCommand(sentence);
+		}
+		else
+		{
+			log('Invalid sentence ' + sentence + '; skipping');
+			self.skip();
 		}
 	}
 
