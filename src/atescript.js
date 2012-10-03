@@ -439,7 +439,12 @@ function scriptingContext(params)
 		if (robot.hasOwnProperty(command))
 		{
 			var callback = robot[command];
-			callback();
+			var parameter = null;
+			if (!sentence.isTerminator())
+			{
+				parameter = readParameter(sentence);
+			}
+			callback(parameter);
 			self.skip();
 			return;
 		}
@@ -467,6 +472,20 @@ function scriptingContext(params)
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Read a parameter, like 'it'.
+	 */
+	function readParameter(sentence)
+	{
+		var token = sentence.currentSkip();
+		if (token == 'it')
+		{
+			return it;
+		}
+		log('Invalid parameter ' + token);
+		return null;
 	}
 
 	/**
@@ -700,22 +719,22 @@ function scriptingEngine(params)
 
 module.test = function()
 {
+	var enemy = {
+		enemy: true,
+		dead: true,
+		toString: function() { return 'Me bad'; },
+	};
 	var engine = new scriptingEngine({
 		file: 'basic-enemy.8s',
 		robot: {
 			view: {
-				id: {
-					enemy: true,
-					dead: true,
-				},
+				id: enemy,
 			},
 			map: {
 				id: {
 					enemy: false,
 				},
-				od: {
-					enemy: true,
-				},
+				od: enemy,
 			},
 			pointAt: function(object) {
 				console.log('pointing at ' + object);
