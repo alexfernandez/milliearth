@@ -25,9 +25,7 @@
  */
 var fs = require('fs');
 var globalParams = require('./params.js').globalParams;
-var vector = require('./vector.js').vector;
 var util = require('./util.js');
-var parser = util.parser;
 var log = util.log;
 var trace = util.trace;
 var extend = util.extend;
@@ -60,6 +58,7 @@ function storage(contents)
 
 	// attributes
 	var index = 0;
+	var marked = 0;
 
 	/**
 	 * Add a new element.
@@ -112,6 +111,22 @@ function storage(contents)
 	self.skip = function()
 	{
 		index++;
+	}
+
+	/**
+	 * Mark the current position.
+	 */
+	self.mark = function()
+	{
+		marked = index;
+	}
+
+	/**
+	 * Go to the latest mark.
+	 */
+	self.goToMark = function()
+	{
+		index = marked;
 	}
 
 	/**
@@ -274,7 +289,6 @@ function scriptingContext(params)
 	var linesRun = 0;
 	var linesPending = 0;
 	var pendingBlocks = 0;
-	var subcontext = null;
 
 	/**
 	 * Run the specified number of lines.
@@ -465,6 +479,7 @@ function scriptingContext(params)
 			log('Invalid repeat sentence ' + sentence);
 			return false;
 		}
+		self.mark();
 		self.skip();
 	}
 
@@ -478,8 +493,12 @@ function scriptingContext(params)
 		{
 			return false;
 		}
+		if (!evaluation)
+		{
+			self.goToMark();
+			return;
+		}
 		self.skip();
-		pendingBlocks++;
 		return evaluation;
 	}
 
