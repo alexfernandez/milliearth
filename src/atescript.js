@@ -212,45 +212,29 @@ function scriptingContext(params)
 	extend(new storage([]), self);
 
 	// attributes
+	self.ready = false;
 	var robot = params.robot;
 	var it = params.it;
-	var deferred = 0;
+	var linesRun = 0;
+	var linesPending = 0;
 	var pendingBlocks = 0;
 	var subcontext = null;
-
-	/**
-	 * Run any deferred lines pending.
-	 */
-	self.runDeferred = function()
-	{
-		var load = deferred;
-		while (load > 0)
-		{
-			log('Running deferred ' + load);
-			self.run(load);
-			deferred -= load;
-			load = deferred;
-		}
-	}
-
-	/**
-	 * Defer execution of a number of lines.
-	 */
-	self.defer = function(lines)
-	{
-		deferred += lines;
-	}
 
 	/**
 	 * Run the specified number of lines.
 	 */
 	self.run = function(lines)
 	{
-		var linesRun = 0;
-		while (!self.finished() && linesRun < lines)
+		if (!self.ready)
+		{
+			linesPending += lines;
+			return;
+		}
+		while (!self.finished() && linesPending > 0)
 		{
 			runSentence();
 			linesRun++;
+			linesPending--;
 		}
 		log('Run ' + linesRun + ' lines');
 		if (self.finished() && params.afterFinished)
@@ -597,7 +581,6 @@ function scriptingEngine(params)
 	// attributes
 	self.file = params.file;
 	var context = new scriptingContext(params);
-	var ready = false;
 
 	readScript(self.file);
 
@@ -641,9 +624,9 @@ function scriptingEngine(params)
 				sentence.add(t);
 			}
 		}
-		ready = true;
-		trace('context: ' + context);
-		context.runDeferred();
+		context.ready = true;
+		// run any pending lines
+		context.run(0);
 	}
 
 	/**
@@ -654,11 +637,6 @@ function scriptingEngine(params)
 		if (!lines)
 		{
 			log('No lines run');
-			return;
-		}
-		if (!ready)
-		{
-			context.defer(lines);
 			return;
 		}
 		context.run(lines);
