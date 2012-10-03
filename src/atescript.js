@@ -57,15 +57,15 @@ function storage(contents)
 	}
 
 	// attributes
-	var index = 0;
-	var marked = 0;
+	self.position = 0;
+	self.contents = contents;
 
 	/**
 	 * Add a new element.
 	 */
 	self.add = function(element)
 	{
-		contents.push(element);
+		self.contents.push(element);
 	}
 
 	/**
@@ -77,7 +77,7 @@ function storage(contents)
 		{
 			return null;
 		}
-		return contents[index];
+		return self.contents[self.position];
 	}
 
 	/**
@@ -110,23 +110,7 @@ function storage(contents)
 	 */
 	self.skip = function()
 	{
-		index++;
-	}
-
-	/**
-	 * Mark the current position.
-	 */
-	self.mark = function()
-	{
-		marked = index;
-	}
-
-	/**
-	 * Go to the latest mark.
-	 */
-	self.goToMark = function()
-	{
-		index = marked;
+		self.position++;
 	}
 
 	/**
@@ -134,7 +118,7 @@ function storage(contents)
 	 */
 	self.finished = function()
 	{
-		return index >= contents.length;
+		return self.position >= self.contents.length;
 	}
 
 	/**
@@ -142,7 +126,7 @@ function storage(contents)
 	 */
 	self.toString = function()
 	{
-		return contents.join(' ');
+		return self.contents.join(' ');
 	}
 }
 
@@ -269,6 +253,14 @@ function scriptingSentence()
 	{
 		return scriptingParams.terminators.test(self.current());
 	}
+
+	/**
+	 * Reset the sentence to the beginning.
+	 */
+	self.reset = function()
+	{
+		self.position = 0;
+	}
 }
 
 /**
@@ -289,6 +281,7 @@ function scriptingContext(params)
 	var linesRun = 0;
 	var linesPending = 0;
 	var pendingBlocks = 0;
+	var marked = 0;
 
 	/**
 	 * Run the specified number of lines.
@@ -355,7 +348,6 @@ function scriptingContext(params)
 			return;
 		}
 		var value = readValue(sentence);
-		console.log(variable + ': ' + value);
 		robot[variable] = value;
 		sentence.skipTerminator();
 		self.skip();
@@ -419,7 +411,6 @@ function scriptingContext(params)
 	 */
 	function readNumber(token)
 	{
-		console.log('float: ' + token);
 		return parseFloat(token);
 	}
 
@@ -428,6 +419,11 @@ function scriptingContext(params)
 	 */
 	function checkCommand(token)
 	{
+		if (!token)
+		{
+			log('Empty token');
+			return false;
+		}
 		if (robot[token])
 		{
 			return true;
@@ -479,8 +475,8 @@ function scriptingContext(params)
 			log('Invalid repeat sentence ' + sentence);
 			return false;
 		}
-		self.mark();
 		self.skip();
+		marked = self.position;
 	}
 
 	/**
@@ -500,6 +496,24 @@ function scriptingContext(params)
 		}
 		self.skip();
 		return evaluation;
+	}
+
+	/**
+	 * Go to the latest mark.
+	 */
+	self.goToMark = function()
+	{
+		if (!marked)
+		{
+			log('Invalid mark');
+			return;
+		}
+		for (var i = marked; i <= self.position; i++)
+		{
+			var sentence = self.contents[i];
+			sentence.reset();
+		}
+		self.position = marked;
 	}
 
 	/**
@@ -542,7 +556,6 @@ function scriptingContext(params)
 			var element = container[key];
 			if (element[elementAttribute])
 			{
-				console.log('Found ' + elementAttribute);
 				it = element;
 				return true;
 			}
