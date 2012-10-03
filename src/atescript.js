@@ -99,7 +99,7 @@ function storage(contents)
 	 */
 	self.toString = function()
 	{
-		return contents.toString();
+		return contents.join(' ');
 	}
 }
 
