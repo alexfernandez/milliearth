@@ -196,7 +196,7 @@ function scriptingContext()
 		var load = deferred;
 		while (load > 0)
 		{
-			console.log('Running deferred ' + load);
+			log('Running deferred ' + load);
 			self.run(load);
 			deferred -= load;
 			load = deferred;
@@ -209,7 +209,6 @@ function scriptingContext()
 	self.defer = function(lines)
 	{
 		deferred += lines;
-		console.log('Deferred ' + deferred + ' lines');
 	}
 
 	/**
@@ -218,7 +217,7 @@ function scriptingContext()
 	self.run = function(lines)
 	{
 		var sentence = self.current();
-		while (sentence && !sentence.finished())
+		while (sentence && !self.finished())
 		{
 			var token = sentence.current();
 			if (token == 'if')
@@ -235,9 +234,10 @@ function scriptingContext()
 			}
 			else
 			{
-				log('Invalid sentence ' + sentence);
+				log('Invalid sentence ' + sentence + '; skipping');
+				self.skip();
 			}
-			self.skip();
+			sentence = self.current();
 		}
 	}
 
@@ -247,6 +247,14 @@ function scriptingContext()
 	function checkCommand(token)
 	{
 		return false;
+	}
+
+	/**
+	 * Do a robot command.
+	 */
+	function doCommand(sentence)
+	{
+		self.skip();
 	}
 
 	/**
@@ -291,7 +299,7 @@ function scriptingContext()
 	function skipBlock()
 	{
 		var sentence = self.current();
-		while (!sentence.isBlock() || self.finished())
+		while (!sentence.isBlock() && !self.finished())
 		{
 			sentence = self.currentSkip();
 		}
@@ -382,7 +390,7 @@ function scriptingEngine(params)
 			}
 		}
 		ready = true;
-		console.log('context: ' + context);
+		trace('context: ' + context);
 		context.runDeferred();
 	}
 
