@@ -287,6 +287,10 @@ function scriptingContext(robot)
 			skipBlock();
 			return false;
 		}
+		if (!sentence.checkSkip('.'))
+		{
+			return false;
+		}
 		self.skip();
 		pendingBlocks++;
 		return true;
@@ -314,7 +318,10 @@ function scriptingContext(robot)
 		sentence.skip();
 		if (!checkCondition(sentence))
 		{
-			skipBlock();
+			return;
+		}
+		if (!sentence.checkSkip('.'))
+		{
 			return;
 		}
 		self.skip();
@@ -327,32 +334,32 @@ function scriptingContext(robot)
 	 */
 	function checkCondition(sentence)
 	{
-		var elementAttribute = sentence.currentSkip();
-		var adverb = sentence.currentSkip();
-		if (adverb != 'in')
+		var subject = sentence.currentSkip();
+		if (subject == 'it')
 		{
-			log('Invalid adverb ' + adverb);
+			return checkIt(sentence);
+		}
+		var particle = sentence.currentSkip();
+		if (particle != 'in')
+		{
+			log('Invalid particle ' + particle);
 			return false;
 		}
+		return checkIn(sentence, subject);
+	}
+
+	/**
+	 * Check an 'in' condition: container has an element with the given attribute.
+	 */
+	function checkIn(sentence, elementAttribute)
+	{
 		var containerAttribute = sentence.currentSkip();
-		if (!sentence.checkSkip(':'))
-		{
-			return false;
-		}
 		var container = robot[containerAttribute];
 		if (!container)
 		{
 			log('Invalid container ' + containerAttribute);
 			return false;
 		}
-		return checkIn(container, elementAttribute);
-	}
-
-	/**
-	 * Check an 'in' condition: container has an element with the given attribute.
-	 */
-	function checkIn(container, elementAttribute)
-	{
 		for (var key in container)
 		{
 			var element = container[key];
@@ -364,6 +371,19 @@ function scriptingContext(robot)
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Check an 'it' condition: something about it.
+	 */
+	function checkIt(sentence)
+	{
+		if (!sentence.checkSkip('is'))
+		{
+			return false;
+		}
+		var attribute = sentence.currentSkip();
+		return it[attribute];
 	}
 
 	/**
