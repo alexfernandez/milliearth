@@ -69,6 +69,21 @@ function storage(contents)
 	}
 
 	/**
+	 * Check that the current element is the given one and skip it.
+	 * If it is different do not skip it and return false.
+	 */
+	self.checkSkip = function(element)
+	{
+		if (self.current() == element)
+		{
+			self.skip();
+			return true;
+		}
+		log('Invalid element ' + self.current() + ', expecting: ' + element);
+		return false;
+	}
+
+	/**
 	 * Get the current element, skip it.
 	 */
 	self.currentSkip = function()
@@ -176,7 +191,7 @@ function parsePosition(text)
  * Provide the context for the scripting engine.
  * Contains an array of sentences.
  */
-function scriptingContext()
+function scriptingContext(robot)
 {
 	// self-reference
 	var self = this;
@@ -184,9 +199,9 @@ function scriptingContext()
 	extend(new storage([]), self);
 
 	// attributes
-	self.it = null;
 	var deferred = 0;
 	var pendingBlocks = 0;
+	var it = null;
 
 	/**
 	 * Run any deferred lines pending.
@@ -290,6 +305,41 @@ function scriptingContext()
 	 */
 	function checkCondition(sentence)
 	{
+		var elementAttribute = sentence.currentSkip();
+		var adverb = sentence.currentSkip();
+		if (adverb != 'in')
+		{
+			log('Invalid adverb ' + adverb);
+			return false;
+		}
+		var containerAttribute = sentence.currentSkip();
+		if (!sentence.checkSkip(':'))
+		{
+			return false;
+		}
+		var container = robot[containerAttribute];
+		if (!container)
+		{
+			log('Invalid container ' + containerAttribute);
+			return false;
+		}
+		return checkIn(container, elementAttribute);
+	}
+
+	/**
+	 * Check an 'in' condition: container has an element with the given attribute.
+	 */
+	function checkIn(container, elementAttribute)
+	{
+		for (var key in container)
+		{
+			var element = container[key];
+			if (element.elementAttribute)
+			{
+				it = element;
+				return true;
+			}
+		}
 		return false;
 	}
 
@@ -344,7 +394,7 @@ function scriptingEngine(params)
 	// attributes
 	self.file = params.file;
 	self.robot = params.robot;
-	var context = new scriptingContext();
+	var context = new scriptingContext(self.robot);
 	var ready = false;
 
 	readScript(self.file);
