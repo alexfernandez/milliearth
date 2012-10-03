@@ -20,11 +20,31 @@
  */
 
 /**
- * Prototypes.
+ * Modify javascript prototypes.
  */
-String.prototype.endsWith = function(suffix)
+
+/**
+ * Find out if the string has the argument at the beginning.
+ */
+String.prototype.startsWith = function (str)
 {
-	return this.indexOf(suffix, this.length - suffix.length) !== -1;
+	return this.slice(0, str.length) == str;
+};
+
+/**
+ * Find out if the string has the argument at the end.
+ */
+String.prototype.endsWith = function (str)
+{
+	return this.slice(this.length - str.length) == str;
+};
+
+/**
+ * Find out if the string contains the argument at any position.
+ */
+String.prototype.contains = function(str)
+{
+	return this.indexOf(str) != -1;
 };
 
 /**

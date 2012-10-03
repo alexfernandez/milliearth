@@ -22,34 +22,6 @@
 
 
 /**
- * Modify javascript prototypes.
- */
-
-/**
- * Find out if the string has the argument at the beginning.
- */
-String.prototype.startsWith = function (str)
-{
-	return this.slice(0, str.length) == str;
-};
-
-/**
- * Find out if the string has the argument at the end.
- */
-String.prototype.endsWith = function (str)
-{
-	return this.slice(this.length - str.length) == str;
-};
-
-/**
- * Find out if the string contains the argument at any position.
- */
-String.prototype.contains = function(str)
-{
-	return this.indexOf(str) != -1;
-};
-
-/**
  * Constants.
  */
 process.title = 'milliearth';
