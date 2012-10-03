@@ -324,6 +324,22 @@ function scriptingContext(params)
 			{
 				value = robot[token];
 			}
+			else if (token == '+')
+			{
+				value += readValue(sentence);
+			}
+			else if (token == '-')
+			{
+				value -= readValue(sentence);
+			}
+			else if (token == '*')
+			{
+				value *= readValue(sentence);
+			}
+			else if (token == '/')
+			{
+				value /= readValue(sentence);
+			}
 			else
 			{
 				log('Invalid token ' + token + ' in value within ' + sentence);
