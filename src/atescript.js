@@ -285,7 +285,7 @@ function scriptingContext(params)
 		}
 		else
 		{
-			log('Invalid sentence ' + sentence + '; skipping');
+			log('Invalid token ' + token + ' in sentence ' + sentence + '; skipping');
 			self.skip();
 		}
 	}
@@ -301,6 +301,7 @@ function scriptingContext(params)
 			return;
 		}
 		var value = readValue(sentence);
+		console.log(variable + ': ' + value);
 		robot[variable] = value;
 		sentence.skipTerminator();
 		self.skip();
@@ -331,6 +332,7 @@ function scriptingContext(params)
 		{
 			log('No value');
 		}
+		return value;
 	}
 
 	/**
@@ -338,6 +340,7 @@ function scriptingContext(params)
 	 */
 	function readNumber(token)
 	{
+		console.log('float: ' + token);
 		return parseFloat(token);
 	}
 
@@ -405,17 +408,14 @@ function scriptingContext(params)
 	 */
 	function doUntil(sentence)
 	{
-		if (!evaluateCondition(sentence))
-		{
-			return;
-		}
+		var evaluation = evaluateCondition(sentence);
 		if (!sentence.checkSkip('.'))
 		{
-			return;
+			return false;
 		}
 		self.skip();
 		pendingBlocks++;
-		return true;
+		return evaluation;
 	}
 
 	/**
@@ -679,7 +679,10 @@ module.test = function()
 		file: 'test-arithmetic.8s',
 		robot: robot,
 		afterFinished: function() {
-			console.log(robot.x);
+			if (robot.x != 10)
+			{
+				log('x should be 10, not ' + robot.x);
+			}
 		},
 	});
 	engine.run(1000);
