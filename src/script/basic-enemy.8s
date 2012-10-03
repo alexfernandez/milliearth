@@ -18,12 +18,14 @@
 # along with MilliEarth.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+# locate enemy in view, shoot towards it
 if enemy in view:
 	repeat:
 		point at it;
 		shoot;
 		until it is dead.
 
+# locate enemy in map, accelerate towards it
 if enemy in map:
   point at it;
   accelerate.
