@@ -191,7 +191,7 @@ function parsePosition(text)
  * Provide the context for the scripting engine.
  * Contains an array of sentences.
  */
-function scriptingContext(robot)
+function scriptingContext(robot, it)
 {
 	// self-reference
 	var self = this;
@@ -201,7 +201,6 @@ function scriptingContext(robot)
 	// attributes
 	var deferred = 0;
 	var pendingBlocks = 0;
-	var it = null;
 
 	/**
 	 * Run any deferred lines pending.
@@ -298,7 +297,7 @@ function scriptingContext(robot)
 			skipBlock();
 			return false;
 		}
-		if (!sentence.checkSkip('.'))
+		if (!sentence.checkSkip(':'))
 		{
 			return false;
 		}
