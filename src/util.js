@@ -130,7 +130,7 @@ function extend(parent, child)
 	parent.setSelf(child);
 	for (var property in parent)
 	{
-		if (!(property in child))
+		if (!(child.hasOwnProperty(property)))
 		{
 			child[property] = parent[property];
 		}
