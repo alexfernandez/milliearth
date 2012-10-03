@@ -185,6 +185,77 @@ function scriptingContext()
 
 	// attributes
 	self.it = null;
+	var deferred = 0;
+
+	/**
+	 * Run any deferred lines pending.
+	 */
+	self.runDeferred = function()
+	{
+		var load = deferred;
+		while (load > 0)
+		{
+			console.log('Running deferred ' + load);
+			self.run(load);
+			deferred -= load;
+			load = deferred;
+		}
+	}
+
+	/**
+	 * Defer execution of a number of lines.
+	 */
+	self.defer = function(lines)
+	{
+		deferred += lines;
+		console.log('Deferred ' + deferred + ' lines');
+	}
+
+	/**
+	 * Run the specified number of lines.
+	 */
+	self.run = function(lines)
+	{
+		var sentence = self.current();
+		while (sentence && !sentence.finished())
+		{
+			var t = sentence.current();
+			if (t == 'if')
+			{
+				sentence.skip();
+				doIf(sentence);
+			}
+			self.skip();
+		}
+	}
+
+	function doIf(sentence)
+	{
+		if (!checkIf(sentence))
+		{
+			skipBlock();
+		}
+	}
+
+	/**
+	 * Check a conditional if.
+	 */
+	function checkIf(sentence)
+	{
+		return false;
+	}
+
+	/**
+	 * Skip a whole block of code (until the next period '.').
+	 */
+	function skipBlock()
+	{
+		var sentence = self.current();
+		while (!sentence.isBlock() || self.finished())
+		{
+			sentence = self.currentSkip();
+		}
+	}
 }
 
 /**
@@ -198,6 +269,20 @@ function scriptingSentence()
 	extend(new storage([]), self);
 
 	// attributes
+
+	self.isBlock = function()
+	{
+		var t;
+		while (!self.finished())
+		{
+			t = self.currentSkip();
+		}
+		if (t == '.')
+		{
+			return true;
+		}
+		return false;
+	}
 }
 
 /**
@@ -212,6 +297,7 @@ function scriptingEngine(params)
 	self.file = params.file;
 	self.robot = params.robot;
 	var context = new scriptingContext();
+	var ready = false;
 
 	readScript(self.file);
 
@@ -256,7 +342,9 @@ function scriptingEngine(params)
 				sentence.add(t);
 			}
 		}
+		ready = true;
 		console.log('context: ' + context);
+		context.runDeferred();
 	}
 
 	/**
@@ -264,16 +352,17 @@ function scriptingEngine(params)
 	 */
 	self.run = function(lines)
 	{
-		console.log('run');
-		var sentence = context.current();
-		while (sentence && !sentence.finished())
+		if (!lines)
 		{
-			var t = sentence.current();
-			if (t == 'if')
-			{
-				checkConditional(sentence);
-			}
+			log('No lines run');
+			return;
 		}
+		if (!ready)
+		{
+			context.defer(lines);
+			return;
+		}
+		context.run(lines);
 	}
 }
 
@@ -302,7 +391,7 @@ module.test = function()
 
 		},
 	});
-	engine.run();
+	engine.run(10);
 }
 
 module.test();
