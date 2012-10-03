@@ -34,6 +34,18 @@ var extend = util.extend;
 
 
 /**
+ * General parameters for scripting.
+ */
+var scriptingParams = new function()
+{
+	// self-reference
+	var self = this;
+
+	// attributes;
+	self.terminators = /[\;\,\.\:]/;
+}
+
+/**
  * Created a generic storage of an array of things.
  */
 function storage(contents)
@@ -243,7 +255,7 @@ function scriptingContext(robot, it)
 	function runSentence()
 	{
 		var sentence = self.current();
-		var token = sentence.current();
+		var token = sentence.currentSkip();
 		if (token == 'if')
 		{
 			doIf(sentence);
@@ -256,15 +268,32 @@ function scriptingContext(robot, it)
 		{
 			doUntil(sentence);
 		}
+		else if (token == 'make')
+		{
+			doMake(sentence);
+		}
 		else if (checkCommand(token))
 		{
-			doCommand(sentence);
+			doCommand(token, sentence);
 		}
 		else
 		{
 			log('Invalid sentence ' + sentence + '; skipping');
 			self.skip();
 		}
+	}
+
+	/**
+	 * Run a make sentence.
+	 */
+	function doMake(sentence)
+	{
+		var variable = sentence.currentSkip();
+		if (!sentence.checkSkip('='))
+		{
+			return;
+		}
+		var value = readValue(sentence);
 	}
 
 	/**
@@ -289,7 +318,7 @@ function scriptingContext(robot, it)
 	/**
 	 * Do a robot command.
 	 */
-	function doCommand(sentence)
+	function doCommand(command, sentence)
 	{
 		self.skip();
 	}
@@ -299,7 +328,6 @@ function scriptingContext(robot, it)
 	 */
 	function doIf(sentence)
 	{
-		sentence.skip();
 		if (!checkCondition(sentence))
 		{
 			skipBlock();
@@ -319,7 +347,6 @@ function scriptingContext(robot, it)
 	 */
 	function doRepeat(sentence)
 	{
-		sentence.skip();
 		if (!sentence.checkSkip(':'))
 		{
 			log('Invalid repeat sentence ' + sentence);
@@ -333,7 +360,6 @@ function scriptingContext(robot, it)
 	 */
 	function doUntil(sentence)
 	{
-		sentence.skip();
 		if (!checkCondition(sentence))
 		{
 			return;
@@ -489,7 +515,7 @@ function scriptingEngine(params)
 			{
 				pos.skipPast('\n');
 			}
-			else if (/[\;\,\.\:]/.test(t))
+			else if (scriptingParams.terminators.test(t))
 			{
 				sentence.add(t);
 				context.add(sentence);
@@ -550,6 +576,11 @@ module.test = function()
 		},
 	});
 	engine.run(10);
+	engine = new scriptingEngine({
+		file: 'test-arithmetic.8s',
+		robot: {},
+	});
+	engine.run(1000);
 }
 
 module.test();
