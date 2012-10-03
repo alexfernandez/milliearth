@@ -243,6 +243,10 @@ function scriptingContext(robot)
 			{
 				doRepeat(sentence);
 			}
+			else if (token == 'until')
+			{
+				doUntil(sentence);
+			}
 			else if (checkCommand(token))
 			{
 				doCommand(sentence);
@@ -281,7 +285,9 @@ function scriptingContext(robot)
 		if (!checkCondition(sentence))
 		{
 			skipBlock();
+			return false;
 		}
+		self.skip();
 		pendingBlocks++;
 		return true;
 	}
@@ -292,10 +298,26 @@ function scriptingContext(robot)
 	function doRepeat(sentence)
 	{
 		sentence.skip();
+		if (!sentence.checkSkip(':'))
+		{
+			log('Invalid repeat sentence ' + sentence);
+			return false;
+		}
+		self.skip();
+	}
+
+	/**
+	 * Run an until sentence.
+	 */
+	function doUntil(sentence)
+	{
+		sentence.skip();
 		if (!checkCondition(sentence))
 		{
 			skipBlock();
+			return;
 		}
+		self.skip();
 		pendingBlocks++;
 		return true;
 	}
@@ -334,8 +356,9 @@ function scriptingContext(robot)
 		for (var key in container)
 		{
 			var element = container[key];
-			if (element.elementAttribute)
+			if (element[elementAttribute])
 			{
+				console.log('Found ' + elementAttribute);
 				it = element;
 				return true;
 			}
