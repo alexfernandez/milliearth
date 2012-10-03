@@ -204,7 +204,7 @@ function parsePosition(text)
  * Provide the context for the scripting engine.
  * Contains an array of sentences.
  */
-function scriptingContext(robot, it)
+function scriptingContext(params)
 {
 	// self-reference
 	var self = this;
@@ -212,6 +212,8 @@ function scriptingContext(robot, it)
 	extend(new storage([]), self);
 
 	// attributes
+	var robot = params.robot;
+	var it = params.it;
 	var deferred = 0;
 	var pendingBlocks = 0;
 	var subcontext = null;
@@ -251,6 +253,10 @@ function scriptingContext(robot, it)
 			linesRun++;
 		}
 		log('Run ' + linesRun + ' lines');
+		if (self.finished() && params.afterFinished)
+		{
+			params.afterFinished();
+		}
 	}
 
 	function runSentence()
@@ -573,8 +579,7 @@ function scriptingEngine(params)
 
 	// attributes
 	self.file = params.file;
-	self.robot = params.robot;
-	var context = new scriptingContext(self.robot);
+	var context = new scriptingContext(params);
 	var ready = false;
 
 	readScript(self.file);
@@ -669,9 +674,13 @@ module.test = function()
 		},
 	});
 	engine.run(10);
+	var robot = {};
 	engine = new scriptingEngine({
 		file: 'test-arithmetic.8s',
-		robot: {},
+		robot: robot,
+		afterFinished: function() {
+			console.log(robot.x);
+		},
 	});
 	engine.run(1000);
 }
