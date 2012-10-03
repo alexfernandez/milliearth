@@ -186,6 +186,7 @@ function scriptingContext()
 	// attributes
 	self.it = null;
 	var deferred = 0;
+	var pendingBlocks = 0;
 
 	/**
 	 * Run any deferred lines pending.
@@ -219,28 +220,67 @@ function scriptingContext()
 		var sentence = self.current();
 		while (sentence && !sentence.finished())
 		{
-			var t = sentence.current();
-			if (t == 'if')
+			var token = sentence.current();
+			if (token == 'if')
 			{
-				sentence.skip();
 				doIf(sentence);
+			}
+			else if (token == 'repeat')
+			{
+				doRepeat(sentence);
+			}
+			else if (checkCommand(token))
+			{
+				doCommand(sentence);
+			}
+			else
+			{
+				log('Invalid sentence ' + sentence);
 			}
 			self.skip();
 		}
 	}
 
-	function doIf(sentence)
+	/**
+	 * Check if the token corresponds to any command.
+	 */
+	function checkCommand(token)
 	{
-		if (!checkIf(sentence))
-		{
-			skipBlock();
-		}
+		return false;
 	}
 
 	/**
-	 * Check a conditional if.
+	 * Run an if sentence.
 	 */
-	function checkIf(sentence)
+	function doIf(sentence)
+	{
+		sentence.skip();
+		if (!checkCondition(sentence))
+		{
+			skipBlock();
+		}
+		pendingBlocks++;
+		return true;
+	}
+
+	/**
+	 * Run a repeat sentence.
+	 */
+	function doRepeat(sentence)
+	{
+		sentence.skip();
+		if (!checkCondition(sentence))
+		{
+			skipBlock();
+		}
+		pendingBlocks++;
+		return true;
+	}
+
+	/**
+	 * Check a condition.
+	 */
+	function checkCondition(sentence)
 	{
 		return false;
 	}
@@ -321,7 +361,6 @@ function scriptingEngine(params)
 	 */
 	function prepare(text)
 	{
-		console.log('prepare');
 		var pos = new parsePosition(text);
 		var sentence = new scriptingSentence();
 		while (!pos.finished())
