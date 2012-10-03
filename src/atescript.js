@@ -424,18 +424,11 @@ function scriptingContext(params)
 			log('Empty token');
 			return false;
 		}
-		if (robot[token])
+		if (robot.hasOwnProperty(token))
 		{
 			return true;
 		}
-		for (var attribute in robot)
-		{
-			if (robot.hasOwnProperty(attribute) && attribute.startsWith(token))
-			{
-				return true;
-			}
-		}
-		return false;
+		return findCommandStarts(token);
 	}
 
 	/**
@@ -443,7 +436,37 @@ function scriptingContext(params)
 	 */
 	function doCommand(command, sentence)
 	{
-		self.skip();
+		if (robot.hasOwnProperty(command))
+		{
+			var callback = robot[command];
+			callback();
+			self.skip();
+			return;
+		}
+		if (self.finished() || !findCommandStarts(command))
+		{
+			log('Invalid command ' + command);
+			self.skip();
+			return;
+		}
+		var trailing = sentence.currentSkip();
+		command += trailing.charAt(0).toUpperCase() + trailing.slice(1);
+		return doCommand(command, sentence);
+	}
+
+	/**
+	 * Return true if the robot has an attribute starting with command.
+	 */
+	function findCommandStarts(command)
+	{
+		for (var attribute in robot)
+		{
+			if (robot.hasOwnProperty(attribute) && attribute.startsWith(command))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -694,9 +717,15 @@ module.test = function()
 					enemy: true,
 				},
 			},
-			pointAt: function(object) { },
-			shoot: function() { },
-			accelerateTowards: function(object) { },
+			pointAt: function(object) {
+				console.log('pointing at ' + object);
+			},
+			shoot: function() {
+				console.log('shooting');
+			},
+			accelerate: function() {
+				console.log('accelerating');
+			},
 
 		},
 	});
@@ -712,7 +741,7 @@ module.test = function()
 			}
 		},
 	});
-	engine.run(1000);
+	engine.run(100);
 }
 
 module.test();

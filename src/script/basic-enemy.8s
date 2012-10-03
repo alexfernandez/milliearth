@@ -25,5 +25,6 @@ if enemy in view:
 		until it is dead.
 
 if enemy in map:
-  accelerate towards it.
+  point at it;
+  accelerate.
 
