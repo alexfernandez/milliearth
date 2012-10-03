@@ -265,6 +265,17 @@ function scriptingContext(robot)
 	 */
 	function checkCommand(token)
 	{
+		if (robot[token])
+		{
+			return true;
+		}
+		for (var attribute in robot)
+		{
+			if (robot.hasOwnProperty(attribute) && attribute.startsWith(token))
+			{
+				return true;
+			}
+		}
 		return false;
 	}
 
