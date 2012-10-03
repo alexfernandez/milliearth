@@ -43,6 +43,7 @@ var scriptingParams = new function()
 
 	// attributes;
 	self.terminators = /[\;\,\.\:]/;
+	self.number = /\d+/;
 }
 
 /**
@@ -91,7 +92,7 @@ function storage(contents)
 			self.skip();
 			return true;
 		}
-		log('Invalid element ' + self.current() + ', expecting: ' + element);
+		log('Invalid element ' + self.current() + ', expecting: ' + element + ' in ' + self);
 		return false;
 	}
 
@@ -294,6 +295,44 @@ function scriptingContext(robot, it)
 			return;
 		}
 		var value = readValue(sentence);
+		robot[variable] = value;
+		sentence.skipTerminator();
+		self.skip();
+	}
+
+	/**
+	 * Read the value for a variable.
+	 */
+	function readValue(sentence)
+	{
+		var value = null;
+		while (!sentence.isTerminator() && !sentence.finished())
+		{
+			if (sentence.isNumber())
+			{
+				value = readNumber(sentence.currentSkip());
+			}
+			else
+			{
+				var token = sentence.currentSkip();
+				if (robot[token])
+				{
+					value = robot[token];
+				}
+			}
+		}
+		if (value === null)
+		{
+			log('No value');
+		}
+	}
+
+	/**
+	 * Read a numeric value.
+	 */
+	function readNumber(token)
+	{
+		return parseFloat(token);
 	}
 
 	/**
@@ -328,7 +367,7 @@ function scriptingContext(robot, it)
 	 */
 	function doIf(sentence)
 	{
-		if (!checkCondition(sentence))
+		if (!evaluateCondition(sentence))
 		{
 			skipBlock();
 			return false;
@@ -360,7 +399,7 @@ function scriptingContext(robot, it)
 	 */
 	function doUntil(sentence)
 	{
-		if (!checkCondition(sentence))
+		if (!evaluateCondition(sentence))
 		{
 			return;
 		}
@@ -374,28 +413,32 @@ function scriptingContext(robot, it)
 	}
 
 	/**
-	 * Check a condition.
+	 * Evaluate a condition.
 	 */
-	function checkCondition(sentence)
+	function evaluateCondition(sentence)
 	{
 		var subject = sentence.currentSkip();
 		if (subject == 'it')
 		{
-			return checkIt(sentence);
+			return evaluateIt(sentence);
 		}
 		var particle = sentence.currentSkip();
-		if (particle != 'in')
+		if (particle == 'in')
 		{
-			log('Invalid particle ' + particle);
-			return false;
+			return evaluateIn(sentence, subject);
 		}
-		return checkIn(sentence, subject);
+		if (particle == '=')
+		{
+			return evaluateValue(sentence, subject);
+		}
+		log('Invalid particle ' + particle);
+		return false;
 	}
 
 	/**
-	 * Check an 'in' condition: container has an element with the given attribute.
+	 * Evaluate an 'in' condition: container has an element with the given attribute.
 	 */
-	function checkIn(sentence, elementAttribute)
+	function evaluateIn(sentence, elementAttribute)
 	{
 		var containerAttribute = sentence.currentSkip();
 		var container = robot[containerAttribute];
@@ -418,9 +461,9 @@ function scriptingContext(robot, it)
 	}
 
 	/**
-	 * Check an 'it' condition: something about it.
+	 * Evaluate an 'it' condition: something about it.
 	 */
-	function checkIt(sentence)
+	function evaluateIt(sentence)
 	{
 		if (!sentence.checkSkip('is'))
 		{
@@ -431,12 +474,25 @@ function scriptingContext(robot, it)
 	}
 
 	/**
+	 * Evaluate that the given attribute holds the given value.
+	 */
+	function evaluateValue(sentence, attribute)
+	{
+		if (!(attribute in robot))
+		{
+			return false;
+		}
+		var value = readValue(sentence);
+		return (value == robot[attribute]);
+	}
+
+	/**
 	 * Skip a whole block of code (until the next period '.').
 	 */
 	function skipBlock()
 	{
 		var sentence = self.current();
-		while (!sentence.isBlock() && !self.finished())
+		while (!sentence.endsBlock() && !self.finished())
 		{
 			sentence = self.currentSkip();
 		}
@@ -455,7 +511,10 @@ function scriptingSentence()
 
 	// attributes
 
-	self.isBlock = function()
+	/**
+	 * Check for a block finisher.
+	 */
+	self.endsBlock = function()
 	{
 		var t;
 		while (!self.finished())
@@ -467,6 +526,40 @@ function scriptingSentence()
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Find out if the current token is a number.
+	 */
+	self.isNumber = function()
+	{
+		return scriptingParams.number.test(self.current());
+	}
+
+	/**
+	 * Skip terminator and check that the sentence finishes.
+	 * If not present or there are tokens after the terminator, complain.
+	 */
+	self.skipTerminator = function()
+	{
+		if (!self.isTerminator())
+		{
+			log('Unexpected token ' + self.current() + ' instead of terminator');
+			return false;
+		};
+		self.skip();
+		if (!self.finished())
+		{
+			log('Sentence continues after terminator: ' + self);
+		}
+	}
+
+	/**
+	 * Find out if the current token is a terminator: ,;:.
+	 */
+	self.isTerminator = function()
+	{
+		return scriptingParams.terminators.test(self.current());
 	}
 }
 
