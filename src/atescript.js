@@ -315,17 +315,18 @@ function scriptingContext(params)
 		var value = null;
 		while (!sentence.isTerminator() && !sentence.finished())
 		{
-			if (sentence.isNumber())
+			var token = sentence.currentSkip();
+			if (isNumber(token))
 			{
-				value = readNumber(sentence.currentSkip());
+				value = readNumber(token);
+			}
+			else if (robot.hasOwnProperty(token))
+			{
+				value = robot[token];
 			}
 			else
 			{
-				var token = sentence.currentSkip();
-				if (robot[token])
-				{
-					value = robot[token];
-				}
+				log('Invalid token ' + token + ' in value within ' + sentence);
 			}
 		}
 		if (value === null)
@@ -333,6 +334,14 @@ function scriptingContext(params)
 			log('No value');
 		}
 		return value;
+	}
+
+	/**
+	 * Find out if the current token is a number.
+	 */
+	function isNumber(token)
+	{
+		return scriptingParams.number.test(token);
 	}
 
 	/**
@@ -532,14 +541,6 @@ function scriptingSentence()
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Find out if the current token is a number.
-	 */
-	self.isNumber = function()
-	{
-		return scriptingParams.number.test(self.current());
 	}
 
 	/**
