@@ -201,6 +201,62 @@ function parsePosition(text)
 }
 
 /**
+ * A sentence (or statement) in the language.
+ */
+function scriptingSentence()
+{
+	// self-reference
+	var self = this;
+	// extend storage
+	extend(new storage([]), self);
+
+	// attributes
+
+	/**
+	 * Check for a block finisher.
+	 */
+	self.endsBlock = function()
+	{
+		var t;
+		while (!self.finished())
+		{
+			t = self.currentSkip();
+		}
+		if (t == '.')
+		{
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Skip terminator and check that the sentence finishes.
+	 * If not present or there are tokens after the terminator, complain.
+	 */
+	self.skipTerminator = function()
+	{
+		if (!self.isTerminator())
+		{
+			log('Unexpected token ' + self.current() + ' instead of terminator');
+			return false;
+		};
+		self.skip();
+		if (!self.finished())
+		{
+			log('Sentence continues after terminator: ' + self);
+		}
+	}
+
+	/**
+	 * Find out if the current token is a terminator: ,;:.
+	 */
+	self.isTerminator = function()
+	{
+		return scriptingParams.terminators.test(self.current());
+	}
+}
+
+/**
  * Provide the context for the scripting engine.
  * Contains an array of sentences.
  */
@@ -511,62 +567,6 @@ function scriptingContext(params)
 		{
 			sentence = self.currentSkip();
 		}
-	}
-}
-
-/**
- * A sentence (or statement) in the language.
- */
-function scriptingSentence()
-{
-	// self-reference
-	var self = this;
-	// extend storage
-	extend(new storage([]), self);
-
-	// attributes
-
-	/**
-	 * Check for a block finisher.
-	 */
-	self.endsBlock = function()
-	{
-		var t;
-		while (!self.finished())
-		{
-			t = self.currentSkip();
-		}
-		if (t == '.')
-		{
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Skip terminator and check that the sentence finishes.
-	 * If not present or there are tokens after the terminator, complain.
-	 */
-	self.skipTerminator = function()
-	{
-		if (!self.isTerminator())
-		{
-			log('Unexpected token ' + self.current() + ' instead of terminator');
-			return false;
-		};
-		self.skip();
-		if (!self.finished())
-		{
-			log('Sentence continues after terminator: ' + self);
-		}
-	}
-
-	/**
-	 * Find out if the current token is a terminator: ,;:.
-	 */
-	self.isTerminator = function()
-	{
-		return scriptingParams.terminators.test(self.current());
 	}
 }
 
