@@ -791,7 +791,7 @@ module.exports.test = function()
 	};
 	var engine = new scriptingEngine({
 		computer: basicComputer,
-		file: 'test/basic-enemy.8s',
+		file: 'basic-enemy.8s',
 	});
 	engine.run(20, function(computer) {
 		if (!computer.finished)

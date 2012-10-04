@@ -35,7 +35,7 @@ function isNumber(n)
 	return !isNaN(parseFloat(n)) && isFinite(n);
 }
 /**
- * Round a vector value.
+ * Round a value to print easily.
  */
 function round(value)
 {
@@ -95,150 +95,150 @@ function vector(x, y, z)
 	self.copy = function()
 	{
 		return new vector(self.x, self.y, self.z);
-		}
+	}
 
-		/**
-		 * Get a unit vector along this vector.
-		 */
-		self.unit = function()
-		{
-			return self.elongate(1);
-		}
+	/**
+	 * Get a unit vector along this vector.
+	 */
+	self.unit = function()
+	{
+		return self.elongate(1);
+	}
 
-		/**
-		 * Add another vector to this one, return the result.
-		 */
-		self.sum = function(point)
-		{
-			return new vector(self.x + point.x, self.y + point.y, self.z + point.z);
-		}
+	/**
+	 * Add another vector to this one, return the result.
+	 */
+	self.sum = function(point)
+	{
+		return new vector(self.x + point.x, self.y + point.y, self.z + point.z);
+	}
 
-		/**
-		 * Add another vector to this one, scaled, and return the result.
-		 */
-		self.sumScaled = function(point, factor)
-		{
-			var term = point.scale(factor);
-			return self.sum(term);
-		}
+	/**
+	 * Add another vector to this one, scaled, and return the result.
+	 */
+	self.sumScaled = function(point, factor)
+	{
+		var term = point.scale(factor);
+		return self.sum(term);
+	}
 
-		/**
-		 * Add the given vector. Modifies the current vector.
-		 */
-		self.add = function(point)
-		{
-			self.x += point.x;
-			self.y += point.y;
-			self.z += point.z;
-		}
+	/**
+	 * Add the given vector. Modifies the current vector.
+	 */
+	self.add = function(point)
+	{
+		self.x += point.x;
+		self.y += point.y;
+		self.z += point.z;
+	}
 
-		/**
-		 * Add a scaled vector. Modifies the current vector.
-		 */
-		self.addScaled = function(point, scale)
-		{
-			self.x += point.x * scale;
-			self.y += point.y * scale;
-			self.z += point.z * scale;
-		}
+	/**
+	 * Add a scaled vector. Modifies the current vector.
+	 */
+	self.addScaled = function(point, scale)
+	{
+		self.x += point.x * scale;
+		self.y += point.y * scale;
+		self.z += point.z * scale;
+	}
 
-		/**
-		 * Substract another point in space, return the difference as vector.
-		 */
-		self.difference = function(point)
-		{
-			return new vector(self.x - point.x, self.y - point.y, self.z - point.z);
-		}
+	/**
+	 * Substract another point in space, return the difference as vector.
+	 */
+	self.difference = function(point)
+	{
+		return new vector(self.x - point.x, self.y - point.y, self.z - point.z);
+	}
 
-		/**
-		 * Return a vector along this one but with the given length.
-		 */
-		self.elongate = function(length)
-		{
-			return self.scale(length / self.length());
-		}
+	/**
+	 * Return a vector along this one but with the given length.
+	 */
+	self.elongate = function(length)
+	{
+		return self.scale(length / self.length());
+	}
 
-		/**
-		 * Multiply by a scalar, return the result.
-		 */
-		self.scale = function(factor)
-		{
-			return new vector(self.x * factor, self.y * factor, self.z * factor);
-		}
+	/**
+	 * Multiply by a scalar, return the result.
+	 */
+	self.scale = function(factor)
+	{
+		return new vector(self.x * factor, self.y * factor, self.z * factor);
+	}
 
-		/**
-		 * Return the length of the vector, squared.
-		 */
-		self.squaredLength = function()
-		{
-			return self.x * self.x + self.y * self.y + self.z * self.z;
-		}
+	/**
+	 * Return the length of the vector, squared.
+	 */
+	self.squaredLength = function()
+	{
+		return self.x * self.x + self.y * self.y + self.z * self.z;
+	}
 
-		/**
-		 * Return the length of the given vector.
-		 */
-		self.length = function()
-		{
-			var squared = self.squaredLength();
-			return Math.sqrt(squared);
-		}
+	/**
+	 * Return the length of the given vector.
+	 */
+	self.length = function()
+	{
+		var squared = self.squaredLength();
+		return Math.sqrt(squared);
+	}
 
-		/**
-		 * Return the scalar product or dot product.
-		 */
-		self.scalarProduct = function(value)
-		{
-			/*
-			if (!isVector(value))
-			{
-				log('Vector product value ' + value + ' is not a vector');
-				return 0;
-			}
-			*/
-			return self.x * value.x + self.y * value.y + self.z * value.z;
-		}
+	/**
+	 * Return the scalar product or dot product.
+	 */
+	self.scalarProduct = function(value)
+	{
+		/*
+		   if (!isVector(value))
+		   {
+		   log('Vector product value ' + value + ' is not a vector');
+		   return 0;
+		   }
+		   */
+		return self.x * value.x + self.y * value.y + self.z * value.z;
+	}
 
-		/**
-		 * Return the vector product or cross product.
-		 */
-		self.vectorProduct = function(value)
-		{
-			/*
-			if (!isVector(value))
-			{
-				log('Vector product value ' + value + ' is not a vector');
-				return new vector(0, 0, 0);
-			}
-			*/
-			var x = self.y * value.z - self.z * value.y;
-			var y = self.z * value.x - self.x * value.z;
-			var z = self.x * value.y - self.y * value.x;
-			return new vector(x, y, z);
-		}
+	/**
+	 * Return the vector product or cross product.
+	 */
+	self.vectorProduct = function(value)
+	{
+		/*
+		   if (!isVector(value))
+		   {
+		   log('Vector product value ' + value + ' is not a vector');
+		   return new vector(0, 0, 0);
+		   }
+		   */
+		var x = self.y * value.z - self.z * value.y;
+		var y = self.z * value.x - self.x * value.z;
+		var z = self.x * value.y - self.y * value.x;
+		return new vector(x, y, z);
+	}
 
-		/**
-		 * Printable representation.
-		 */
-		self.toString = function()
-		{
-			return '(' + round(self.x) + ',' + round(self.y) + ',' + round(self.z) + ')';
-		}
+	/**
+	 * Printable representation.
+	 */
+	self.toString = function()
+	{
+		return '(' + round(self.x) + ',' + round(self.y) + ',' + round(self.z) + ')';
+	}
 
-		/**
-		 * Find out if the value has x, y and z components.
-		 */
-		function isVector(value)
+	/**
+	 * Find out if the value has x, y and z components.
+	 */
+	function isVector(value)
+	{
+		if (!value)
 		{
-			if (!value)
-			{
-				return false;
-			}
-			if (!isFinite(value.x) || !isFinite(value.y) || !isFinite(value.z))
-			{
-				return false;
-			}
-			return true;
+			return false;
 		}
+		if (!isFinite(value.x) || !isFinite(value.y) || !isFinite(value.z))
+		{
+			return false;
+		}
+		return true;
+	}
 }
 
 /**
@@ -401,15 +401,25 @@ function coordinateSystem(u, v, w)
 	}
 }
 
+
 module.exports.planarPoint = planarPoint;
 module.exports.vector = vector;
 module.exports.polarVector = polarVector;
 module.exports.coordinateSystem = coordinateSystem;
 
-module.test = function()
-{
+module.exports.test = function() {
 	var a = new vector(1, 2, 3);
-	console.log(a.scalarProduct(new vector(3, 4, 5)));
-	console.log(a.vectorProduct(new vector(3, 4, 5)).toString());
-}
+	var s = a.scalarProduct(new vector(3, 4, 5));
+	if (s != 26)
+	{
+		log('Invalid scalar product: ' + s + ' != 26');
+	}
+	var v = a.vectorProduct(new vector(3, 4, 5));
+	if (v.x != -2 || v.y != 4 || v.z != -2)
+	{
+		log('Invalid vector product: ' + v + ' != (-2, 4, -2)');
+	}
+	log('vector: OK');
+};
+
 
