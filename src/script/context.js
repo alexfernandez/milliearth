@@ -108,7 +108,10 @@ function scriptingContext(params)
 		if (sentence instanceof scriptingContext)
 		{
 			var context = sentence;
-			context.it = self.it;
+			if (self.it)
+			{
+				context.it = self.it;
+			}
 			context.runSentence();
 			if (context.finished())
 			{
@@ -428,8 +431,20 @@ function scriptingContext(params)
 		{
 			return false;
 		}
+		if (sentence.checkSkip('in'))
+		{
+			return evaluateItIn(sentence);
+		}
 		var attribute = sentence.currentSkip();
 		return self.it[attribute];
+	}
+
+	/**
+	 * Evaluate an 'it' 'in' condition: 'it' is in some attribute.
+	 */
+	function evaluateItIn(sentence)
+	{
+		return false;
 	}
 
 	/**
