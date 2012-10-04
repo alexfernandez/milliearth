@@ -445,7 +445,7 @@ function scriptingContext(params)
 	function skipBlock()
 	{
 		var sentence = self.current();
-		while (!sentence.endsBlock() && !self.finished())
+		while (sentence.getTerminator() != '.' && !self.finished())
 		{
 			log.d('Skipping ' + sentence);
 			sentence = self.currentSkip();

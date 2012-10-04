@@ -210,23 +210,6 @@ function scriptingSentence()
 	// attributes
 
 	/**
-	 * Check for a block finisher.
-	 */
-	self.endsBlock = function()
-	{
-		var t;
-		while (!self.finished())
-		{
-			t = self.currentSkip();
-		}
-		if (t == '.')
-		{
-			return true;
-		}
-		return false;
-	}
-
-	/**
 	 * Get the terminator: the last token.
 	 */
 	self.getTerminator = function()
