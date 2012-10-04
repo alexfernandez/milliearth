@@ -27,13 +27,13 @@
 var atescriptTest = require('./atescript.js').test;
 var vectorTest = require('./vector.js').test;
 var log = require('./util.js').log;
-var trace = require('./util.js').trace;
 
 /**
  *
  */
 function runAll()
 {
+	log.debug = true;
 	atescriptTest();
 	vectorTest();
 }

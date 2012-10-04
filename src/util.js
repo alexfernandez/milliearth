@@ -114,7 +114,7 @@ var log = new function()
 	var self = this;
 
 	// attributes
-	self.traceEnabled = false;
+	self.debug = false;
 
 	/**
 	 * Log an error message, with ERROR priority.
@@ -145,11 +145,11 @@ var log = new function()
 	 */
 	self.d = function(message)
 	{
-		if (!self.traceEnabled)
+		if (!self.debug)
 		{
 			return;
 		}
-		log(message);
+		self.i(message);
 	}
 }
 
