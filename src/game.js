@@ -31,7 +31,6 @@ var autoPlayer = player.autoPlayer;
 var util = require('./util.js');
 var parser = util.parser;
 var log = util.log;
-var trace = util.trace;
 var extend = util.extend;
 
 
@@ -65,7 +64,7 @@ function timer(delay, callback)
 	{
 		var diff = new Date().getTime() - start;
 		var drift = diff / delay - counter;
-		trace('Seconds: ' + Math.round(diff / 1000) + ', counter: ' + counter + ', drift: ' + drift);
+		log.d('Seconds: ' + Math.round(diff / 1000) + ', counter: ' + counter + ', drift: ' + drift);
 	}
 
 	// start timer
@@ -91,7 +90,7 @@ function meGame(id)
 	self.add = function(player)
 	{
 		players.push(player);
-		log('Player ' + player.id + ' connected to game ' + self.id + '; ' + players.length + ' connected');
+		log.i('Player ' + player.id + ' connected to game ' + self.id + '; ' + players.length + ' connected');
 	}
 
 	/**
@@ -125,12 +124,12 @@ function meGame(id)
 		});
 
 		connection.on('error', function(error) {
-				log('Error ' + error);
+				log.e('Error ' + error);
 		});
 
 		// when a connection is closed check winner
 		connection.on('close', function() {
-				log('Client ' + connection.remoteAddress + ' disconnected.');
+				log.i('Client ' + connection.remoteAddress + ' disconnected.');
 				self.close(player);
 		});
 		if (self.world.active)
@@ -161,7 +160,7 @@ function meGame(id)
 				players: playerIds
 		});
 		self.world.start();
-		trace('Game ' + self.id + ' started!');
+		log.d('Game ' + self.id + ' started!');
 	}
 
 	/**
@@ -192,7 +191,7 @@ function meGame(id)
 	 */
 	self.error = function(player, message)
 	{
-		log('Player ' + player.id + ' error: ' + message);
+		log.e('Player ' + player.id + ' error: ' + message);
 		var error = {
 			type: 'error',
 			message: message
@@ -214,7 +213,7 @@ function meGame(id)
 		{
 			self.error(player, 'Missing game type');
 		}
-		trace('Player ' + player.id + ' sent a message ' + message.type);
+		log.d('Player ' + player.id + ' sent a message ' + message.type);
 		if (message.type == 'update')
 		{
 			self.processEvents(player, message.events);
@@ -241,18 +240,18 @@ function meGame(id)
 		}
 		if (!remove(player))
 		{
-			log('Could not remove ' + player.id + ' from players list');
+			log.e('Could not remove ' + player.id + ' from players list');
 			return;
 		}
 		self.world.stop();
 		if (players.length == 0)
 		{
-			log('nobody left!?');
+			log.e('nobody left!?');
 			return
 		}
 		if (players.length > 1)
 		{
-			log('Too many (' + players.length + ') people left!?');
+			log.e('Too many (' + players.length + ') people left!?');
 			return;
 		}
 		var rival = players[0];
@@ -260,7 +259,7 @@ function meGame(id)
 			type: 'abandoned',
 			life: rival.life,
 		};
-		log('Player ' + player.id + ' disconnected; ' + rival.id + ' won by points');
+		log.i('Player ' + player.id + ' disconnected; ' + rival.id + ' won by points');
 		rival.send(abandoned);
 		self.finish();
 	}
@@ -317,7 +316,7 @@ function meGame(id)
 		{
 			players[index].disconnect();
 		}
-		log('Game ' + self.id + ' finished');
+		log.i('Game ' + self.id + ' finished');
 	}
 
 	/**
@@ -463,7 +462,7 @@ var gameSelector = new function()
 		}
 		if (count > 0)
 		{
-			log('games in progress: ' + count);
+			log.i('games in progress: ' + count);
 		}
 	}
 

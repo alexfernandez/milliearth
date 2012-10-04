@@ -25,7 +25,6 @@
  */
 var util = require('./util.js');
 var log = util.log;
-var success = util.success;
 
 
 /**
@@ -192,7 +191,7 @@ function vector(x, y, z)
 		/*
 		   if (!isVector(value))
 		   {
-		   log('Vector product value ' + value + ' is not a vector');
+		   log.e('Vector product value ' + value + ' is not a vector');
 		   return 0;
 		   }
 		   */
@@ -207,7 +206,7 @@ function vector(x, y, z)
 		/*
 		   if (!isVector(value))
 		   {
-		   log('Vector product value ' + value + ' is not a vector');
+		   log.e('Vector product value ' + value + ' is not a vector');
 		   return new vector(0, 0, 0);
 		   }
 		   */
@@ -331,7 +330,7 @@ function coordinateSystem(u, v, w)
 		var vProduct = self.v.scalarProduct(v);
 		if (vProduct == 0)
 		{
-			log('Cannot align with perpendicular vector');
+			log.e('Cannot align with perpendicular vector');
 			return;
 		}
 		self.v = v;
@@ -413,14 +412,14 @@ module.exports.test = function() {
 	var s = a.scalarProduct(new vector(3, 4, 5));
 	if (s != 26)
 	{
-		log('Invalid scalar product: ' + s + ' != 26');
+		log.e('Invalid scalar product: ' + s + ' != 26');
 	}
 	var v = a.vectorProduct(new vector(3, 4, 5));
 	if (v.x != -2 || v.y != 4 || v.z != -2)
 	{
-		log('Invalid vector product: ' + v + ' != (-2, 4, -2)');
+		log.e('Invalid vector product: ' + v + ' != (-2, 4, -2)');
 	}
-	success('vector: OK');
+	log.success('vector: OK');
 };
 
 

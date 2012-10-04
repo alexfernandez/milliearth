@@ -29,7 +29,6 @@ var scriptingEngine = require('./atescript.js').scriptingEngine;
 var util = require('./util.js');
 var parser = util.parser;
 var log = util.log;
-var trace = util.trace;
 var extend = util.extend;
 
 
@@ -54,7 +53,7 @@ function gamePlayer(params)
 	 */
 	self.send = function(message)
 	{
-		trace('Auto: ' + parser.convert(message));
+		log.d('Auto: ' + parser.convert(message));
 	}
 
 	/**
@@ -62,7 +61,7 @@ function gamePlayer(params)
 	 */
 	self.disconnect = function()
 	{
-		log(self.id + ' disconnected');
+		log.i(self.id + ' disconnected');
 	}
 
 	/**
@@ -96,7 +95,7 @@ function connectedPlayer(params)
 	 */
 	self.send = function(message)
 	{
-		trace('Sending client: ' + message);
+		log.d('Sending client: ' + message);
 		self.connection.sendUTF(parser.convert(message));
 	}
 
@@ -108,7 +107,7 @@ function connectedPlayer(params)
 		var callback = self.robot[name];
 		if (!callback)
 		{
-			log('Event ' + name + ' for player ' + self.id + ' without callback');
+			log.e('Event ' + name + ' for player ' + self.id + ' without callback');
 			return;
 		}
 		callback(period / 1000);

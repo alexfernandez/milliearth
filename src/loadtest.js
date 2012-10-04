@@ -34,8 +34,6 @@ String.prototype.endsWith = function(suffix)
 var WebSocketClient = require('websocket').client;
 var util = require('./util.js');
 var log = util.log;
-var trace = util.trace;
-// util.enableTrace();
 
 /**
  * Globals.
@@ -99,11 +97,11 @@ var latency = new function()
 			total -= removed;
 		}
 		index++;
-		trace('Index: ' + index);
+		log.d('Index: ' + index);
 		if (index > max)
 		{
 			var mean = total / measurements.length;
-			log('Mean latency: ' + mean);
+			log.i('Mean latency: ' + mean);
 			index = 0;
 		}
 	}
@@ -130,12 +128,12 @@ function gamePlayer(gameId, playerId)
 	{
 		var client = new WebSocketClient();
 		client.on('connectFailed', function(error) {
-				log('Connect Error: ' + error.toString());
+				log.e('Connect Error: ' + error.toString());
 		});
 		client.on('connect', connect);
 		var url = 'ws://' + server + '/serve?game=' + gameId + '&player=' + playerId;
 		client.connect(url, []);
-		log('WebSocket client connected to ' + url);
+		log.i('WebSocket client connected to ' + url);
 	}
 
 	/**
@@ -145,15 +143,15 @@ function gamePlayer(gameId, playerId)
 	{
 		connection = localConnection;
 		connection.on('error', function(error) {
-				log("Connection error: " + error.toString());
+				log.e("Connection error: " + error.toString());
 		});
 		connection.on('close', function() {
-				log('Connection closed');
+				log.i('Connection closed');
 		});
 		connection.on('message', function(message) {
 				if (message.type != 'utf8')
 				{
-					log('Invalid message type ' + message.type);
+					log.e('Invalid message type ' + message.type);
 					return;
 				}
 				if (lastCall)
@@ -170,7 +168,7 @@ function gamePlayer(gameId, playerId)
 				}
 				catch(e)
 				{
-					log('Invalid JSON: ' + message.utf8Data);
+					log.e('Invalid JSON: ' + message.utf8Data);
 					return;
 				}
 				receive(json);
@@ -185,12 +183,12 @@ function gamePlayer(gameId, playerId)
 	{
 		if (!message || !message.type)
 		{
-			log('Wrong message ' + JSON.stringify(message));
+			log.e('Wrong message ' + JSON.stringify(message));
 			return;
 		}
 		if (message.type == 'start')
 		{
-			log('Starting game for ' + self.playerId);
+			log.i('Starting game for ' + self.playerId);
 			setInterval(requestUpdate, Math.round(1000 / requestsSecond));
 			return;
 		}

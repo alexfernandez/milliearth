@@ -29,7 +29,6 @@ var coordinateSystem = require('./vector.js').coordinateSystem;
 var util = require('./util.js');
 var parser = util.parser;
 var log = util.log;
-var trace = util.trace;
 var extend = util.extend;
 
 
@@ -104,7 +103,7 @@ function massiveBody(params)
 	self.substractDamage = function(energy)
 	{
 		self.life -= energy;
-		log(self.id + ' damaged: ' + energy + ', life: ' + self.life);
+		log.i(self.id + ' damaged: ' + energy + ', life: ' + self.life);
 		if (self.life <= 0)
 		{
 			self.active = false;
@@ -497,7 +496,7 @@ function fighterRobot(params)
 		// add to world
 		self.world.addObject(projectile);
 		self.projectiles--;
-		log('Player ' + self.id + ' has fired a shot!');
+		log.i('Player ' + self.id + ' has fired a shot!');
 	}
 }
 
@@ -546,7 +545,7 @@ var gameWorld = function(id)
 	{
 		if (!self.active)
 		{
-			log('World not active');
+			log.e('World not active');
 			return {};
 		}
 		var player = bodies[id];
@@ -564,7 +563,7 @@ var gameWorld = function(id)
 	{
 		if (!self.active)
 		{
-			log('World not active');
+			log.e('World not active');
 			return {};
 		}
 		var player = bodies[id];
@@ -616,7 +615,7 @@ var gameWorld = function(id)
 	{
 		if (object.id in bodies)
 		{
-			log('Error: object ' + object.id + ' already exists');
+			log.e('Error: object ' + object.id + ' already exists');
 			return;
 		}
 		bodies[object.id] = object;
@@ -647,7 +646,7 @@ var gameWorld = function(id)
 			body.move(period);
 			if (!body.active)
 			{
-				log('Removing ' + body.id);
+				log.i('Removing ' + body.id);
 				delete bodies[body.id];
 			}
 		}
@@ -697,7 +696,7 @@ var gameWorld = function(id)
 		var safety = globalParams.safetyDistance * globalParams.safetyDistance;
 		if (d2 + safety < min2)
 		{
-			trace("Direct collision: " + d2 + ' < ' + min2);
+			log.d("Direct collision: " + d2 + ' < ' + min2);
 			return true;
 		}
 		// quick trajectory check
@@ -725,7 +724,7 @@ var gameWorld = function(id)
 		var mind = d2 - q*q/(4*ds2);
 		if (mind + safety < min2)
 		{
-			trace("Speeding collision: " + mind + ' < ' + min2 + ' from ' + d2 + ' at ' + tm);
+			log.d("Speeding collision: " + mind + ' < ' + min2 + ' from ' + d2 + ' at ' + tm);
 			return true;
 		}
 		return false;

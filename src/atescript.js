@@ -26,9 +26,7 @@
 var fs = require('fs');
 var globalParams = require('./params.js').globalParams;
 var util = require('./util.js');
-var error = util.error;
 var log = util.log;
-var trace = util.trace;
 var extend = util.extend;
 var concurrencyLock = util.concurrencyLock;
 
@@ -93,7 +91,7 @@ function storage(contents)
 			self.skip();
 			return true;
 		}
-		error('Invalid element ' + self.current() + ', expecting: ' + element + ' in ' + self);
+		log.e('Invalid element ' + self.current() + ', expecting: ' + element + ' in ' + self);
 		return false;
 	}
 
@@ -238,13 +236,13 @@ function scriptingSentence()
 	{
 		if (!self.isTerminator())
 		{
-			error('Unexpected token ' + self.current() + ' instead of terminator');
+			log.e('Unexpected token ' + self.current() + ' instead of terminator');
 			return false;
 		};
 		self.skip();
 		if (!self.finished())
 		{
-			error('Sentence continues after terminator: ' + self);
+			log.e('Sentence continues after terminator: ' + self);
 		}
 		return true;
 	}
@@ -307,7 +305,7 @@ function scriptingContext(params)
 		{
 			interrupt = false;
 		}
-		log('Run ' + run + ' lines');
+		log.i('Run ' + run + ' lines');
 	}
 
 	/**
@@ -316,7 +314,7 @@ function scriptingContext(params)
 	function runSentence()
 	{
 		var sentence = self.current();
-		trace('Running: ' + sentence);
+		log.d('Running: ' + sentence);
 		var token = sentence.currentSkip();
 		if (token == 'if')
 		{
@@ -340,7 +338,7 @@ function scriptingContext(params)
 		}
 		else
 		{
-			error('Invalid token ' + token + ' in sentence ' + sentence + '; skipping');
+			log.e('Invalid token ' + token + ' in sentence ' + sentence + '; skipping');
 		}
 		self.skip();
 	}
@@ -403,12 +401,12 @@ function scriptingContext(params)
 			}
 			else
 			{
-				error('Invalid token ' + token + ' in value within ' + sentence);
+				log.e('Invalid token ' + token + ' in value within ' + sentence);
 			}
 		}
 		if (value === null)
 		{
-			error('No value');
+			log.e('No value');
 		}
 		return value;
 	}
@@ -436,7 +434,7 @@ function scriptingContext(params)
 	{
 		if (!token)
 		{
-			error('Empty token');
+			log.e('Empty token');
 			return false;
 		}
 		if (computer.hasOwnProperty(token))
@@ -465,7 +463,7 @@ function scriptingContext(params)
 			command += trailing.charAt(0).toUpperCase() + trailing.slice(1);
 			return doCommand(command, sentence);
 		}
-		error('Invalid command ' + command);
+		log.e('Invalid command ' + command);
 	}
 
 	/**
@@ -498,7 +496,7 @@ function scriptingContext(params)
 			}
 			else
 			{
-				error('Invalid parameter ' + token);
+				log.e('Invalid parameter ' + token);
 			}
 		}
 		return parameter;
@@ -528,7 +526,7 @@ function scriptingContext(params)
 	{
 		if (!sentence.checkSkip(':'))
 		{
-			error('Invalid repeat sentence ' + sentence);
+			log.e('Invalid repeat sentence ' + sentence);
 			return false;
 		}
 		marked = self.position;
@@ -556,7 +554,7 @@ function scriptingContext(params)
 	{
 		if (!marked)
 		{
-			error('Invalid mark');
+			log.e('Invalid mark');
 			return;
 		}
 		for (var i = marked; i <= self.position; i++)
@@ -586,7 +584,7 @@ function scriptingContext(params)
 		{
 			return evaluateValue(sentence, subject);
 		}
-		error('Invalid particle ' + particle);
+		log.e('Invalid particle ' + particle);
 		return false;
 	}
 
@@ -599,7 +597,7 @@ function scriptingContext(params)
 		var container = computer[containerAttribute];
 		if (!container)
 		{
-			error('Invalid container attribute ' + containerAttribute);
+			log.e('Invalid container attribute ' + containerAttribute);
 			return false;
 		}
 		for (var key in container)
@@ -621,7 +619,7 @@ function scriptingContext(params)
 	{
 		if (!it)
 		{
-			error('Invalid reference to it');
+			log.e('Invalid reference to it');
 			return;
 		}
 		if (!sentence.checkSkip('is'))
@@ -653,7 +651,7 @@ function scriptingContext(params)
 		var sentence = self.current();
 		while (!sentence.endsBlock() && !self.finished())
 		{
-			trace('Skipping ' + sentence);
+			log.d('Skipping ' + sentence);
 			sentence = self.currentSkip();
 		}
 	}
@@ -688,7 +686,7 @@ function scriptingEngine(params)
 		fs.readFile('src/script/' + file, function(err, data) {
 			if (err)
 			{
-				error('Invalid script file ' + file);
+				log.e('Invalid script file ' + file);
 				return;
 			}
 			prepare(data.toString());
@@ -804,13 +802,14 @@ module.exports.test = function()
 	engine.run(20, function(computer) {
 		if (!computer.finished)
 		{
-			error('Script not finished');
+			log.e('Script not finished');
 			return;
 		}
 		if (!enemy.dead)
 		{
-			error('enemy should be dead by now');
+			log.e('enemy should be dead by now');
 		}
+		log.success('Scripting basic enemy: OK');
 	});
 	engine = new scriptingEngine({
 		file: 'test/test-arithmetic.8s',
@@ -819,13 +818,14 @@ module.exports.test = function()
 	engine.run(100, function(computer) {
 		if (!computer.finished)
 		{
-			error('Script not finished');
+			log.e('Script not finished');
 			return;
 		}
 		if (computer.x != 10)
 		{
-			error('x should be 10, not ' + computer.x);
+			log.e('x should be 10, not ' + computer.x);
 		}
+		log.success('Scripting arithmetic: OK');
 	});
 }
 

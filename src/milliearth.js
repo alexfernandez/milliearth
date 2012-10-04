@@ -35,7 +35,6 @@ var urlParser = require('url');
 var fs = require('fs');
 var globalParams = require('./params.js').globalParams;
 var log = require('./util.js').log;
-var trace = require('./util.js').trace;
 var gameSelector = require('./game.js').gameSelector;
 
 /**
@@ -48,7 +47,7 @@ if (process.argv.length > 2)
 }
 var clients = [];
 var server = http.createServer(serve).listen(port, function() {
-	log('Server running at http://127.0.0.1:' + port + '/');
+	log.i('Server running at http://127.0.0.1:' + port + '/');
 });
 
 /**
@@ -65,10 +64,10 @@ var wsServer = new webSocketServer({
  */
 wsServer.on('request', function(request) {
 	var url = urlParser.parse(request.resource, true);
-	trace('Connection to ' + url.pathname);
+	log.d('Connection to ' + url.pathname);
 	if (url.pathname != '/serve')
 	{
-		log('Invalid URL ' + url.pathname);
+		log.e('Invalid URL ' + url.pathname);
 		return;
 	}
 	// check client parameters
@@ -76,13 +75,13 @@ wsServer.on('request', function(request) {
 	var playerId = url.query.player;
 	if (!gameId || !playerId)
 	{
-		log('Invalid parameters: game ' + gameId + ', player ' + playerId);
+		log.e('Invalid parameters: game ' + gameId + ', player ' + playerId);
 		return;
 	}
 	var connection = request.accept(null, request.origin);
 	var game = gameSelector.find(gameId);
 	game.connect(playerId, connection);
-	log('Connection from ' + connection.remoteAddress + ' accepted');
+	log.i('Connection from ' + connection.remoteAddress + ' accepted');
 });
 
 /**

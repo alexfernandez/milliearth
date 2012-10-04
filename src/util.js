@@ -75,7 +75,7 @@ var parser = new function()
 /**
  * Lock to avoid two processes at the same time.
  */
-function concurrencyLock()
+var concurrencyLock = function()
 {
 	// self-reference
 	var self = this;
@@ -106,52 +106,51 @@ function concurrencyLock()
 }
 
 /**
- * Log an error message, with ERROR priority.
+ * Message log.
  */
-function error(message)
+var log = new function()
 {
-	console.error('\u001b[31m' + iso(new Date()) + ' ' + message + '\u001b[0m');
-}
+	// self-reference
+	var self = this;
 
-/**
- * Log a success message in green, for tests.
- */
-function success(message)
-{
-	console.error('\u001b[32m' + iso(new Date()) + ' ' + message + '\u001b[0m');
-}
+	// attributes
+	self.traceEnabled = false;
 
-/**
- * Log a message, with INFO priority.
- */
-function log(message)
-{
-	console.log(iso(new Date()) + ' ' + message);
-}
-
-/**
- * Global to control if traces are logged.
- */
-var traceEnabled = false;
-
-/**
- * Log a trace message, with DEBUG priority.
- */
-function trace(message)
-{
-	if (!traceEnabled)
+	/**
+	 * Log an error message, with ERROR priority.
+	 */
+	self.e = function(message)
 	{
-		return;
+		console.error('\u001b[31m' + iso(new Date()) + ' ' + message + '\u001b[0m');
 	}
-	log(message);
-}
 
-/**
- * Enable trace messages.
- */
-function enableTrace()
-{
-	traceEnabled = true;
+	/**
+	 * Log a success message in green, for tests.
+	 */
+	self.success = function(message)
+	{
+		console.log('\u001b[32m' + iso(new Date()) + ' ' + message + '\u001b[0m');
+	}
+
+	/**
+	 * Log a message with INFO priority.
+	 */
+	self.i = function(message)
+	{
+		console.log(iso(new Date()) + ' ' + message);
+	}
+
+	/**
+	 * Log a trace message with DEBUG priority.
+	 */
+	self.d = function(message)
+	{
+		if (!self.traceEnabled)
+		{
+			return;
+		}
+		log(message);
+	}
 }
 
 /**
@@ -207,11 +206,7 @@ function extend(parent, child)
 }
 
 module.exports.parser = parser;
-module.exports.trace = trace;
-module.exports.enableTrace = enableTrace;
 module.exports.log = log;
-module.exports.error = error;
-module.exports.success = success;
 module.exports.extend = extend;
 module.exports.concurrencyLock = concurrencyLock;
 
