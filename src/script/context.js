@@ -46,7 +46,7 @@ function scriptingContext(params)
 
 	// attributes
 	var computer = params.computer;
-	var it = params.it;
+	self.it = params.it;
 	var marked = 0;
 	var interrupt = false;
 	var stack = [self];
@@ -107,6 +107,7 @@ function scriptingContext(params)
 		var sentence = self.current();
 		if (sentence instanceof scriptingContext)
 		{
+			sentence.it = self.it;
 			sentence.runSentence();
 			return;
 		}
@@ -288,7 +289,7 @@ function scriptingContext(params)
 			var token = sentence.currentSkip();
 			if (token == 'it')
 			{
-				parameter = it;
+				parameter = self.it;
 			}
 			else
 			{
@@ -401,7 +402,7 @@ function scriptingContext(params)
 			var element = container[key];
 			if (element[elementAttribute])
 			{
-				it = element;
+				self.it = element;
 				return true;
 			}
 		}
@@ -413,7 +414,7 @@ function scriptingContext(params)
 	 */
 	function evaluateIt(sentence)
 	{
-		if (!it)
+		if (!self.it)
 		{
 			log.e('Invalid reference to it');
 			return;
@@ -423,7 +424,7 @@ function scriptingContext(params)
 			return false;
 		}
 		var attribute = sentence.currentSkip();
-		return it[attribute];
+		return self.it[attribute];
 	}
 
 	/**
