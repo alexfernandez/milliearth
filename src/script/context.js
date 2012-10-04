@@ -64,11 +64,10 @@ function scriptingContext(params)
 	self.run = function(lines)
 	{
 		var run = 0;
-		while (lines > 0 && !self.finished() && !interrupt)
+		while (run < lines && !self.finished() && !interrupt)
 		{
 			runSentence();
 			run++;
-			lines--;
 		}
 		if (interrupt)
 		{
