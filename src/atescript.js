@@ -282,6 +282,7 @@ function scriptingContext(params)
 	var linesPending = 0;
 	var marked = 0;
 	var callbacks = [];
+	var interrupt = false;
 
 	/**
 	 * Run the specified number of lines.
@@ -294,11 +295,15 @@ function scriptingContext(params)
 		{
 			return;
 		}
-		while (linesPending > 0 && !self.finished())
+		while (linesPending > 0 && !self.finished() && !interrupt)
 		{
 			runSentence();
 			linesRun++;
 			linesPending--;
+		}
+		if (interrupt)
+		{
+			interrupt = false;
 		}
 		if (self.finished())
 		{
@@ -459,6 +464,7 @@ function scriptingContext(params)
 				parameter = readParameter(sentence);
 			}
 			callback(parameter);
+			interrupt = true;
 			return;
 		}
 		if (findCommandStarts(command))
