@@ -322,12 +322,34 @@ var paintingLayer = function(params)
 			var marks = self.computeMarks(new vector(message.position), new coordinateSystem(message.camera), message.radius);
 			message.objects = message.objects.concat(marks);
 		}
+		// addBeacons(message.objects);
 		message.objects.sort(byDepth);
 		adjustScale(message.objects);
 		self.clear();
 		paintObjects(message.objects);
 		paintCrosshairs();
 		self.show();
+	}
+
+	/**
+	 * Add a few beacons to test geometry and projections.
+	 */
+	function addBeacons(objects)
+	{
+		var positions = [
+			new vector(50, 0, 100),
+			new vector(0, 50, 100),
+			new vector(50, 50, 100),
+		];
+		for (var index in positions)
+		{
+			message.objects.push({
+				type: 'beacon',
+				position: positions[index],
+				radius: 2,
+				color: '#00f',
+			});
+		}
 	}
 
 	/**
@@ -423,7 +445,7 @@ var paintingLayer = function(params)
 			{
 				paintLine(object);
 			}
-			else if (object.type == 'robot' || object.type == 'projectile')
+			else if (object.type == 'robot' || object.type == 'projectile' || object.type == 'beacon')
 			{
 				self.paintBody(object);
 			}

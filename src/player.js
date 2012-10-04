@@ -184,7 +184,7 @@ function autoPlayer(params)
 	self.shortLoop = function(delay)
 	{
 		var instructions = globalParams.instructionsPerMs * delay;
-		engine.run(instructions);
+		//engine.run(instructions);
 	}
 }
 
