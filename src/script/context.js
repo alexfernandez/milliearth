@@ -332,7 +332,6 @@ function scriptingContext(params)
 			return false;
 		}
 		marked = self.position + 1;
-		console.log('Marked at ' + marked);
 	}
 
 	/**
