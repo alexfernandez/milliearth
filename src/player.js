@@ -132,7 +132,6 @@ function autoComputer(robot)
 	var self = this;
 
 	// attributes
-	self.dead = false;
 	self.view = {};
 	self.scope = {};
 	self.map = {};
@@ -142,6 +141,23 @@ function autoComputer(robot)
 	 */
 	self.pointAt = function(object, delay)
 	{
+		var position = robot.computePosition(object);
+		if (position.x > 0)
+		{
+			robot.turnLeft(delay);
+		}
+		else if (position.x < 0)
+		{
+			robot.turnRight(delay);
+		}
+		if (position.y > 0)
+		{
+			robot.turnDown(delay);
+		}
+		else if (position.y < 0)
+		{
+			robot.turnUp(delay);
+		}
 	}
 
 	/**

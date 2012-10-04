@@ -317,7 +317,7 @@ function fighterRobot(params)
 	 */
 	self.computeViewUpdate = function(bodies)
 	{
-		var center = computePosition(self.world.milliEarth);
+		var center = self.computePosition(self.world.milliEarth);
 		var meBody = {
 			id: 'milliEarth',
 			type: 'milliEarth',
@@ -334,7 +334,7 @@ function fighterRobot(params)
 					id: body.id,
 					type: 'robot',
 					radius: body.radius,
-					position: computePosition(body),
+					position: self.computePosition(body),
 					color: body.color,
 				};
 				objects.push(object);
@@ -381,7 +381,7 @@ function fighterRobot(params)
 	/**
 	 * Compute the position of a body with respect to the line of sight.
 	 */
-	function computePosition(body)
+	self.computePosition = function(body)
 	{
 		var origin = computeViewPosition();
 		var position = body.position.difference(origin);
