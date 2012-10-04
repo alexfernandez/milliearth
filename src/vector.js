@@ -25,6 +25,7 @@
  */
 var util = require('./util.js');
 var log = util.log;
+var success = util.success;
 
 
 /**
@@ -419,7 +420,7 @@ module.exports.test = function() {
 	{
 		log('Invalid vector product: ' + v + ' != (-2, 4, -2)');
 	}
-	log('vector: OK');
+	success('vector: OK');
 };
 
 

@@ -26,6 +26,7 @@
 var fs = require('fs');
 var globalParams = require('./params.js').globalParams;
 var util = require('./util.js');
+var error = util.error;
 var log = util.log;
 var trace = util.trace;
 var extend = util.extend;
@@ -92,7 +93,7 @@ function storage(contents)
 			self.skip();
 			return true;
 		}
-		log('Invalid element ' + self.current() + ', expecting: ' + element + ' in ' + self);
+		error('Invalid element ' + self.current() + ', expecting: ' + element + ' in ' + self);
 		return false;
 	}
 
@@ -237,13 +238,13 @@ function scriptingSentence()
 	{
 		if (!self.isTerminator())
 		{
-			log('Unexpected token ' + self.current() + ' instead of terminator');
+			error('Unexpected token ' + self.current() + ' instead of terminator');
 			return false;
 		};
 		self.skip();
 		if (!self.finished())
 		{
-			log('Sentence continues after terminator: ' + self);
+			error('Sentence continues after terminator: ' + self);
 		}
 		return true;
 	}
@@ -339,7 +340,7 @@ function scriptingContext(params)
 		}
 		else
 		{
-			log('Invalid token ' + token + ' in sentence ' + sentence + '; skipping');
+			error('Invalid token ' + token + ' in sentence ' + sentence + '; skipping');
 		}
 		self.skip();
 	}
@@ -402,12 +403,12 @@ function scriptingContext(params)
 			}
 			else
 			{
-				log('Invalid token ' + token + ' in value within ' + sentence);
+				error('Invalid token ' + token + ' in value within ' + sentence);
 			}
 		}
 		if (value === null)
 		{
-			log('No value');
+			error('No value');
 		}
 		return value;
 	}
@@ -435,7 +436,7 @@ function scriptingContext(params)
 	{
 		if (!token)
 		{
-			log('Empty token');
+			error('Empty token');
 			return false;
 		}
 		if (computer.hasOwnProperty(token))
@@ -464,7 +465,7 @@ function scriptingContext(params)
 			command += trailing.charAt(0).toUpperCase() + trailing.slice(1);
 			return doCommand(command, sentence);
 		}
-		log('Invalid command ' + command);
+		error('Invalid command ' + command);
 	}
 
 	/**
@@ -497,7 +498,7 @@ function scriptingContext(params)
 			}
 			else
 			{
-				log('Invalid parameter ' + token);
+				error('Invalid parameter ' + token);
 			}
 		}
 		return parameter;
@@ -527,7 +528,7 @@ function scriptingContext(params)
 	{
 		if (!sentence.checkSkip(':'))
 		{
-			log('Invalid repeat sentence ' + sentence);
+			error('Invalid repeat sentence ' + sentence);
 			return false;
 		}
 		marked = self.position;
@@ -555,7 +556,7 @@ function scriptingContext(params)
 	{
 		if (!marked)
 		{
-			log('Invalid mark');
+			error('Invalid mark');
 			return;
 		}
 		for (var i = marked; i <= self.position; i++)
@@ -585,7 +586,7 @@ function scriptingContext(params)
 		{
 			return evaluateValue(sentence, subject);
 		}
-		log('Invalid particle ' + particle);
+		error('Invalid particle ' + particle);
 		return false;
 	}
 
@@ -598,7 +599,7 @@ function scriptingContext(params)
 		var container = computer[containerAttribute];
 		if (!container)
 		{
-			log('Invalid container attribute ' + containerAttribute);
+			error('Invalid container attribute ' + containerAttribute);
 			return false;
 		}
 		for (var key in container)
@@ -620,7 +621,7 @@ function scriptingContext(params)
 	{
 		if (!it)
 		{
-			log('Invalid reference to it');
+			error('Invalid reference to it');
 			return;
 		}
 		if (!sentence.checkSkip('is'))
@@ -687,7 +688,7 @@ function scriptingEngine(params)
 		fs.readFile('src/script/' + file, function(err, data) {
 			if (err)
 			{
-				log('Invalid script file ' + file);
+				error('Invalid script file ' + file);
 				return;
 			}
 			prepare(data.toString());
@@ -803,12 +804,12 @@ module.exports.test = function()
 	engine.run(20, function(computer) {
 		if (!computer.finished)
 		{
-			log('Script not finished');
+			error('Script not finished');
 			return;
 		}
 		if (!enemy.dead)
 		{
-			log('enemy should be dead by now');
+			error('enemy should be dead by now');
 		}
 	});
 	engine = new scriptingEngine({
@@ -818,12 +819,12 @@ module.exports.test = function()
 	engine.run(100, function(computer) {
 		if (!computer.finished)
 		{
-			log('Script not finished');
+			error('Script not finished');
 			return;
 		}
 		if (computer.x != 10)
 		{
-			log('x should be 10, not ' + computer.x);
+			error('x should be 10, not ' + computer.x);
 		}
 	});
 }

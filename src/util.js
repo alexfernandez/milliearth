@@ -106,9 +106,20 @@ function concurrencyLock()
 }
 
 /**
- * Global to control if traces are logged.
+ * Log an error message, with ERROR priority.
  */
-var traceEnabled = false;
+function error(message)
+{
+	console.error('\u001b[31m' + iso(new Date()) + ' ' + message + '\u001b[0m');
+}
+
+/**
+ * Log a success message in green, for tests.
+ */
+function success(message)
+{
+	console.error('\u001b[32m' + iso(new Date()) + ' ' + message + '\u001b[0m');
+}
 
 /**
  * Log a message, with INFO priority.
@@ -117,6 +128,11 @@ function log(message)
 {
 	console.log(iso(new Date()) + ' ' + message);
 }
+
+/**
+ * Global to control if traces are logged.
+ */
+var traceEnabled = false;
 
 /**
  * Log a trace message, with DEBUG priority.
@@ -194,6 +210,8 @@ module.exports.parser = parser;
 module.exports.trace = trace;
 module.exports.enableTrace = enableTrace;
 module.exports.log = log;
+module.exports.error = error;
+module.exports.success = success;
 module.exports.extend = extend;
 module.exports.concurrencyLock = concurrencyLock;
 
