@@ -163,7 +163,14 @@ function connectedPlayer(params)
 }
 
 /**
- * A computer player.
+ * A computer that controls an auto player.
+ */
+function autoComputer(robot)
+{
+}
+
+/**
+ * An auto player.
  */
 function autoPlayer(params)
 {
@@ -172,9 +179,11 @@ function autoPlayer(params)
 	// extend gamePlayer
 	extend(new gamePlayer(params), self);
 
+	// attributes
+	var computer = new autoComputer(self.robot);
 	var engine = new scriptingEngine({
 		file: 'basic-enemy.8s',
-		robot: self.robot,
+		computer: computer,
 	});
 
 	/**

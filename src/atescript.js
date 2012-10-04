@@ -276,7 +276,7 @@ function scriptingContext(params)
 
 	// attributes
 	self.ready = false;
-	var robot = params.robot;
+	var computer = params.computer;
 	var it = params.it;
 	var linesRun = 0;
 	var linesPending = 0;
@@ -307,7 +307,7 @@ function scriptingContext(params)
 		}
 		if (self.finished())
 		{
-			robot.finished = true;
+			computer.finished = true;
 		}
 		runCallbacks();
 		log('Run ' + linesRun + ' lines');
@@ -321,7 +321,7 @@ function scriptingContext(params)
 		var callback = callbacks.shift();
 		while (callback)
 		{
-			callback(robot);
+			callback(computer);
 			callback = callbacks.shift();
 		}
 	}
@@ -368,7 +368,7 @@ function scriptingContext(params)
 			return;
 		}
 		var value = readValue(sentence);
-		robot[variable] = value;
+		computer[variable] = value;
 		sentence.skipTerminator();
 	}
 
@@ -385,9 +385,9 @@ function scriptingContext(params)
 			{
 				value = readNumber(token);
 			}
-			else if (robot.hasOwnProperty(token))
+			else if (computer.hasOwnProperty(token))
 			{
-				value = robot[token];
+				value = computer[token];
 			}
 			else if (token == '+')
 			{
@@ -443,7 +443,7 @@ function scriptingContext(params)
 			log('Empty token');
 			return false;
 		}
-		if (robot.hasOwnProperty(token))
+		if (computer.hasOwnProperty(token))
 		{
 			return true;
 		}
@@ -451,13 +451,13 @@ function scriptingContext(params)
 	}
 
 	/**
-	 * Do a robot command.
+	 * Do a computer command.
 	 */
 	function doCommand(command, sentence)
 	{
-		if (robot.hasOwnProperty(command))
+		if (computer.hasOwnProperty(command))
 		{
-			var callback = robot[command];
+			var callback = computer[command];
 			var parameter = readParameter(sentence);
 			callback(parameter);
 			interrupt = true;
@@ -473,13 +473,13 @@ function scriptingContext(params)
 	}
 
 	/**
-	 * Return true if the robot has an attribute starting with command.
+	 * Return true if the computer has an attribute starting with command.
 	 */
 	function findCommandStarts(command)
 	{
-		for (var attribute in robot)
+		for (var attribute in computer)
 		{
-			if (robot.hasOwnProperty(attribute) && attribute.startsWith(command))
+			if (computer.hasOwnProperty(attribute) && attribute.startsWith(command))
 			{
 				return true;
 			}
@@ -603,7 +603,7 @@ function scriptingContext(params)
 	function evaluateIn(sentence, elementAttribute)
 	{
 		var containerAttribute = sentence.currentSkip();
-		var container = robot[containerAttribute];
+		var container = computer[containerAttribute];
 		if (!container)
 		{
 			log('Invalid container attribute ' + containerAttribute);
@@ -639,12 +639,12 @@ function scriptingContext(params)
 	 */
 	function evaluateValue(sentence, attribute)
 	{
-		if (!(attribute in robot))
+		if (!(attribute in computer))
 		{
 			return false;
 		}
 		var value = readValue(sentence);
-		return (value == robot[attribute]);
+		return (value == computer[attribute]);
 	}
 
 	/**
@@ -743,7 +743,7 @@ module.test = function()
 		dead: false,
 		toString: function() { return 'Me bad'; },
 	};
-	var basicRobot = {
+	var basicComputer = {
 		view: {
 			id: enemy,
 		},
@@ -755,7 +755,7 @@ module.test = function()
 			od: enemy,
 		},
 		pointAt: function(object) {
-			basicRobot.scope.id = object;
+			basicComputer.scope.id = object;
 		},
 		shoot: function() {
 			enemy.shots ++;
@@ -769,11 +769,11 @@ module.test = function()
 
 	};
 	var engine = new scriptingEngine({
-		robot: basicRobot,
+		computer: basicComputer,
 		file: 'basic-enemy.8s',
 	});
-	engine.run(20, function(robot) {
-		if (!robot.finished)
+	engine.run(20, function(computer) {
+		if (!computer.finished)
 		{
 			log('Script not finished');
 			return;
@@ -785,17 +785,17 @@ module.test = function()
 	});
 	engine = new scriptingEngine({
 		file: 'test-arithmetic.8s',
-		robot: {},
+		computer: {},
 	});
-	engine.run(100, function(robot) {
-		if (!robot.finished)
+	engine.run(100, function(computer) {
+		if (!computer.finished)
 		{
 			log('Script not finished');
 			return;
 		}
-		if (robot.x != 10)
+		if (computer.x != 10)
 		{
-			log('x should be 10, not ' + robot.x);
+			log('x should be 10, not ' + computer.x);
 		}
 	});
 }
