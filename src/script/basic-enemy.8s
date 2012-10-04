@@ -21,7 +21,9 @@
 # locate enemy in view, shoot towards it
 if enemy in view:
 	repeat:
-		point at it;
+		repeat:
+			point at it;
+			until enemy in scope.
 		shoot;
 		until it is dead.
 

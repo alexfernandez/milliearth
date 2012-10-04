@@ -598,7 +598,7 @@ function scriptingContext(params)
 		var container = robot[containerAttribute];
 		if (!container)
 		{
-			log('Invalid container ' + containerAttribute);
+			log('Invalid container attribute ' + containerAttribute);
 			return false;
 		}
 		for (var key in container)
@@ -735,31 +735,34 @@ module.test = function()
 		dead: false,
 		toString: function() { return 'Me bad'; },
 	};
-	var engine = new scriptingEngine({
-		file: 'basic-enemy.8s',
-		robot: {
-			view: {
-				id: enemy,
-			},
-			map: {
-				id: {
-					enemy: false,
-				},
-				od: enemy,
-			},
-			pointAt: function(object) {
-			},
-			shoot: function() {
-				enemy.shots ++;
-				if (enemy.shots == 3)
-				{
-					enemy.dead = true;
-				}
-			},
-			accelerate: function() {
-			},
-
+	var basicRobot = {
+		view: {
+			id: enemy,
 		},
+		scope: {},
+		map: {
+			id: {
+				enemy: false,
+			},
+			od: enemy,
+		},
+		pointAt: function(object) {
+			basicRobot.scope.id = object;
+		},
+		shoot: function() {
+			enemy.shots ++;
+			if (enemy.shots == 3)
+			{
+				enemy.dead = true;
+			}
+		},
+		accelerate: function() {
+		},
+
+	};
+	var engine = new scriptingEngine({
+		robot: basicRobot,
+		file: 'basic-enemy.8s',
 	});
 	engine.run(20, function(robot) {
 		if (!robot.finished)
@@ -772,10 +775,9 @@ module.test = function()
 			log('enemy should be dead by now');
 		}
 	});
-	var robot = {};
 	engine = new scriptingEngine({
 		file: 'test-arithmetic.8s',
-		robot: robot,
+		robot: {},
 	});
 	engine.run(100, function(robot) {
 		if (!robot.finished)
