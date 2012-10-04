@@ -136,6 +136,29 @@ function autoComputer(robot)
 	self.view = {};
 	self.scope = {};
 	self.map = {};
+
+	/**
+	 * Point at an object with position.
+	 */
+	self.pointAt = function(object, delay)
+	{
+	}
+
+	/**
+	 * Make the robot accelerate.
+	 */
+	self.accelerate = function(delay)
+	{
+		robot.accelerate(delay);
+	}
+
+	/**
+	 * Shoot.
+	 */
+	self.shoot = function(delay)
+	{
+		robot.shoot();
+	}
 }
 
 /**
