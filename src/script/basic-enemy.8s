@@ -23,7 +23,7 @@ if enemy in view:
 	repeat:
 		repeat:
 			point at it;
-			until enemy in scope;
+			until it is in scope;
 		shoot;
 		until it is dead.
 
