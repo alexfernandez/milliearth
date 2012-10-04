@@ -23,6 +23,7 @@
 /**
  * Requirements.
  */
+var globalParams = require('./params.js').globalParams;
 var gameWorld = require('./world.js').gameWorld;
 var scriptingEngine = require('./atescript.js').scriptingEngine;
 var util = require('./util.js');
@@ -172,9 +173,18 @@ function autoPlayer(params)
 	extend(new gamePlayer(params), self);
 
 	var engine = new scriptingEngine({
-		file: 'basic-engine.8s',
+		file: 'basic-enemy.8s',
 		robot: self.robot,
 	});
+
+	/**
+	 * Run some instructions on our engine.
+	 */
+	self.shortLoop = function(delay)
+	{
+		var instructions = globalParams.instructionsPerMs * delay;
+		engine.run(instructions);
+	}
 }
 
 /**
@@ -478,6 +488,10 @@ function meGame(id)
 		for (var index in playersCopy)
 		{
 			var player = playersCopy[index];
+			if (player.shortLoop)
+			{
+				player.shortLoop(delay);
+			}
 			if (player.hasLost())
 			{
 				self.sendLost(player);
