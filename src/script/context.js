@@ -96,7 +96,7 @@ function scriptingContext(params)
 		{
 			interrupt = false;
 		}
-		log.i('Run ' + run + ' lines');
+		log.d('Run ' + run + ' lines');
 	}
 
 	/**

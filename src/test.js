@@ -33,7 +33,6 @@ var log = require('./util.js').log;
  */
 function runAll()
 {
-	log.debug = true;
 	atescriptTest();
 	vectorTest();
 }

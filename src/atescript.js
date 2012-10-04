@@ -104,7 +104,10 @@ function scriptingEngine(params)
 	 */
 	self.run = function(lines, callback)
 	{
-		callbacks.push(callback);
+		if (callback)
+		{
+			callbacks.push(callback);
+		}
 		linesPending += lines;
 		if (!self.ready)
 		{
@@ -175,7 +178,8 @@ module.exports.test = function()
 		computer: basicComputer,
 		file: 'basic-enemy.8s',
 	});
-	engine.run(30, function(computer) {
+	engine.run(10);
+	engine.run(20, function(computer) {
 		if (!computer.finished)
 		{
 			log.e('Script not finished');
