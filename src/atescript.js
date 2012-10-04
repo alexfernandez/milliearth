@@ -286,6 +286,15 @@ function scriptingContext(params)
 	var callbacks = [];
 	var interrupt = false;
 	var semaphor = new concurrencyLock();
+	var stack = [self];
+
+	/**
+	 * Add a new sentence. Instantiates new contexts as necessary.
+	 */
+	self.addSentence = function(sentence)
+	{
+		self.add(sentence);
+	}
 
 	/**
 	 * Run the specified number of lines.
@@ -720,7 +729,7 @@ function scriptingEngine(params)
 			else if (scriptingParams.terminators.test(t))
 			{
 				sentence.add(t);
-				context.add(sentence);
+				context.addSentence(sentence);
 				sentence = new scriptingSentence();
 			}
 			else
