@@ -756,7 +756,7 @@ function scriptingEngine(params)
 
 module.exports.scriptingEngine = scriptingEngine;
 
-module.test = function()
+module.exports.test = function()
 {
 	var enemy = {
 		enemy: true,
@@ -791,7 +791,7 @@ module.test = function()
 	};
 	var engine = new scriptingEngine({
 		computer: basicComputer,
-		file: 'basic-enemy.8s',
+		file: 'test/basic-enemy.8s',
 	});
 	engine.run(20, function(computer) {
 		if (!computer.finished)
@@ -805,7 +805,7 @@ module.test = function()
 		}
 	});
 	engine = new scriptingEngine({
-		file: 'test-arithmetic.8s',
+		file: 'test/test-arithmetic.8s',
 		computer: {},
 	});
 	engine.run(100, function(computer) {
