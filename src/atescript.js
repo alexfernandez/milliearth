@@ -800,5 +800,4 @@ module.test = function()
 	});
 }
 
-module.test();
 

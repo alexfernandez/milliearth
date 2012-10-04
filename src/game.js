@@ -24,6 +24,7 @@
  * Requirements.
  */
 var gameWorld = require('./world.js').gameWorld;
+var scriptingEngine = require('./atescript.js').scriptingEngine;
 var util = require('./util.js');
 var parser = util.parser;
 var log = util.log;
@@ -169,6 +170,11 @@ function autoPlayer(params)
 	var self = this;
 	// extend gamePlayer
 	extend(new gamePlayer(params), self);
+
+	var engine = new scriptingEngine({
+		file: 'basic-engine.8s',
+		robot: self.robot,
+	});
 }
 
 /**
