@@ -133,6 +133,9 @@ function autoComputer(robot)
 
 	// attributes
 	self.dead = false;
+	self.view = {};
+	self.scope = {};
+	self.map = {};
 }
 
 /**
