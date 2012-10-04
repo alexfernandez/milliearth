@@ -333,8 +333,8 @@ function scriptingContext(params)
 		else
 		{
 			log('Invalid token ' + token + ' in sentence ' + sentence + '; skipping');
-			self.skip();
 		}
+		self.skip();
 	}
 
 	/**
@@ -350,7 +350,6 @@ function scriptingContext(params)
 		var value = readValue(sentence);
 		robot[variable] = value;
 		sentence.skipTerminator();
-		self.skip();
 	}
 
 	/**
@@ -445,18 +444,15 @@ function scriptingContext(params)
 				parameter = readParameter(sentence);
 			}
 			callback(parameter);
-			self.skip();
 			return;
 		}
-		if (self.finished() || !findCommandStarts(command))
+		if (findCommandStarts(command))
 		{
-			log('Invalid command ' + command);
-			self.skip();
-			return;
+			var trailing = sentence.currentSkip();
+			command += trailing.charAt(0).toUpperCase() + trailing.slice(1);
+			return doCommand(command, sentence);
 		}
-		var trailing = sentence.currentSkip();
-		command += trailing.charAt(0).toUpperCase() + trailing.slice(1);
-		return doCommand(command, sentence);
+		log('Invalid command ' + command);
 	}
 
 	/**
@@ -502,8 +498,6 @@ function scriptingContext(params)
 		{
 			return false;
 		}
-		self.skip();
-		pendingBlocks++;
 		return true;
 	}
 
@@ -517,8 +511,7 @@ function scriptingContext(params)
 			log('Invalid repeat sentence ' + sentence);
 			return false;
 		}
-		self.skip();
-		marked = self.position;
+		marked = self.position + 1;
 	}
 
 	/**
@@ -536,7 +529,6 @@ function scriptingContext(params)
 			self.goToMark();
 			return;
 		}
-		self.skip();
 		return evaluation;
 	}
 
@@ -717,11 +709,14 @@ function scriptingEngine(params)
 	}
 }
 
+module.exports.scriptingEngine = scriptingEngine;
+
 module.test = function()
 {
 	var enemy = {
 		enemy: true,
-		dead: true,
+		shots: 0,
+		dead: false,
 		toString: function() { return 'Me bad'; },
 	};
 	var engine = new scriptingEngine({
@@ -737,13 +732,15 @@ module.test = function()
 				od: enemy,
 			},
 			pointAt: function(object) {
-				console.log('pointing at ' + object);
 			},
 			shoot: function() {
-				console.log('shooting');
+				enemy.shots ++;
+				if (enemy.shots == 3)
+				{
+					enemy.dead = true;
+				}
 			},
 			accelerate: function() {
-				console.log('accelerating');
 			},
 
 		},
