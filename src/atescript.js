@@ -244,6 +244,7 @@ function scriptingSentence()
 		{
 			log('Sentence continues after terminator: ' + self);
 		}
+		return true;
 	}
 
 	/**
@@ -329,6 +330,7 @@ function scriptingContext(params)
 	function runSentence()
 	{
 		var sentence = self.current();
+		log('Running: ' + sentence);
 		var token = sentence.currentSkip();
 		if (token == 'if')
 		{
@@ -544,10 +546,7 @@ function scriptingContext(params)
 	function doUntil(sentence)
 	{
 		var evaluation = evaluateCondition(sentence);
-		if (!sentence.checkSkip('.'))
-		{
-			return false;
-		}
+		sentence.skipTerminator();
 		if (!evaluation)
 		{
 			self.goToMark();
@@ -660,8 +659,10 @@ function scriptingContext(params)
 		var sentence = self.current();
 		while (!sentence.endsBlock() && !self.finished())
 		{
+			console.log('Skipping ' + sentence);
 			sentence = self.currentSkip();
 		}
+		console.log('Ends: ' + sentence.endsBlock() + ', finished: ' + self.finished());
 	}
 }
 
