@@ -280,7 +280,6 @@ function scriptingContext(params)
 	var it = params.it;
 	var linesRun = 0;
 	var linesPending = 0;
-	var pendingBlocks = 0;
 	var marked = 0;
 	var callbacks = [];
 
