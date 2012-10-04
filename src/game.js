@@ -73,7 +73,7 @@ function timer(delay, callback)
 /**
  * One of the players in a game.
  */
-function gamePlayer(id)
+function gamePlayer(params)
 {
 	// self-reference
 	var self = this;
@@ -83,8 +83,8 @@ function gamePlayer(id)
 	}
 
 	// attributes
-	self.id = id;
-	self.robot = null;
+	self.id = params.id;
+	self.robot = params.world.addRobot(self.id);
 
 	/**
 	 * Keep a message for the auto player.
@@ -118,15 +118,15 @@ function gamePlayer(id)
 /**
  * One of the players connected to a game.
  */
-function connectedPlayer(id, connection)
+function connectedPlayer(params)
 {
 	// self-reference
 	var self = this;
 	// extend gamePlayer
-	extend(new gamePlayer(id), self);
+	extend(new gamePlayer(params), self);
 
 	// attributes
-	self.connection = connection;
+	self.connection = params.connection;
 
 	/**
 	 * Send a message to the player.
@@ -163,12 +163,12 @@ function connectedPlayer(id, connection)
 /**
  * A computer player.
  */
-function autoPlayer(id)
+function autoPlayer(params)
 {
 	// self-reference
 	var self = this;
 	// extend gamePlayer
-	extend(new gamePlayer(id), self);
+	extend(new gamePlayer(params), self);
 }
 
 /**
@@ -188,7 +188,6 @@ function meGame(id)
 	 */
 	self.add = function(player)
 	{
-		player.robot = self.world.addRobot(player.id);
 		players.push(player);
 		log('Player ' + player.id + ' connected to game ' + self.id + '; ' + players.length + ' connected');
 	}
@@ -198,7 +197,11 @@ function meGame(id)
 	 */
 	self.connect = function(id, connection)
 	{
-		var player = new connectedPlayer(id, connection);
+		var player = new connectedPlayer({
+			id: id,
+			world: self.world,
+			connection: connection,
+		});
 		self.add(player);
 		connection.on('message', function(message) {
 				if (message.type != 'utf8')
@@ -275,8 +278,11 @@ function meGame(id)
 	 */
 	self.autostart = function()
 	{
-		self.add(new autoPlayer('computer1'));
-		// self.add(new autoPlayer('computer2'));
+		var player = new autoPlayer({
+			id: 'computer1',
+			world: self.world,
+		});
+		self.add(player);
 	}
 
 	/**
