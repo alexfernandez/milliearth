@@ -78,7 +78,7 @@ function scriptingContext(params)
 		var context = stack[stack.length - 1];
 		var newContext = new scriptingContext(params);
 		context.add(newContext);
-		stack.push(context);
+		stack.push(newContext);
 	}
 
 	/**

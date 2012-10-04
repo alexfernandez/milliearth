@@ -94,7 +94,6 @@ function scriptingEngine(params)
 				sentence.add(t);
 			}
 		}
-		log.d('Result: ' + context);
 		self.ready = true;
 		// run any pending lines
 		self.run(0);
