@@ -277,16 +277,10 @@ function scriptingContext(params)
 	extend(new storage([]), self);
 
 	// attributes
-	self.ready = false;
 	var computer = params.computer;
 	var it = params.it;
-	var linesRun = 0;
-	var linesPending = 0;
 	var marked = 0;
-	var callbacks = [];
 	var interrupt = false;
-	var semaphor = new concurrencyLock();
-	var stack = [self];
 
 	/**
 	 * Add a new sentence. Instantiates new contexts as necessary.
@@ -297,26 +291,16 @@ function scriptingContext(params)
 	}
 
 	/**
-	 * Run the specified number of lines.
+	 * Run the specified number of lines, or less.
 	 */
-	self.run = function(lines, callback)
+	self.run = function(lines)
 	{
-		callbacks.push(callback);
-		linesPending += lines;
-		if (!self.ready)
-		{
-			return;
-		}
-		if (!semaphor.check(self))
-		{
-			// semaphor closed
-			return;
-		}
-		while (linesPending > 0 && !self.finished() && !interrupt)
+		var run = 0;
+		while (lines > 0 && !self.finished() && !interrupt)
 		{
 			runSentence();
-			linesRun++;
-			linesPending--;
+			run++;
+			lines--;
 		}
 		if (interrupt)
 		{
@@ -326,9 +310,7 @@ function scriptingContext(params)
 		{
 			computer.finished = true;
 		}
-		runCallbacks();
-		log('Run ' + linesRun + ' lines');
-		semaphor.release();
+		log('Run ' + run + ' lines');
 	}
 
 	/**
@@ -693,7 +675,13 @@ function scriptingEngine(params)
 
 	// attributes
 	self.file = params.file;
+	self.ready = false;
+	var linesRun = 0;
+	var linesPending = 0;
+	var callbacks = [];
+	var semaphor = new concurrencyLock();
 	var context = new scriptingContext(params);
+	var stack = [self];
 
 	readScript(self.file);
 
@@ -752,7 +740,21 @@ function scriptingEngine(params)
 			log('No lines run');
 			return;
 		}
-		context.run(lines, callback);
+		callbacks.push(callback);
+		linesPending += lines;
+		if (!self.ready)
+		{
+			return;
+		}
+		if (!semaphor.check(self))
+		{
+			// semaphor closed
+			return;
+		}
+		var run = context.run(lines, callback);
+		linesRun += run;
+		runCallbacks()
+		semaphor.release();
 	}
 }
 
