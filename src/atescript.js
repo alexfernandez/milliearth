@@ -306,10 +306,6 @@ function scriptingContext(params)
 		{
 			interrupt = false;
 		}
-		if (self.finished())
-		{
-			computer.finished = true;
-		}
 		log('Run ' + run + ' lines');
 	}
 
@@ -725,7 +721,7 @@ function scriptingEngine(params)
 				sentence.add(t);
 			}
 		}
-		context.ready = true;
+		self.ready = true;
 		// run any pending lines
 		context.run(0);
 	}

@@ -23,3 +23,5 @@ repeat:
 	make x = x + 1;
 	until x = 10.
 
+make finished = true;
+

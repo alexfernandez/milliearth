@@ -32,3 +32,5 @@ if enemy in map:
   point at it;
   accelerate.
 
+make finished = 1;
+
