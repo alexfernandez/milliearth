@@ -626,6 +626,11 @@ function scriptingContext(params)
 	 */
 	function evaluateIt(sentence)
 	{
+		if (!it)
+		{
+			log('Invalid reference to it');
+			return;
+		}
 		if (!sentence.checkSkip('is'))
 		{
 			return false;

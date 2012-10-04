@@ -167,6 +167,11 @@ function connectedPlayer(params)
  */
 function autoComputer(robot)
 {
+	// self-reference
+	var self = this;
+
+	// attributes
+	self.dead = false;
 }
 
 /**
