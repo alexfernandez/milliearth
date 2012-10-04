@@ -282,15 +282,17 @@ function scriptingContext(params)
 	var linesPending = 0;
 	var pendingBlocks = 0;
 	var marked = 0;
+	var callbacks = [];
 
 	/**
 	 * Run the specified number of lines.
 	 */
-	self.run = function(lines)
+	self.run = function(lines, callback)
 	{
+		callbacks.push(callback);
+		linesPending += lines;
 		if (!self.ready)
 		{
-			linesPending += lines;
 			return;
 		}
 		while (linesPending > 0 && !self.finished())
@@ -299,10 +301,24 @@ function scriptingContext(params)
 			linesRun++;
 			linesPending--;
 		}
-		log('Run ' + linesRun + ' lines');
-		if (self.finished() && params.afterFinished)
+		if (self.finished())
 		{
-			params.afterFinished();
+			robot.finished = true;
+		}
+		runCallbacks();
+		log('Run ' + linesRun + ' lines');
+	}
+
+	/**
+	 * Run all pending callbacks.
+	 */
+	function runCallbacks()
+	{
+		var callback = callbacks.shift();
+		while (callback)
+		{
+			callback(robot);
+			callback = callbacks.shift();
 		}
 	}
 
@@ -698,14 +714,14 @@ function scriptingEngine(params)
 	/**
 	 * Run the script for a number of lines.
 	 */
-	self.run = function(lines)
+	self.run = function(lines, callback)
 	{
 		if (!lines)
 		{
 			log('No lines run');
 			return;
 		}
-		context.run(lines);
+		context.run(lines, callback);
 	}
 }
 
@@ -744,27 +760,34 @@ module.test = function()
 			},
 
 		},
-		afterFinished: function() {
-			console.log('hey');
-			if (!enemy.dead)
-			{
-				log('enemy should be dead by now');
-			}
-		},
 	});
-	engine.run(10);
+	engine.run(20, function(robot) {
+		if (!robot.finished)
+		{
+			log('Script not finished');
+			return;
+		}
+		if (!enemy.dead)
+		{
+			log('enemy should be dead by now');
+		}
+	});
 	var robot = {};
 	engine = new scriptingEngine({
 		file: 'test-arithmetic.8s',
 		robot: robot,
-		afterFinished: function() {
-			if (robot.x != 10)
-			{
-				log('x should be 10, not ' + robot.x);
-			}
-		},
 	});
-	engine.run(100);
+	engine.run(100, function(robot) {
+		if (!robot.finished)
+		{
+			log('Script not finished');
+			return;
+		}
+		if (robot.x != 10)
+		{
+			log('x should be 10, not ' + robot.x);
+		}
+	});
 }
 
 module.test();
