@@ -310,22 +310,12 @@ function scriptingContext(params)
 	}
 
 	/**
-	 * Run all pending callbacks.
+	 * Run a single sentence.
 	 */
-	function runCallbacks()
-	{
-		var callback = callbacks.shift();
-		while (callback)
-		{
-			callback(computer);
-			callback = callbacks.shift();
-		}
-	}
-
 	function runSentence()
 	{
 		var sentence = self.current();
-		log('Running: ' + sentence);
+		trace('Running: ' + sentence);
 		var token = sentence.currentSkip();
 		if (token == 'if')
 		{
@@ -381,6 +371,14 @@ function scriptingContext(params)
 			if (isNumber(token))
 			{
 				value = readNumber(token);
+			}
+			else if (token == 'true')
+			{
+				value = true;
+			}
+			else if (token == 'false')
+			{
+				value = false;
 			}
 			else if (computer.hasOwnProperty(token))
 			{
@@ -654,10 +652,9 @@ function scriptingContext(params)
 		var sentence = self.current();
 		while (!sentence.endsBlock() && !self.finished())
 		{
-			console.log('Skipping ' + sentence);
+			trace('Skipping ' + sentence);
 			sentence = self.currentSkip();
 		}
-		console.log('Ends: ' + sentence.endsBlock() + ', finished: ' + self.finished());
 	}
 }
 
@@ -672,6 +669,7 @@ function scriptingEngine(params)
 	// attributes
 	self.file = params.file;
 	self.ready = false;
+	var computer = params.computer;
 	var linesRun = 0;
 	var linesPending = 0;
 	var callbacks = [];
@@ -723,7 +721,7 @@ function scriptingEngine(params)
 		}
 		self.ready = true;
 		// run any pending lines
-		context.run(0);
+		self.run(0);
 	}
 
 	/**
@@ -731,11 +729,6 @@ function scriptingEngine(params)
 	 */
 	self.run = function(lines, callback)
 	{
-		if (!lines)
-		{
-			log('No lines run');
-			return;
-		}
 		callbacks.push(callback);
 		linesPending += lines;
 		if (!self.ready)
@@ -747,10 +740,24 @@ function scriptingEngine(params)
 			// semaphor closed
 			return;
 		}
-		var run = context.run(lines, callback);
+		var run = context.run(linesPending, callback);
 		linesRun += run;
-		runCallbacks()
+		linesPending -= run;
+		runCallbacks();
 		semaphor.release();
+	}
+
+	/**
+	 * Run all pending callbacks.
+	 */
+	function runCallbacks()
+	{
+		var callback = callbacks.shift();
+		while (callback)
+		{
+			callback(computer);
+			callback = callbacks.shift();
+		}
 	}
 }
 
