@@ -293,7 +293,7 @@ function scriptingContext(params)
 			linesPending += lines;
 			return;
 		}
-		while (!self.finished() && linesPending > 0)
+		while (linesPending > 0 && !self.finished())
 		{
 			runSentence();
 			linesRun++;
@@ -511,7 +511,7 @@ function scriptingContext(params)
 			log('Invalid repeat sentence ' + sentence);
 			return false;
 		}
-		marked = self.position + 1;
+		marked = self.position;
 	}
 
 	/**
@@ -743,6 +743,13 @@ module.test = function()
 			accelerate: function() {
 			},
 
+		},
+		afterFinished: function() {
+			console.log('hey');
+			if (!enemy.dead)
+			{
+				log('enemy should be dead by now');
+			}
 		},
 	});
 	engine.run(10);
