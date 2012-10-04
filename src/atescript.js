@@ -175,7 +175,7 @@ module.exports.test = function()
 		computer: basicComputer,
 		file: 'basic-enemy.8s',
 	});
-	engine.run(20, function(computer) {
+	engine.run(30, function(computer) {
 		if (!computer.finished)
 		{
 			log.e('Script not finished');

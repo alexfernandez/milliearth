@@ -398,6 +398,21 @@ function scriptingContext(params)
 	 */
 	function evaluateIn(sentence, elementAttribute)
 	{
+		return evaluateContainer(sentence, function(element) {
+			var evaluation = element[elementAttribute];
+			if (evaluation)
+			{
+				self.it = element;
+			}
+			return evaluation;
+		});
+	}
+
+	/**
+	 * Evaluate some callback inside every element of a container attribute.
+	 */
+	function evaluateContainer(sentence, callback)
+	{
 		var containerAttribute = sentence.currentSkip();
 		var container = computer[containerAttribute];
 		if (!container)
@@ -408,9 +423,8 @@ function scriptingContext(params)
 		for (var key in container)
 		{
 			var element = container[key];
-			if (element[elementAttribute])
+			if (callback(element))
 			{
-				self.it = element;
 				return true;
 			}
 		}
@@ -431,11 +445,11 @@ function scriptingContext(params)
 		{
 			return false;
 		}
-		if (sentence.checkSkip('in'))
+		var attribute = sentence.currentSkip();
+		if (attribute == 'in')
 		{
 			return evaluateItIn(sentence);
 		}
-		var attribute = sentence.currentSkip();
 		return self.it[attribute];
 	}
 
@@ -444,7 +458,9 @@ function scriptingContext(params)
 	 */
 	function evaluateItIn(sentence)
 	{
-		return false;
+		return evaluateContainer(sentence, function(element) {
+			return (self.it == element);
+		});
 	}
 
 	/**
@@ -471,6 +487,19 @@ function scriptingContext(params)
 			log.d('Skipping ' + sentence);
 			sentence = self.currentSkip();
 		}
+	}
+
+	/**
+	 * Reset: make all contained elements reset.
+	 */
+	self.oldReset = self.reset;
+	self.reset = function()
+	{
+		for (var index in self.contents)
+		{
+			self.contents[index].reset();
+		}
+		self.oldReset();
 	}
 
 	/**

@@ -120,6 +120,14 @@ function storage(contents)
 	}
 
 	/**
+	 * Reset to the beginning.
+	 */
+	self.reset = function()
+	{
+		self.position = 0;
+	}
+
+	/**
 	 * Printable representation.
 	 */
 	self.toString = function()
@@ -242,14 +250,6 @@ function scriptingSentence()
 	self.isTerminator = function()
 	{
 		return scriptingParams.terminators.test(self.current());
-	}
-
-	/**
-	 * Reset the sentence to the beginning.
-	 */
-	self.reset = function()
-	{
-		self.position = 0;
 	}
 }
 
