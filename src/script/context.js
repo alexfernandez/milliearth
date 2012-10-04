@@ -107,9 +107,10 @@ function scriptingContext(params)
 		var sentence = self.current();
 		if (sentence instanceof scriptingContext)
 		{
-			sentence.it = self.it;
-			sentence.runSentence();
-			if (sentence.finished())
+			var context = sentence;
+			context.it = self.it;
+			context.runSentence();
+			if (context.finished())
 			{
 				self.skip();
 			}
