@@ -73,6 +73,39 @@ var parser = new function()
 }
 
 /**
+ * Lock to avoid two processes at the same time.
+ */
+function concurrencyLock()
+{
+	// self-reference
+	var self = this;
+
+	var locks = [];
+
+	/**
+	 * Check out if the lock is busy; if free, return true and lock it.
+	 */
+	self.check = function(object)
+	{
+		var index = locks.push(object) - 1;
+		if (index != 0)
+		{
+			locks.splice(index, 1);
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Release the lock, by whoever was holding it. Should be used responsibly.
+	 */
+	self.release = function()
+	{
+		locks.splice(0, 1);
+	}
+}
+
+/**
  * Global to control if traces are logged.
  */
 var traceEnabled = false;
@@ -162,4 +195,5 @@ module.exports.trace = trace;
 module.exports.enableTrace = enableTrace;
 module.exports.log = log;
 module.exports.extend = extend;
+module.exports.concurrencyLock = concurrencyLock;
 

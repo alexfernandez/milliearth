@@ -29,6 +29,7 @@ var util = require('./util.js');
 var log = util.log;
 var trace = util.trace;
 var extend = util.extend;
+var concurrencyLock = util.concurrencyLock;
 
 
 /**
@@ -284,6 +285,7 @@ function scriptingContext(params)
 	var marked = 0;
 	var callbacks = [];
 	var interrupt = false;
+	var semaphor = new concurrencyLock();
 
 	/**
 	 * Run the specified number of lines.
@@ -294,6 +296,11 @@ function scriptingContext(params)
 		linesPending += lines;
 		if (!self.ready)
 		{
+			return;
+		}
+		if (!semaphor.check(self))
+		{
+			// semaphor closed
 			return;
 		}
 		while (linesPending > 0 && !self.finished() && !interrupt)
@@ -312,6 +319,7 @@ function scriptingContext(params)
 		}
 		runCallbacks();
 		log('Run ' + linesRun + ' lines');
+		semaphor.release();
 	}
 
 	/**
