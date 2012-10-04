@@ -109,6 +109,10 @@ function scriptingContext(params)
 		{
 			sentence.it = self.it;
 			sentence.runSentence();
+			if (sentence.finished())
+			{
+				self.skip();
+			}
 			return;
 		}
 		log.d('Running: ' + sentence);
@@ -326,7 +330,8 @@ function scriptingContext(params)
 			log.e('Invalid repeat sentence ' + sentence);
 			return false;
 		}
-		marked = self.position;
+		marked = self.position + 1;
+		console.log('Marked at ' + marked);
 	}
 
 	/**
@@ -359,7 +364,7 @@ function scriptingContext(params)
 			var sentence = self.contents[i];
 			sentence.reset();
 		}
-		self.position = marked;
+		self.position = marked - 1;
 	}
 
 	/**
