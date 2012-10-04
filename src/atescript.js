@@ -458,11 +458,7 @@ function scriptingContext(params)
 		if (robot.hasOwnProperty(command))
 		{
 			var callback = robot[command];
-			var parameter = null;
-			if (!sentence.isTerminator())
-			{
-				parameter = readParameter(sentence);
-			}
+			var parameter = readParameter(sentence);
 			callback(parameter);
 			interrupt = true;
 			return;
@@ -496,13 +492,20 @@ function scriptingContext(params)
 	 */
 	function readParameter(sentence)
 	{
-		var token = sentence.currentSkip();
-		if (token == 'it')
+		var parameter = null;
+		while (!sentence.isTerminator())
 		{
-			return it;
+			var token = sentence.currentSkip();
+			if (token == 'it')
+			{
+				parameter = it;
+			}
+			else
+			{
+				log('Invalid parameter ' + token);
+			}
 		}
-		log('Invalid parameter ' + token);
-		return null;
+		return parameter;
 	}
 
 	/**
