@@ -51,7 +51,6 @@ function scriptingEngine(params)
 	var callbacks = [];
 	var semaphor = new concurrencyLock();
 	var context = new scriptingContext(params);
-	var stack = [self];
 
 	readScript(self.file);
 

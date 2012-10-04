@@ -227,6 +227,14 @@ function scriptingSentence()
 	}
 
 	/**
+	 * Get the terminator: the last token.
+	 */
+	self.getTerminator = function()
+	{
+		return self.contents[self.contents.length - 1];
+	}
+
+	/**
 	 * Skip terminator and check that the sentence finishes.
 	 * If not present or there are tokens after the terminator, complain.
 	 */

@@ -49,13 +49,36 @@ function scriptingContext(params)
 	var it = params.it;
 	var marked = 0;
 	var interrupt = false;
+	var stack = [self];
 
 	/**
 	 * Add a new sentence. Instantiates new contexts as necessary.
+	 * Does not use recursion.
 	 */
 	self.addSentence = function(sentence)
 	{
-		self.add(sentence);
+		if (sentence.getTerminator() == ':')
+		{
+			addNewContext();
+		}
+		var context = stack[stack.length - 1];
+		context.add(sentence);
+		var token = sentence.current();
+		if (token == 'until' || sentence.getTerminator() == '.')
+		{
+			stack.pop();
+		}
+	}
+
+	/**
+	 * Create a new context inside the current one.
+	 */
+	function addNewContext()
+	{
+		var context = stack[stack.length - 1];
+		var newContext = new scriptingContext(params);
+		context.add(newContext);
+		stack.push(context);
 	}
 
 	/**
@@ -66,7 +89,7 @@ function scriptingContext(params)
 		var run = 0;
 		while (run < lines && !self.finished() && !interrupt)
 		{
-			runSentence();
+			self.runSentence();
 			run++;
 		}
 		if (interrupt)
@@ -77,11 +100,16 @@ function scriptingContext(params)
 	}
 
 	/**
-	 * Run a single sentence.
+	 * Run a single sentence. Uses recursion to get into embedded contexts.
 	 */
-	function runSentence()
+	self.runSentence = function()
 	{
 		var sentence = self.current();
+		if (sentence instanceof scriptingContext)
+		{
+			sentence.runSentence();
+			return;
+		}
 		log.d('Running: ' + sentence);
 		var token = sentence.currentSkip();
 		if (token == 'if')
