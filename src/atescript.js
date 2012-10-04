@@ -24,9 +24,9 @@
  * Requirements.
  */
 var fs = require('fs');
-var parsePosition = require('./script/context.js').parsePosition;
-var scriptingParams = require('./script/context.js').scriptingParams;
-var scriptingSentence = require('./script/context.js').scriptingSentence;
+var parsePosition = require('./script/parse.js').parsePosition;
+var scriptingParams = require('./script/parse.js').scriptingParams;
+var scriptingSentence = require('./script/parse.js').scriptingSentence;
 var scriptingContext = require('./script/context.js').scriptingContext;
 var util = require('./util.js');
 var log = util.log;
