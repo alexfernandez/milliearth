@@ -451,6 +451,15 @@ function scriptingContext(params)
 			sentence = self.currentSkip();
 		}
 	}
+
+	/**
+	 * Printable representation.
+	 */
+	self.oldToString = self.toString;
+	self.toString = function()
+	{
+		return '[' + self.oldToString() + ']';
+	}
 }
 
 module.exports.scriptingContext = scriptingContext;
