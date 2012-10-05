@@ -62,6 +62,11 @@ function scriptingContext(params)
 			addNewContext();
 		}
 		var context = stack[stack.length - 1];
+		if (!context)
+		{
+			log.e('All blocks closed; cannot add ' + sentence);
+			return;
+		}
 		context.add(sentence);
 		var token = sentence.current();
 		if (token == 'until' || sentence.getTerminator() == '.')
