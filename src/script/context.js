@@ -366,7 +366,7 @@ function scriptingContext(params)
 		for (var i = marked; i <= self.position; i++)
 		{
 			var sentence = self.contents[i];
-			sentence.reset();
+			sentence.restart();
 		}
 		self.position = marked - 1;
 	}
@@ -503,16 +503,16 @@ function scriptingContext(params)
 	}
 
 	/**
-	 * Reset: make all contained elements reset.
+	 * Restart: make all contained elements restart.
 	 */
-	self.oldReset = self.reset;
-	self.reset = function()
+	self.oldRestart = self.restart;
+	self.restart = function()
 	{
 		for (var index in self.contents)
 		{
-			self.contents[index].reset();
+			self.contents[index].restart();
 		}
-		self.oldReset();
+		self.oldRestart();
 	}
 
 	/**

@@ -120,9 +120,9 @@ function storage(contents)
 	}
 
 	/**
-	 * Reset to the beginning.
+	 * Restart to the beginning.
 	 */
-	self.reset = function()
+	self.restart = function()
 	{
 		self.position = 0;
 	}

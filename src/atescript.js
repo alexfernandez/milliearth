@@ -118,9 +118,14 @@ function scriptingEngine(params)
 			// semaphor closed
 			return;
 		}
+		if (context.finished())
+		{
+			log.d('Context finished');
+			context.restart();
+		}
 		var run = context.run(linesPending, callback);
 		linesRun += run;
-		linesPending -= run;
+		linesPending = 0;
 		runCallbacks();
 		semaphor.release();
 	}
