@@ -97,6 +97,7 @@ function scriptingContext(params)
 			interrupt = false;
 		}
 		log.d('Run ' + run + ' lines');
+		return run;
 	}
 
 	/**
@@ -108,7 +109,7 @@ function scriptingContext(params)
 		if (sentence instanceof scriptingContext)
 		{
 			var context = sentence;
-			if (self.it)
+			if (self.it && !context.it)
 			{
 				context.it = self.it;
 			}
