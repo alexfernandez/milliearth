@@ -34,6 +34,46 @@ var extend = util.extend;
 
 
 /**
+ * A stack of contexts used during runtime.
+ */
+function runtimeStack(initial)
+{
+	// self-reference
+	var self = this;
+
+	// attributes
+	self.interrupt = false;
+	var contexts = [initial];
+
+	/**
+	 * Add a new context.
+	 */
+	self.addNew = function(params)
+	{
+		var context = self.current();
+		var newContext = new scriptingContext(params);
+		context.add(newContext);
+		contexts.push(newContext);
+	}
+
+	/**
+	 * Get the current context.
+	 */
+	self.current = function()
+	{
+		return contexts[contexts.length - 1];
+	}
+
+	/**
+	 * Remove the last context.
+	 */
+	self.removeLast = function()
+	{
+		contexts.pop();
+	}
+}
+
+/**
  * Provide the context for the scripting engine.
  * Contains an array of sentences.
  */
@@ -48,8 +88,7 @@ function scriptingContext(params)
 	var computer = params.computer;
 	self.it = params.it;
 	var marked = 0;
-	var interrupt = false;
-	var stack = [self];
+	var stack = new runtimeStack(self);
 
 	/**
 	 * Add a new sentence. Instantiates new contexts as necessary.
@@ -59,9 +98,9 @@ function scriptingContext(params)
 	{
 		if (sentence.getTerminator() == ':')
 		{
-			addNewContext();
+			stack.addNew(params);
 		}
-		var context = stack[stack.length - 1];
+		var context = stack.current();
 		if (!context)
 		{
 			log.e('All blocks closed; cannot add ' + sentence);
@@ -71,19 +110,8 @@ function scriptingContext(params)
 		var token = sentence.current();
 		if (token == 'until' || sentence.getTerminator() == '.')
 		{
-			stack.pop();
+			stack.removeLast();
 		}
-	}
-
-	/**
-	 * Create a new context inside the current one.
-	 */
-	function addNewContext()
-	{
-		var context = stack[stack.length - 1];
-		var newContext = new scriptingContext(params);
-		context.add(newContext);
-		stack.push(newContext);
 	}
 
 	/**
@@ -92,14 +120,15 @@ function scriptingContext(params)
 	self.run = function(lines)
 	{
 		var run = 0;
-		while (run < lines && !self.finished() && !interrupt)
+		while (run < lines && !self.finished() && !stack.interrupt)
 		{
 			self.runSentence();
 			run++;
+			log.d('i ' + stack.interrupt);
 		}
-		if (interrupt)
+		if (stack.interrupt)
 		{
-			interrupt = false;
+			stack.interrupt = false;
 		}
 		log.d('Run ' + run + ' lines');
 		return run;
@@ -269,7 +298,8 @@ function scriptingContext(params)
 			var callback = computer[command];
 			var parameter = readParameter(sentence);
 			callback(parameter);
-			interrupt = true;
+			stack.interrupt = true;
+			log.d('interrupt: ' + stack.interrupt);
 			return;
 		}
 		if (findCommandStarts(command))
