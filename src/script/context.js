@@ -135,6 +135,10 @@ function scriptingContext(params)
 		{
 			doRepeat(sentence);
 		}
+		else if (token == 'always')
+		{
+			doAlways(sentence);
+		}
 		else if (token == 'until')
 		{
 			doUntil(sentence);
@@ -341,6 +345,14 @@ function scriptingContext(params)
 			return false;
 		}
 		marked = self.position + 1;
+	}
+
+	/**
+	 * Loop always.
+	 */
+	function doAlways(sentence)
+	{
+		self.goToMark();
 	}
 
 	/**

@@ -19,7 +19,8 @@
 #
 
 # just accelerate like crazy
-accelerate;
+repeat:
+	accelerate;
+	always;
 
-make finished = 1;
 
