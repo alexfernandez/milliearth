@@ -128,7 +128,6 @@ function scriptingContext(params)
 		{
 			self.runSentence();
 			run++;
-			log.d('i ' + stack.interrupt);
 		}
 		if (stack.interrupt)
 		{
@@ -303,7 +302,6 @@ function scriptingContext(params)
 			var parameter = readParameter(sentence);
 			callback(parameter);
 			stack.interrupt = true;
-			log.d('interrupt: ' + stack.interrupt);
 			return;
 		}
 		if (findCommandStarts(command))
