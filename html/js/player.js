@@ -172,11 +172,10 @@ var clientPlayer = function()
 	 */
 	function disconnect(reconnect)
 	{
-		if (websocket == null)
+		if (websocket != null)
 		{
-			return;
+			websocket.close();
 		}
-		websocket.close();
 		$('#connect').val('Connect');
 		websocket = null;
 		if (running)
