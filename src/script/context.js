@@ -482,11 +482,23 @@ function scriptingContext(params)
 	function skipBlock()
 	{
 		var sentence = self.current();
-		while (sentence.getTerminator() != '.' && !self.finished())
+		while (!endsBlock(sentence) && !self.finished())
 		{
 			log.d('Skipping ' + sentence);
 			sentence = self.currentSkip();
 		}
+	}
+
+	/**
+	 * Find out if a sentence marks a block.
+	 */
+	function endsBlock(sentence)
+	{
+		if (sentence instanceof scriptingContext)
+		{
+			return false;
+		}
+		return sentence.getTerminator() == '.';
 	}
 
 	/**
