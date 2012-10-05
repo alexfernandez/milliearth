@@ -95,7 +95,6 @@ function connectedPlayer(params)
 	 */
 	self.send = function(message)
 	{
-		log.d('Sending client: ' + message);
 		self.connection.sendUTF(parser.convert(message));
 	}
 
