@@ -88,7 +88,11 @@ function scriptingContext(params)
 	var computer = params.computer;
 	self.it = params.it;
 	var marked = 0;
-	var stack = new runtimeStack(self);
+	if (!params.stack)
+	{
+		params.stack = new runtimeStack(self);
+	}
+	var stack = params.stack;
 
 	/**
 	 * Add a new sentence. Instantiates new contexts as necessary.
