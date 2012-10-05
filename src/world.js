@@ -594,7 +594,7 @@ var gameWorld = function(id)
 			// enemy
 			robot.start(
 				new vector(distance + 2, 160, 0),
-				new vector(1, 0, 0));
+				new vector(0, 1, 0));
 		}
 		else
 		{

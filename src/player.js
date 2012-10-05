@@ -133,43 +133,44 @@ function autoComputer(robot)
 	self.view = {};
 	self.scope = {};
 	self.map = {};
+	self.delay = 0;
 
 	/**
 	 * Point at an object with position.
 	 */
-	self.pointAt = function(object, delay)
+	self.pointAt = function(object)
 	{
 		var position = robot.computePosition(object);
 		if (position.x > 0)
 		{
-			robot.turnLeft(delay);
+			robot.turnLeft(self.delay);
 		}
 		else if (position.x < 0)
 		{
-			robot.turnRight(delay);
+			robot.turnRight(self.delay);
 		}
 		if (position.y > 0)
 		{
-			robot.turnDown(delay);
+			robot.turnDown(self.delay);
 		}
 		else if (position.y < 0)
 		{
-			robot.turnUp(delay);
+			robot.turnUp(self.delay);
 		}
 	}
 
 	/**
 	 * Make the robot accelerate.
 	 */
-	self.accelerate = function(delay)
+	self.accelerate = function()
 	{
-		robot.accelerate(delay);
+		robot.accelerate(self.delay);
 	}
 
 	/**
 	 * Shoot.
 	 */
-	self.shoot = function(delay)
+	self.shoot = function()
 	{
 		robot.shoot();
 	}
@@ -188,7 +189,7 @@ function autoPlayer(params)
 	// attributes
 	var computer = new autoComputer(self.robot);
 	var engine = new scriptingEngine({
-		file: 'basic-enemy.8s',
+		file: 'forrest.8s',
 		computer: computer,
 	});
 
@@ -197,6 +198,7 @@ function autoPlayer(params)
 	 */
 	self.shortLoop = function(delay)
 	{
+		computer.delay = delay / 1000;
 		var instructions = globalParams.instructionsPerMs * delay;
 		engine.run(instructions);
 	}
