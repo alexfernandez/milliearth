@@ -20,7 +20,8 @@
 
 # just accelerate like crazy
 repeat:
-	accelerate;
+	if speed < 200:
+		accelerate.
 	always;
 
 

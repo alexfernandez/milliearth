@@ -435,9 +435,24 @@ function scriptingContext(params)
 		{
 			return evaluateIn(sentence, subject);
 		}
+		// attribute comparisons
+		if (!(computer.hasOwnProperty(subject)))
+		{
+			log.e('Invalid attribute ' + subject);
+			return false;
+		}
+		var attribute = computer[subject];
 		if (particle == '=')
 		{
-			return evaluateValue(sentence, subject);
+			return evaluateEquals(attribute, sentence);
+		}
+		if (particle == '<')
+		{
+			return evaluateLessThan(attribute, sentence);
+		}
+		if (particle == '>')
+		{
+			return evaluateBiggerThan(attribute, sentence);
 		}
 		log.e('Invalid particle ' + particle);
 		return false;
@@ -514,16 +529,30 @@ function scriptingContext(params)
 	}
 
 	/**
-	 * Evaluate that the given attribute holds the given value.
+	 * Evaluate that the given attribute equals the given value.
 	 */
-	function evaluateValue(sentence, attribute)
+	function evaluateEquals(attribute, sentence)
 	{
-		if (!(attribute in computer))
-		{
-			return false;
-		}
 		var value = readValue(sentence);
-		return (value == computer[attribute]);
+		return (value == attribute);
+	}
+
+	/**
+	 * Evaluate that the given attribute is less than the given value.
+	 */
+	function evaluateLessThan(attribute, sentence)
+	{
+		var value = readValue(sentence);
+		return (value < attribute);
+	}
+
+	/**
+	 * Evaluate that the given attribute is bigger than the given value.
+	 */
+	function evaluateBiggerThan(attribute, sentence)
+	{
+		var value = readValue(sentence);
+		return (value < attribute);
 	}
 
 	/**
