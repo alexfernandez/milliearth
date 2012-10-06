@@ -142,7 +142,6 @@ function autoComputer(robot)
 	self.update = function(delay)
 	{
 		interval = delay;
-		return;
 		var update = robot.computeViewUpdate();
 		self.speed = update.speed;
 		for (var index in update.objects)
