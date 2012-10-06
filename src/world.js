@@ -343,7 +343,9 @@ function fighterRobot(params)
 		return {
 			camera: camera,
 			position: computeViewPosition(),
+			speed: self.speed.length(),
 			radius: self.world.milliEarth.radius,
+			height: self.computeHeight() - self.radius,
 			objects: objects,
 		};
 	}

@@ -133,16 +133,18 @@ function autoComputer(robot)
 	self.view = {};
 	self.scope = {};
 	self.map = {};
-	self.delay = 0;
+	self.speed = 0;
+	var interval = 0;
 
 	/**
 	 * Run an update of the outside world.
 	 */
 	self.update = function(delay)
 	{
-		self.delay = delay;
+		interval = delay;
 		return;
 		var update = robot.computeViewUpdate();
+		self.speed = update.speed;
 		for (var index in update.objects)
 		{
 			var object = update.objects[index];
@@ -168,19 +170,19 @@ function autoComputer(robot)
 		var position = robot.computePosition(object);
 		if (position.x > 0)
 		{
-			robot.turnLeft(self.delay);
+			robot.turnLeft(interval);
 		}
 		else if (position.x < 0)
 		{
-			robot.turnRight(self.delay);
+			robot.turnRight(interval);
 		}
 		if (position.y > 0)
 		{
-			robot.turnDown(self.delay);
+			robot.turnDown(interval);
 		}
 		else if (position.y < 0)
 		{
-			robot.turnUp(self.delay);
+			robot.turnUp(interval);
 		}
 	}
 
@@ -189,7 +191,7 @@ function autoComputer(robot)
 	 */
 	self.accelerate = function()
 	{
-		// robot.accelerate(self.delay);
+		robot.accelerate(interval);
 	}
 
 	/**
