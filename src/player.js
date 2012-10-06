@@ -169,11 +169,28 @@ function autoComputer(robot)
 		//refresh object
 		var object = self.view[object.id];
 		var position = object.position;
-		if (position.z > 0 && position.x * position.x < 1)
+		log.i('p ' + position);
+		if (position.z < 0)
 		{
-			// lock
+			if (position.x > 0)
+			{
+				robot.turnLeft(interval);
+			}
+			else
+			{
+				robot.turnRight(interval);
+			}
+			if (position.y > 0)
+			{
+				robot.turnUp(interval);
+			}
+			else
+			{
+				robot.turnDown(interval);
+			}
+			return;
 		}
-		else if (position.x < 0)
+		if (position.x < 0)
 		{
 			robot.turnLeft(interval);
 		}
@@ -181,17 +198,13 @@ function autoComputer(robot)
 		{
 			robot.turnRight(interval);
 		}
-		if (position.z > 0 && position.y * position.y < 1)
+		if (position.y > 0)
 		{
-			// lock
-		}
-		else if (position.y >= 0)
-		{
-			robot.turnDown(interval);
+			robot.turnUp(interval);
 		}
 		else
 		{
-			robot.turnUp(interval);
+			robot.turnDown(interval);
 		}
 	}
 
