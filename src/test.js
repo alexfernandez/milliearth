@@ -27,6 +27,7 @@
 var atescriptTest = require('./atescript.js').test;
 var vectorTest = require('./vector.js').test;
 var log = require('./util.js').log;
+log.debug = true;
 
 /**
  *

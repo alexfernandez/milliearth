@@ -126,8 +126,8 @@ function scriptingEngine(params)
 		var run = context.run(linesPending, callback);
 		linesRun += run;
 		linesPending = 0;
-		runCallbacks();
 		semaphor.release();
+		runCallbacks();
 	}
 
 	/**
@@ -146,7 +146,33 @@ function scriptingEngine(params)
 
 module.exports.scriptingEngine = scriptingEngine;
 
-module.exports.test = function()
+/**
+ * Arithmetic test.
+ */
+function testArithmetic()
+{
+	var engine = new scriptingEngine({
+		file: 'test/test-arithmetic.8s',
+		computer: {},
+	});
+	engine.run(100, function(computer) {
+		if (!computer.finished)
+		{
+			log.e('Script not finished');
+			return;
+		}
+		if (computer.x != 10)
+		{
+			log.e('x should be 10, not ' + computer.x);
+		}
+		log.success('Scripting arithmetic: OK');
+	});
+}
+
+/**
+ * Test a basic enemy.
+ */
+function testBasicEnemy()
 {
 	var enemy = {
 		enemy: true,
@@ -183,35 +209,46 @@ module.exports.test = function()
 		computer: basicComputer,
 		file: 'basic-enemy.8s',
 	});
-	engine.run(10);
-	engine.run(20, function(computer) {
+	var iterations = 0;
+	var expected = 8;
+	var callback = null;
+	var iterate = function() {
+		engine.run(10, callback);
+	};
+	var callback = function(computer) {
 		if (!computer.finished)
 		{
+			if (iterations < expected)
+			{
+				iterations ++;
+				iterate();
+				return;
+			}
 			log.e('Script not finished');
 			return;
+		}
+		else
+		{
+			if (iterations < expected)
+			{
+				log.e('Finished too soon: ' + iterations + ' iterations');
+			}
 		}
 		if (!enemy.dead)
 		{
-			log.e('enemy should be dead by now');
+			log.e('Enemy should be dead by now');
 		}
 		log.success('Scripting basic enemy: OK');
-	});
-	engine = new scriptingEngine({
-		file: 'test/test-arithmetic.8s',
-		computer: {},
-	});
-	engine.run(100, function(computer) {
-		if (!computer.finished)
-		{
-			log.e('Script not finished');
-			return;
-		}
-		if (computer.x != 10)
-		{
-			log.e('x should be 10, not ' + computer.x);
-		}
-		log.success('Scripting arithmetic: OK');
-	});
+	};
+	iterate();
+}
+
+
+
+module.exports.test = function()
+{
+	testArithmetic();
+	testBasicEnemy();
 }
 
 
