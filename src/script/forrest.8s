@@ -18,9 +18,9 @@
 # along with MilliEarth.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# just accelerate like crazy
+# accelerate until 180 m/s are reached
 repeat:
-	if speed < 200:
+	if speed < 180:
 		accelerate.
 	always;
 
