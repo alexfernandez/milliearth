@@ -79,6 +79,8 @@ var globalParams = new function()
 	this.maxCollisionSpeed = 1000;
 	// atescript instructions per ms
 	this.instructionsPerMs = 0.5;
+	// atescript scope width
+	this.scopeWidth = 4;
 }
 
 module.exports.globalParams = globalParams;

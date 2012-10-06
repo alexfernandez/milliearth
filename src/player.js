@@ -141,7 +141,23 @@ function autoComputer(robot)
 	self.update = function(delay)
 	{
 		self.delay = delay;
+		return;
 		var update = robot.computeViewUpdate();
+		for (var index in update.objects)
+		{
+			var object = update.objects[index];
+			self.view[object.id] = object;
+			if (object.type == 'robot')
+			{
+				object.enemy = true;
+				// log.i('position: ' + object.position);
+			}
+			var scopeDistance = Math.sqrt(object.position.x * object.position.x + object.position.y * object.position.y);
+			if (scopeDistance < globalParams.scopeWidth)
+			{
+				self.scope[object.id] = object;
+			}
+		}
 	}
 
 	/**
@@ -173,7 +189,7 @@ function autoComputer(robot)
 	 */
 	self.accelerate = function()
 	{
-		robot.accelerate(self.delay);
+		// robot.accelerate(self.delay);
 	}
 
 	/**
