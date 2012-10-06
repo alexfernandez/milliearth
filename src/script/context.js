@@ -534,7 +534,7 @@ function scriptingContext(params)
 	function evaluateEquals(attribute, sentence)
 	{
 		var value = readValue(sentence);
-		return (value == attribute);
+		return (attribute == value);
 	}
 
 	/**
@@ -543,7 +543,7 @@ function scriptingContext(params)
 	function evaluateLessThan(attribute, sentence)
 	{
 		var value = readValue(sentence);
-		return (value < attribute);
+		return (attribute < value);
 	}
 
 	/**
@@ -552,7 +552,7 @@ function scriptingContext(params)
 	function evaluateBiggerThan(attribute, sentence)
 	{
 		var value = readValue(sentence);
-		return (value < attribute);
+		return (attribute > value);
 	}
 
 	/**
