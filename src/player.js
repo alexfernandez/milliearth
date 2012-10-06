@@ -136,6 +136,15 @@ function autoComputer(robot)
 	self.delay = 0;
 
 	/**
+	 * Run an update of the outside world.
+	 */
+	self.update = function(delay)
+	{
+		self.delay = delay;
+		var update = robot.computeViewUpdate();
+	}
+
+	/**
 	 * Point at an object with position.
 	 */
 	self.pointAt = function(object)
@@ -198,7 +207,7 @@ function autoPlayer(params)
 	 */
 	self.shortLoop = function(delay)
 	{
-		computer.delay = delay / 1000;
+		computer.update(delay / 1000);
 		var instructions = globalParams.instructionsPerMs * delay;
 		engine.run(instructions);
 	}

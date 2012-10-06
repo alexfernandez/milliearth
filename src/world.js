@@ -316,6 +316,7 @@ function fighterRobot(params)
 	 */
 	self.computeViewUpdate = function(bodies)
 	{
+		var bodies = self.world.bodiesExcept(self.id);
 		var center = self.computePosition(self.world.milliEarth);
 		var meBody = {
 			id: 'milliEarth',
@@ -553,7 +554,7 @@ var gameWorld = function(id)
 		{
 			return {};
 		}
-		return player.computeViewUpdate(bodiesExcept(id));
+		return player.computeViewUpdate();
 	}
 
 	/**
@@ -744,7 +745,7 @@ var gameWorld = function(id)
 	/**
 	 * Return all bodies except the given one.
 	 */
-	function bodiesExcept(id)
+	self.bodiesExcept = function(id)
 	{
 		var except = {};
 		iterate(function(body) {
