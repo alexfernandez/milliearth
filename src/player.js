@@ -169,7 +169,6 @@ function autoComputer(robot)
 		//refresh object
 		var object = self.view[object.id];
 		var position = object.position;
-		log.i('p ' + position);
 		if (position.z < 0)
 		{
 			if (position.x > 0)
@@ -205,6 +204,34 @@ function autoComputer(robot)
 		else
 		{
 			robot.turnDown(interval);
+		}
+	}
+
+	/**
+	 * Fine tune the scope.
+	 */
+	self.refineScopeAt = function(object)
+	{
+		//refresh object
+		var object = self.view[object.id];
+		var position = object.position;
+		var tx = position.x / position.z / globalParams.turningAngle;
+		if (position.x < 0)
+		{
+			robot.turnLeft(Math.min(interval, -tx));
+		}
+		else
+		{
+			robot.turnRight(Math.min(interval, tx));
+		}
+		var ty = position.y / position.z / globalParams.turningAngle;
+		if (position.y > 0)
+		{
+			robot.turnUp(Math.max(interval, ty));
+		}
+		else
+		{
+			robot.turnDown(Math.max(interval, -ty));
 		}
 	}
 
