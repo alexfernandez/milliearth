@@ -166,8 +166,10 @@ function autoComputer(robot)
 	 */
 	self.pointAt = function(object)
 	{
-		var position = robot.computePosition(object);
-		if (position.x > 0)
+		//refresh object
+		var object = self.view[object.id];
+		var position = object.position;
+		if (position.x >= 0)
 		{
 			robot.turnLeft(interval);
 		}
@@ -175,7 +177,7 @@ function autoComputer(robot)
 		{
 			robot.turnRight(interval);
 		}
-		if (position.y > 0)
+		if (position.y >= 0)
 		{
 			robot.turnDown(interval);
 		}
@@ -215,7 +217,7 @@ function autoPlayer(params)
 	// attributes
 	var computer = new autoComputer(self.robot);
 	var engine = new scriptingEngine({
-		file: 'forrest.8s',
+		file: 'basic-enemy.8s',
 		computer: computer,
 	});
 
