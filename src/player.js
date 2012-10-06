@@ -154,7 +154,7 @@ function autoComputer(robot)
 				// log.i('position: ' + object.position);
 			}
 			var scopeDistance = Math.sqrt(object.position.x * object.position.x + object.position.y * object.position.y);
-			if (scopeDistance < globalParams.scopeWidth)
+			if (scopeDistance < globalParams.scopeWidth && object.position.z > 0)
 			{
 				self.scope[object.id] = object;
 			}
@@ -169,19 +169,27 @@ function autoComputer(robot)
 		//refresh object
 		var object = self.view[object.id];
 		var position = object.position;
-		if (position.x >= 0)
+		if (position.z > 0 && position.x * position.x < 1)
 		{
-			robot.turnLeft(interval);
+			// lock
 		}
 		else if (position.x < 0)
 		{
+			robot.turnLeft(interval);
+		}
+		else
+		{
 			robot.turnRight(interval);
 		}
-		if (position.y >= 0)
+		if (position.z > 0 && position.y * position.y < 1)
+		{
+			// lock
+		}
+		else if (position.y >= 0)
 		{
 			robot.turnDown(interval);
 		}
-		else if (position.y < 0)
+		else
 		{
 			robot.turnUp(interval);
 		}

@@ -524,7 +524,7 @@ function scriptingContext(params)
 	function evaluateItIn(sentence)
 	{
 		return evaluateContainer(sentence, function(element) {
-			return (self.it == element);
+			return (self.it.id == element.id);
 		});
 	}
 
