@@ -376,8 +376,8 @@ function quaternion(a, b, c, d)
 	self.product = function(q)
 	{
 		var a = self.a * q.a - self.b * q.b - self.c * q.c - self.d * q.d;
-		var b = self.a * q.b + self.b * q.a + self.c * q.d + self.d * q.c;
-		var c = self.a * q.c - self.b * q.d + self.c * q.a - self.d * q.b;
+		var b = self.a * q.b + self.b * q.a + self.c * q.d - self.d * q.c;
+		var c = self.a * q.c - self.b * q.d + self.c * q.a + self.d * q.b;
 		var d = self.a * q.d + self.b * q.c - self.c * q.b + self.d * q.a;
 		return new quaternion(a, b, c, d);
 	}
@@ -516,7 +516,7 @@ function quaternionSystem(q, r, s, t)
 	 */
 	self.yaw = function(angle)
 	{
-		turn(angle, new vector(1, 0, 0));
+		turn(angle, new vector(0, 1, 0));
 	}
 
 	/**
@@ -524,7 +524,7 @@ function quaternionSystem(q, r, s, t)
 	 */
 	self.pitch = function(angle)
 	{
-		turn(angle, new vector(0, 1, 0));
+		turn(angle, new vector(0, 0, 1));
 	}
 
 	/**
@@ -532,7 +532,7 @@ function quaternionSystem(q, r, s, t)
 	 */
 	self.roll = function(angle)
 	{
-		turn(angle, new vector(0, 0, 1));
+		turn(angle, new vector(1, 0, 0));
 	}
 	
 	/**
