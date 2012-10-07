@@ -353,6 +353,14 @@ function quaternion(a, b, c, d)
 	}
 
 	/**
+	 * Return the difference with another quaternion.
+	 */
+	self.difference = function(q)
+	{
+		return new quaternion(self.a - q.a, self.b - q.b, self.c - q.c, self.d - q.d);
+	}
+
+	/**
 	 * Hamilton product with another quaternion.
 	 */
 	self.product = function(q)
@@ -392,8 +400,16 @@ function quaternion(a, b, c, d)
 	 */
 	self.unit = function()
 	{
-		var length = self.a*self.a + self.b*self.b + self.c*self.c + self.d*self.d;
+		var length = self.length();
 		return new quaternion(self.a / length, self.b / length, self.c / length, self.d / length);
+	}
+
+	/**
+	 * Get the length of the quaternion.
+	 */
+	self.length = function()
+	{
+		return Math.sqrt(self.a*self.a + self.b*self.b + self.c*self.c + self.d*self.d);
 	}
 
 	/**
@@ -405,23 +421,19 @@ function quaternion(a, b, c, d)
 		{
 			return false;
 		}
-		if (self.a != q.a)
-		{
-			return false;
-		}
-		if (self.b != q.b)
-		{
-			return false;
-		}
-		if (self.c != q.c)
-		{
-			return false;
-		}
-		if (self.d != q.d)
+		if (self.difference(q).length() > 1e-15)
 		{
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Return the imaginary part of the quaternion as a vector.
+	 */
+	self.vector = function()
+	{
+		return new vector(self.b, self.c, self.d);
 	}
 
 	/**
@@ -437,19 +449,27 @@ function quaternion(a, b, c, d)
 /**
  * A coordinate system defined by a single quaternion.
  */
-function quaternionSystem(q)
+function quaternionSystem(q, r, s, t)
 {
 	// self-reference
 	var self = this;
 
 	// attributes
-	if (q && q.quaternion)
+	if (!q)
 	{
-		self.quaternion = q.quaternion.unit();
+		self.q = new quaternion(0, 0, 0, 0);
+	}
+	else if (q.q)
+	{
+		self.q = q.q.unit();
+	}
+	else if (q.a)
+	{
+		self.q = q;
 	}
 	else
 	{
-		self.quaternion = q;
+		self.q = new quaternion(q, r, s, t);
 	}
 
 	/**
@@ -462,7 +482,7 @@ function quaternionSystem(q)
 		self.q.b = v.x;
 		self.q.c = v.y;
 		self.q.d = v.z;
-		return;
+		return self;
 	}
 
 	/**
@@ -471,6 +491,14 @@ function quaternionSystem(q)
 	self.project = function(position)
 	{
 		return self.q.rotate(position);
+	}
+
+	/** 
+	 * Get the axis of coordinate system.
+	 */
+	self.getAxis = function()
+	{
+		return self.q.vector();
 	}
 
 	/**
@@ -556,6 +584,14 @@ function coordinateSystem(u, v, w)
 			self.u = self.u.sum(v.scale(-uProduct)).unit();
 		}
 		self.w = self.u.vectorProduct(self.v);
+	}
+
+	/**
+	 * Get the axis of the system: the v coordinate.
+	 */
+	self.getAxis = function()
+	{
+		return self.v;
 	}
 
 	/**

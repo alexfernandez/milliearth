@@ -25,7 +25,7 @@
  */
 var globalParams = require('./params.js').globalParams;
 var vector = require('./vector.js').vector;
-var coordinateSystem = require('./vector.js').coordinateSystem;
+var quaternionSystem = require('./vector.js').quaternionSystem;
 var util = require('./util.js');
 var parser = util.parser;
 var log = util.log;
@@ -206,7 +206,8 @@ function fighterRobot(params)
 	self.type = 'robot';
 	self.projectiles = globalParams.projectiles;
 	self.color = '#080';
-	var camera = new coordinateSystem(new vector(0, 0, 1), new vector(0, 1, 0), new vector(1, 0, 0));
+	var camera = new quaternionSystem(0, 0, 0, 1);
+	log.i(camera);
 	var shootTimeout = 0;
 
 	/**
@@ -216,7 +217,7 @@ function fighterRobot(params)
 	{
 		self.position = position;
 		self.speed = speed;
-		camera = new coordinateSystem(position.vectorProduct(speed), position, speed);
+		camera = new quaternionSystem().alignV(speed);
 		camera.alignV(position);
 	}
 
@@ -378,7 +379,7 @@ function fighterRobot(params)
 	 */
 	function computeViewPosition()
 	{
-		return self.position.sumScaled(camera.v, self.radius);
+		return self.position.sumScaled(camera.getVector(), self.radius);
 	}
 
 	/**
