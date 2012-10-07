@@ -217,11 +217,43 @@ function vector(x, y, z)
 	}
 
 	/**
+	 * Compare with another vector, return true if both are equal.
+	 */
+	self.equals = function(value)
+	{
+		if (!value)
+		{
+			return false;
+		}
+		if (self.x != value.x)
+		{
+			return false;
+		}
+		if (self.y != value.y)
+		{
+			return false;
+		}
+		if (self.z != value.z)
+		{
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Printable representation.
 	 */
 	self.toString = function()
 	{
 		return '(' + round(self.x) + ',' + round(self.y) + ',' + round(self.z) + ')';
+	}
+
+	/**
+	 * Printable representation in full precision.
+	 */
+	self.toPrecision = function()
+	{
+		return '(' + self.x + ', ' + self.y + ', ' + self.z + ')';
 	}
 
 	/**
@@ -295,6 +327,107 @@ var polarVector = function(r, phi, theta)
 	function degrees(angle)
 	{
 		return angle * 180 / Math.PI;
+	}
+}
+
+
+/**
+ * A quaternion: a rotation of an angle along the given axis.
+ */
+function quaternion(a, b, c, d)
+{
+	// self-reference
+	var self = this;
+
+	// attributes
+	self.a = a || 0;
+	self.b = b || 0;
+	self.c = c || 0;
+	self.d = d || 0;
+
+	/**
+	 * Initialize as a rotation: angle and axis.
+	 */
+	self.initRotation = function(angle, axis)
+	{
+		self.a = Math.cos(angle / 2);
+		var s = Math.sin(angle / 2);
+		var a = axis.elongate(s);
+		self.b = a.x;
+		self.c = a.y;
+		self.d = a.z;
+		return self;
+	}
+
+	/**
+	 * Hamilton product with another quaternion.
+	 */
+	self.product = function(q)
+	{
+		var a = self.a * q.a - self.b * q.b - self.c * q.c - self.d * q.d;
+		var b = self.a * q.b + self.b * q.a + self.c * q.d + self.d * q.c;
+		var c = self.a * q.c - self.b * q.d + self.c * q.a - self.d * q.b;
+		var d = self.a * q.d + self.b * q.c - self.c * q.b + self.d * q.a;
+		return new quaternion(a, b, c, d);
+	}
+
+	/**
+	 * Return the conjugate of a quaternion.
+	 */
+	self.conjugate = function()
+	{
+		return new quaternion(self.a, -self.b, -self.c, -self.d);
+	}
+
+	/**
+	 * Rotate the given point: q·p·q*.
+	 */
+	self.rotate = function(point)
+	{
+		var q = new quaternion(0, point.x, point.y, point.z);
+		var r = self.product(q.product(self.conjugate()));
+		if (r.a)
+		{
+			log.e('Rotation should not have scalar component: ' + r);
+			return new vector(0, 0, 0);
+		}
+		return new vector(r.b, r.c, r.d);
+	}
+
+	/**
+	 * Compare with another quaternion, return true if both are equal.
+	 */
+	self.equals = function(q)
+	{
+		if (!q)
+		{
+			return false;
+		}
+		if (self.a != q.a)
+		{
+			return false;
+		}
+		if (self.b != q.b)
+		{
+			return false;
+		}
+		if (self.c != q.c)
+		{
+			return false;
+		}
+		if (self.d != q.d)
+		{
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Printable representation.
+	 */
+	self.toString = function()
+	{
+		return '(' + round(self.a) + ' + ' + round(self.b) + 'i + ' + round(self.c) + 'j + ' + round(self.d) + 'k)';
 	}
 }
 
@@ -401,6 +534,49 @@ function coordinateSystem(u, v, w)
 	}
 }
 
+/**
+ * Test vectors.
+ */
+function vectorTest()
+{
+	var a = new vector(1, 2, 3);
+	var s = a.scalarProduct(new vector(3, 4, 5));
+	if (s != 26)
+	{
+		log.e('Invalid scalar product: ' + s + ' != 26');
+	}
+	var v = a.vectorProduct(new vector(3, 4, 5));
+	if (!v.equals(new vector(-2, 4, -2)))
+	{
+		log.e('Invalid vector product: ' + v + ' != (-2, 4, -2)');
+	}
+	log.success('vector: OK');
+}
+
+/**
+ * Test quaternions.
+ */
+function quaternionTest()
+{
+	var q = new quaternion(0, 1, 2, 3);
+	var r = new quaternion(4, 5, 6, 7);
+	var product = q.product(r);
+	if (!product.equals(new quaternion(-38, 36, -14, 8)))
+	{
+		log.e('Invalid product ' + product);
+		return;
+	}
+	var s = new quaternion().initRotation(Math.PI / 2, new vector(1, 0, 0));
+	var v = new vector(0, 1, 0);
+	var rotation = s.rotate(v);
+	var result = new vector(0, 0, 1);
+	if (!rotation.equals(result))
+	{
+		log.e('Invalid rotation ' + rotation.toPrecision() + ', should be ' + result);
+		return;
+	}
+	log.success('quaternion: OK');
+}
 
 module.exports.isNumber = isNumber;
 module.exports.planarPoint = planarPoint;
@@ -409,18 +585,8 @@ module.exports.polarVector = polarVector;
 module.exports.coordinateSystem = coordinateSystem;
 
 module.exports.test = function() {
-	var a = new vector(1, 2, 3);
-	var s = a.scalarProduct(new vector(3, 4, 5));
-	if (s != 26)
-	{
-		log.e('Invalid scalar product: ' + s + ' != 26');
-	}
-	var v = a.vectorProduct(new vector(3, 4, 5));
-	if (v.x != -2 || v.y != 4 || v.z != -2)
-	{
-		log.e('Invalid vector product: ' + v + ' != (-2, 4, -2)');
-	}
-	log.success('vector: OK');
+	vectorTest();
+	quaternionTest();
 };
 
 
