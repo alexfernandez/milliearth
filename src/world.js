@@ -294,6 +294,12 @@ function fighterRobot(params)
 	self.getArrow = function()
 	{
 		var start = self.position.copy();
+		return {
+			id: self.id,
+			type: 'arrow',
+			position: start,
+			points: [start],
+		};
 		start.addScaled(camera.w, -400);
 		start.addScaled(camera.v, 400);
 		var end = self.position.copy();
@@ -379,7 +385,7 @@ function fighterRobot(params)
 	 */
 	function computeViewPosition()
 	{
-		return self.position.sumScaled(camera.getVector(), self.radius);
+		return self.position.sumScaled(camera.getAxis(), self.radius);
 	}
 
 	/**

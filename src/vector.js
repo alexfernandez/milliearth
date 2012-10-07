@@ -341,7 +341,7 @@ function quaternion(a, b, c, d)
 	/**
 	 * Initialize as a rotation: angle and axis.
 	 */
-	self.initRotation = function(angle, axis)
+	self.init = function(angle, axis)
 	{
 		self.a = Math.cos(angle / 2);
 		var s = Math.sin(angle / 2);
@@ -531,7 +531,7 @@ function quaternionSystem(q, r, s, t)
 	function turn(angle, axis)
 	{
 		var r = new quaternion().init(angle, axis);
-		self.q = q.product(r);
+		self.q = self.q.product(r);
 	}
 
 	/**
@@ -685,7 +685,7 @@ function quaternionTest()
 		log.e('Invalid product ' + product);
 		return;
 	}
-	var s = new quaternion().initRotation(Math.PI / 2, new vector(1, 0, 0));
+	var s = new quaternion().init(Math.PI / 2, new vector(1, 0, 0));
 	var v = new vector(0, 1, 0);
 	var rotation = s.rotate(v);
 	var result = new vector(0, 0, 1);
