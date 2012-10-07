@@ -164,7 +164,6 @@ function autoComputer(robot)
 	 */
 	self.pointAt = function(interval, object)
 	{
-		log.d('interval: ' + interval);
 		//refresh object
 		var object = self.view[object.id];
 		var position = object.position;
@@ -186,7 +185,7 @@ function autoComputer(robot)
 			{
 				robot.turnDown(interval);
 			}
-			return;
+			return interval;
 		}
 		if (position.x < 0)
 		{
