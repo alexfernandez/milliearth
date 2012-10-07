@@ -134,14 +134,12 @@ function autoComputer(robot)
 	self.scope = {};
 	self.map = {};
 	self.speed = 0;
-	var interval = 0;
 
 	/**
 	 * Run an update of the outside world.
 	 */
-	self.update = function(delay)
+	self.update = function(interval)
 	{
-		interval = delay;
 		var update = robot.computeViewUpdate();
 		self.speed = update.speed;
 		for (var index in update.objects)
@@ -164,8 +162,9 @@ function autoComputer(robot)
 	/**
 	 * Point at an object with position.
 	 */
-	self.pointAt = function(object)
+	self.pointAt = function(interval, object)
 	{
+		log.d('interval: ' + interval);
 		//refresh object
 		var object = self.view[object.id];
 		var position = object.position;
@@ -211,7 +210,7 @@ function autoComputer(robot)
 	/**
 	 * Fine tune the scope.
 	 */
-	self.refineScopeAt = function(object)
+	self.refineScopeAt = function(interval, object)
 	{
 		//refresh object
 		var object = self.view[object.id];
@@ -240,7 +239,7 @@ function autoComputer(robot)
 	/**
 	 * Make the robot accelerate.
 	 */
-	self.accelerate = function()
+	self.accelerate = function(interval)
 	{
 		robot.accelerate(interval);
 		return interval;
@@ -249,10 +248,10 @@ function autoComputer(robot)
 	/**
 	 * Shoot.
 	 */
-	self.shoot = function()
+	self.shoot = function(interval)
 	{
 		robot.shoot();
-		return interval;
+		return 0.2;
 	}
 }
 

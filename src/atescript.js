@@ -191,17 +191,23 @@ function testBasicEnemy()
 			},
 			od: enemy,
 		},
-		pointAt: function(object) {
+		pointAt: function(interval, object) {
 			basicComputer.scope.id = object;
+			return interval;
 		},
-		shoot: function() {
+		refineScopeAt: function(interval, object) {
+			return interval;
+		},
+		shoot: function(interval) {
 			enemy.shots ++;
 			if (enemy.shots == 3)
 			{
 				enemy.dead = true;
 			}
+			return interval;
 		},
-		accelerate: function() {
+		accelerate: function(interval) {
+			return interval;
 		},
 
 	};
@@ -210,7 +216,7 @@ function testBasicEnemy()
 		file: 'basic-enemy.8s',
 	});
 	var iterations = 0;
-	var expected = 8;
+	var expected = 9;
 	var callback = null;
 	var iterate = function() {
 		engine.run(0.01, callback);

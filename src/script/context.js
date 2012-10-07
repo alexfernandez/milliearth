@@ -44,7 +44,7 @@ function runtimeStack(initial)
 	var self = this;
 
 	// attributes
-	self.interrupt = 0;
+	self.interval = 0;
 	var contexts = [initial];
 
 	/**
@@ -121,20 +121,22 @@ function scriptingContext(params)
 	}
 
 	/**
-	 * Run the specified number of lines, or less.
+	 * Run for the specified interval, or less.
 	 */
-	self.run = function(delay)
+	self.run = function(interval)
 	{
-		var lines = 1000 * delay * globalParams.instructionsPerSecond;
+		stack.interval += interval;
+		if (stack.interval < 0)
+		{
+			log.d('Waiting: ' + stack.interval);
+			return;
+		}
+		var lines = 1000 * interval * globalParams.instructionsPerSecond;
 		var run = 0;
-		while (run < lines && !self.finished() && !stack.interrupt)
+		while (run < lines && !self.finished() && stack.interval > 0)
 		{
 			self.runSentence();
 			run++;
-		}
-		if (stack.interrupt)
-		{
-			stack.interrupt = false;
 		}
 		log.d('Run ' + run + ' lines');
 		return run;
@@ -303,8 +305,12 @@ function scriptingContext(params)
 		{
 			var callback = computer[command];
 			var parameter = readParameter(sentence);
-			var delay = callback(parameter);
-			stack.interrupt = delay;
+			var delay = callback(stack.interval, parameter);
+			if (!delay && delay !== 0)
+			{
+				log.e('Invalid delay for command ' + command + ': ' + delay);
+			}
+			stack.interval -= delay;
 			return;
 		}
 		if (findCommandStarts(command))
