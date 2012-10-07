@@ -36,7 +36,7 @@ var globalParams = new function()
 	// max speed from motor acceleration, m/s
 	this.maxSpeed = 200
 	// friction due to speed, 1/s
-	this.frictionPeriod = (this.motorAcceleration - this.frictionDeceleration ) / this.maxSpeed;
+	this.frictionInterval = (this.motorAcceleration - this.frictionDeceleration ) / this.maxSpeed;
 	// brakes deceleration, m/s^2
 	this.brakeDeceleration = 27;
 	// coefficient of dampening due to suspension, unitless
@@ -71,6 +71,8 @@ var globalParams = new function()
 	this.projectileCharge = 4e8;
 	// speed of projectile, m/s
 	this.projectileSpeed = Math.sqrt(this.bigG * this.meMass / this.meRadius);
+	// recharge speed for cannon, s
+	this.projectileRechargeTime = 0.2;
 	// distance at which objects are lost, m
 	this.lostDistance = 3 * this.meRadius;
 	// safety distance before a close encounter is a collision, m

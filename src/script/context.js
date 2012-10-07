@@ -128,7 +128,6 @@ function scriptingContext(params)
 		stack.interval += interval;
 		if (stack.interval < 0)
 		{
-			log.d('Waiting: ' + stack.interval);
 			return;
 		}
 		var lines = 1000 * interval * globalParams.instructionsPerSecond;

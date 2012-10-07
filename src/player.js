@@ -250,7 +250,7 @@ function autoComputer(robot)
 	self.shoot = function(interval)
 	{
 		robot.shoot();
-		return 0.2;
+		return globalParams.projectileRechargeTime;
 	}
 }
 

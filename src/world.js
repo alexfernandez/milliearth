@@ -61,31 +61,31 @@ function massiveBody(params)
 	self.active = true;
 
 	/**
-	 * Compute gravitational attraction by another body in the given period (in seconds).
+	 * Compute gravitational attraction by another body in the given interval (in seconds).
 	 */
-	self.computeAttraction = function(attractor, period)
+	self.computeAttraction = function(attractor, interval)
 	{
 		var difference = attractor.position.difference(self.position);
 		var distance = difference.length();
 		var factor = globalParams.bigG * attractor.mass / Math.pow(distance, 3);
-		self.speed.addScaled(difference, factor * period);
+		self.speed.addScaled(difference, factor * interval);
 		if (distance < self.radius + attractor.radius)
 		{
-			self.computeMilliEarthCollision(attractor, period);
+			self.computeMilliEarthCollision(attractor, interval);
 		}
 	}
 
 	/**
 	 * Move following the current speed.
 	 */
-	self.move = function(period)
+	self.move = function(interval)
 	{
 		if (self.checkOutOfBounds())
 		{
 			self.active = false;
 			return;
 		}
-		var scaledSpeed = self.speed.scale(period);
+		var scaledSpeed = self.speed.scale(interval);
 		self.position.add(scaledSpeed);
 	}
 
@@ -113,7 +113,7 @@ function massiveBody(params)
 	/**
 	 * Compute a collision with the milliEarth, go to the general case of a collision.
 	 */
-	self.computeMilliEarthCollision = function(milliEarth, period)
+	self.computeMilliEarthCollision = function(milliEarth, interval)
 	{
 		self.computeCollision(milliEarth, self.speed.scale(self.mass));
 	}
@@ -207,6 +207,7 @@ function fighterRobot(params)
 	self.projectiles = globalParams.projectiles;
 	self.color = '#080';
 	var camera = new coordinateSystem(new vector(0, 0, 1), new vector(0, 1, 0), new vector(1, 0, 0));
+	var shootTimeout = 0;
 
 	/**
 	 * Start a robot with position and speed. Aligns the camera to the given speed.
@@ -222,7 +223,7 @@ function fighterRobot(params)
 	/**
 	 * Compute a collision with the milliEarth: rebound, apply friction.
 	 */
-	self.computeMilliEarthCollision = function(milliEarth, period)
+	self.computeMilliEarthCollision = function(milliEarth, interval)
 	{
 		var differenceUnit = milliEarth.position.difference(self.position).unit();
 		var collisionSpeed = self.speed.scalarProduct(differenceUnit);
@@ -243,8 +244,8 @@ function fighterRobot(params)
 			return;
 		}
 		// dampen horizontal speed
-		var deceleration = (globalParams.frictionDeceleration + self.speed.length() * globalParams.frictionPeriod) * period;
-		if (deceleration * period > horizontalSpeed.length())
+		var deceleration = (globalParams.frictionDeceleration + self.speed.length() * globalParams.frictionInterval) * interval;
+		if (deceleration * interval > horizontalSpeed.length())
 		{
 			self.speed.addScaled(horizontalSpeed, -1);
 		}
@@ -410,17 +411,17 @@ function fighterRobot(params)
 	/**
 	 * Accelerate the robot.
 	 */
-	self.accelerate = function(period)
+	self.accelerate = function(interval)
 	{
-		self.speed.addScaled(camera.w, globalParams.motorAcceleration * period);
+		self.speed.addScaled(camera.w, globalParams.motorAcceleration * interval);
 	}
 
 	/**
 	 * Activate the brakes.
 	 */
-	self.brake = function(period)
+	self.brake = function(interval)
 	{
-		var deceleration = globalParams.brakeDeceleration * period;
+		var deceleration = globalParams.brakeDeceleration * interval;
 		if (self.speed.length() < deceleration)
 		{
 			self.speed = new vector(0, 0, 0);
@@ -432,49 +433,49 @@ function fighterRobot(params)
 	/**
 	 * Turn the camera left.
 	 */
-	self.turnLeft = function(period)
+	self.turnLeft = function(interval)
 	{
-		camera.yaw(globalParams.turningAngle * period);
+		camera.yaw(globalParams.turningAngle * interval);
 	}
 
 	/**
 	 * Turn the camera right.
 	 */
-	self.turnRight = function(period)
+	self.turnRight = function(interval)
 	{
-		camera.yaw(-globalParams.turningAngle * period);
+		camera.yaw(-globalParams.turningAngle * interval);
 	}
 
 	/**
 	 * Turn the camera up.
 	 */
-	self.turnUp = function(period)
+	self.turnUp = function(interval)
 	{
-		camera.pitch(-globalParams.turningAngle * period);
+		camera.pitch(-globalParams.turningAngle * interval);
 	}
 
 	/**
 	 * Turn the camera down.
 	 */
-	self.turnDown = function(period)
+	self.turnDown = function(interval)
 	{
-		camera.pitch(globalParams.turningAngle * period);
+		camera.pitch(globalParams.turningAngle * interval);
 	}
 
 	/**
 	 * Turn sideways left.
 	 */
-	self.rollLeft = function(period)
+	self.rollLeft = function(interval)
 	{
-		camera.roll(globalParams.turningAngle * period);
+		camera.roll(globalParams.turningAngle * interval);
 	}
 
 	/**
 	 * Turn sideways right.
 	 */
-	self.rollRight = function(period)
+	self.rollRight = function(interval)
 	{
-		camera.roll(-globalParams.turningAngle * period);
+		camera.roll(-globalParams.turningAngle * interval);
 	}
 
 	/**
@@ -483,6 +484,10 @@ function fighterRobot(params)
 	self.shoot = function()
 	{
 		if (self.projectiles <= 0)
+		{
+			return;
+		}
+		if (self.world.seconds < shootTimeout)
 		{
 			return;
 		}
@@ -499,6 +504,7 @@ function fighterRobot(params)
 		// add to world
 		self.world.addObject(projectile);
 		self.projectiles--;
+		shootTimeout = self.world.seconds + globalParams.projectileRechargeTime;
 		log.i('Player ' + self.id + ' has fired a shot!');
 	}
 }
@@ -521,9 +527,9 @@ var gameWorld = function(id)
  		radius: globalParams.meRadius,
 		life: globalParams.meLife,
 	});
-	var bodies = {};
-	var seconds = 0;
+	self.seconds = 0;
 	self.active = false;
+	var bodies = {};
 
 	/**
 	 * Start the world.
@@ -531,6 +537,7 @@ var gameWorld = function(id)
 	self.start = function()
 	{
 		self.active = true;
+		self.seconds = 0;
 	};
 
 	/**
@@ -633,7 +640,8 @@ var gameWorld = function(id)
 		{
 			return;
 		}
-		var period = delay / 1000;
+		var interval = delay / 1000;
+		self.seconds += interval;
 		var bodiesArray = [];
 		iterate(function(body) {
 			bodiesArray.push(body);
@@ -641,12 +649,12 @@ var gameWorld = function(id)
 		for (var i = 0; i < bodiesArray.length; i++)
 		{
 			var body = bodiesArray[i];
-			body.computeAttraction(self.milliEarth, period);
+			body.computeAttraction(self.milliEarth, interval);
 			for (var j = i + 1; j < bodiesArray.length; j++)
 			{
 				computeCollision(body, bodiesArray[j]);
 			}
-			body.move(period);
+			body.move(interval);
 			if (!body.active)
 			{
 				log.i('Removing ' + body.id);
@@ -656,11 +664,11 @@ var gameWorld = function(id)
 	}
 
 	/**
-	 * Compute a potential collision between two bodies for a given period.
+	 * Compute a potential collision between two bodies for a given interval.
 	 */
-	function computeCollision(body1, body2, period)
+	function computeCollision(body1, body2, interval)
 	{
-		if (!checkCollision(body1, body2, period))
+		if (!checkCollision(body1, body2, interval))
 		{
 			return;
 		}
@@ -679,16 +687,16 @@ var gameWorld = function(id)
 	}
 
 	/**
-	 * Check if the two bodies suffer a collision during the given period.
+	 * Check if the two bodies suffer a collision during the given interval.
 	 */
-	function checkCollision(body1, body2, period)
+	function checkCollision(body1, body2, interval)
 	{
 		// quick position check
 		var p1 = body1.position;
 		var p2 = body2.position;
 		var d = p2.difference(p1);
 		var d2 = d.squaredLength();
-		if (d2 > globalParams.maxCollisionSpeed * period)
+		if (d2 > globalParams.maxCollisionSpeed * interval)
 		{
 			// we do not consider higher speeds
 			return false;
@@ -707,7 +715,7 @@ var gameWorld = function(id)
 		var s2 = body2.speed;
 		var ds = s2.difference(s1);
 		var ds2 = ds.squaredLength();
-		if (d2 - ds2 * period > min2)
+		if (d2 - ds2 * interval > min2)
 		{
 			// no way they are going to collide
 			return false;
@@ -719,7 +727,7 @@ var gameWorld = function(id)
 		// min distance time: tm = -q/ds2
 		var q = d.scalarProduct(ds);
 		var tm = -q/ds2;
-		if (tm < 0 || tm > period)
+		if (tm < 0 || tm > interval)
 		{
 			return false;
 		}
