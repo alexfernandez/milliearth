@@ -77,8 +77,8 @@ var globalParams = new function()
 	this.safetyDistance = 0.01;
 	// max speed to consider in collisions, m/s
 	this.maxCollisionSpeed = 1000;
-	// atescript instructions per ms
-	this.instructionsPerMs = 0.5;
+	// atescript instructions per second, 1/s
+	this.instructionsPerSecond = 500;
 	// atescript scope width
 	this.scopeWidth = 4;
 }

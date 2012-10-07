@@ -205,6 +205,7 @@ function autoComputer(robot)
 		{
 			robot.turnDown(interval);
 		}
+		return interval;
 	}
 
 	/**
@@ -233,6 +234,7 @@ function autoComputer(robot)
 		{
 			robot.turnDown(Math.max(interval, -ty));
 		}
+		return interval;
 	}
 
 	/**
@@ -241,6 +243,7 @@ function autoComputer(robot)
 	self.accelerate = function()
 	{
 		robot.accelerate(interval);
+		return interval;
 	}
 
 	/**
@@ -249,6 +252,7 @@ function autoComputer(robot)
 	self.shoot = function()
 	{
 		robot.shoot();
+		return interval;
 	}
 }
 
@@ -274,9 +278,9 @@ function autoPlayer(params)
 	 */
 	self.shortLoop = function(delay)
 	{
-		computer.update(delay / 1000);
-		var instructions = globalParams.instructionsPerMs * delay;
-		engine.run(instructions);
+		var interval = delay / 1000;
+		computer.update(interval);
+		engine.run(interval);
 	}
 }
 

@@ -24,10 +24,12 @@
 /**
  * Requirements.
  */
-var parsePosition = require('./parse.js').parsePosition;
-var scriptingParams = require('./parse.js').scriptingParams;
-var scriptingSentence = require('./parse.js').scriptingSentence;
-var storage = require('./parse.js').storage;
+var globalParams = require('../params.js').globalParams;
+var parse = require('./parse.js');
+var parsePosition = parse.parsePosition;
+var scriptingParams = parse.scriptingParams;
+var scriptingSentence = parse.scriptingSentence;
+var storage = parse.storage;
 var util = require('../util.js');
 var log = util.log;
 var extend = util.extend;
@@ -42,7 +44,7 @@ function runtimeStack(initial)
 	var self = this;
 
 	// attributes
-	self.interrupt = false;
+	self.interrupt = 0;
 	var contexts = [initial];
 
 	/**
@@ -121,8 +123,9 @@ function scriptingContext(params)
 	/**
 	 * Run the specified number of lines, or less.
 	 */
-	self.run = function(lines)
+	self.run = function(delay)
 	{
+		var lines = 1000 * delay * globalParams.instructionsPerSecond;
 		var run = 0;
 		while (run < lines && !self.finished() && !stack.interrupt)
 		{
@@ -300,8 +303,8 @@ function scriptingContext(params)
 		{
 			var callback = computer[command];
 			var parameter = readParameter(sentence);
-			callback(parameter);
-			stack.interrupt = true;
+			var delay = callback(parameter);
+			stack.interrupt = delay;
 			return;
 		}
 		if (findCommandStarts(command))

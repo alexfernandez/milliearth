@@ -47,7 +47,7 @@ function scriptingEngine(params)
 	self.ready = false;
 	var computer = params.computer;
 	var linesRun = 0;
-	var linesPending = 0;
+	var intervalPending = 0;
 	var callbacks = [];
 	var semaphor = new concurrencyLock();
 	var context = new scriptingContext(params);
@@ -95,20 +95,20 @@ function scriptingEngine(params)
 			}
 		}
 		self.ready = true;
-		// run any pending lines
+		// run any pending interval
 		self.run(0);
 	}
 
 	/**
-	 * Run the script for a number of lines.
+	 * Run the script for a number of seconds.
 	 */
-	self.run = function(lines, callback)
+	self.run = function(interval, callback)
 	{
 		if (callback)
 		{
 			callbacks.push(callback);
 		}
-		linesPending += lines;
+		intervalPending += interval;
 		if (!self.ready)
 		{
 			return;
@@ -123,9 +123,9 @@ function scriptingEngine(params)
 			log.d('Context finished');
 			context.restart();
 		}
-		var run = context.run(linesPending, callback);
+		var run = context.run(intervalPending, callback);
 		linesRun += run;
-		linesPending = 0;
+		intervalPending = 0;
 		semaphor.release();
 		runCallbacks();
 	}
@@ -155,7 +155,7 @@ function testArithmetic()
 		file: 'test/test-arithmetic.8s',
 		computer: {},
 	});
-	engine.run(100, function(computer) {
+	engine.run(0.1, function(computer) {
 		if (!computer.finished)
 		{
 			log.e('Script not finished');
@@ -213,7 +213,7 @@ function testBasicEnemy()
 	var expected = 8;
 	var callback = null;
 	var iterate = function() {
-		engine.run(10, callback);
+		engine.run(0.01, callback);
 	};
 	var callback = function(computer) {
 		if (!computer.finished)
