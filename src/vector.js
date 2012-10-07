@@ -402,6 +402,7 @@ function coordinateSystem(u, v, w)
 }
 
 
+module.exports.isNumber = isNumber;
 module.exports.planarPoint = planarPoint;
 module.exports.vector = vector;
 module.exports.polarVector = polarVector;

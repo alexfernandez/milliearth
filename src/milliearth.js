@@ -34,6 +34,7 @@ var http = require('http');
 var urlParser = require('url');
 var fs = require('fs');
 var globalParams = require('./params.js').globalParams;
+var isNumber = require('./vector.js').isNumber;
 var log = require('./util.js').log;
 var gameSelector = require('./game.js').gameSelector;
 
@@ -41,14 +42,35 @@ var gameSelector = require('./game.js').gameSelector;
  * Globals.
  */
 var port = globalParams.port;
-if (process.argv.length > 2)
-{
-	port = process.argv[2];
-}
+processArguments(process.argv.slice(2));
 var clients = [];
 var server = http.createServer(serve).listen(port, function() {
 	log.i('Server running at http://127.0.0.1:' + port + '/');
 });
+
+/**
+ * Process command line arguments.
+ */
+function processArguments(args)
+{
+	while (args.length > 0)
+	{
+		var arg = args.shift();
+		if (arg == '-d')
+		{
+			log.debug = true;
+		}
+		else if (isNumber(arg))
+		{
+			port = arg;
+		}
+		else
+		{
+			log.e('Usage: milliearth [-d] [port]');
+			return;
+		}
+	}
+}
 
 /**
  * WebSocket server
