@@ -397,9 +397,9 @@ function quaternion(a, b, c, d)
 	{
 		var q = new quaternion(0, point.x, point.y, point.z);
 		var r = self.product(q.product(self.conjugate()));
-		if (r.a)
+		if (r.a > 1e10)
 		{
-			log.e('Rotation should not have scalar component: ' + r);
+			log.e('Rotation should not have scalar component: ' + r.a);
 			return new vector(0, 0, 0);
 		}
 		return new vector(r.b, r.c, r.d);
