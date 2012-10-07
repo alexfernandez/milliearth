@@ -294,22 +294,18 @@ function fighterRobot(params)
 	self.getArrow = function()
 	{
 		var start = self.position.copy();
-		return {
-			id: self.id,
-			type: 'arrow',
-			position: start,
-			points: [start],
-		};
-		start.addScaled(camera.w, -400);
-		start.addScaled(camera.v, 400);
+		var v = camera.getUpward();
+		var w = camera.getForward();
+		start.addScaled(w, -400);
+		start.addScaled(v, 400);
 		var end = self.position.copy();
-		end.addScaled(camera.w, 400);
-		end.addScaled(camera.v, 400);
+		end.addScaled(w, 400);
+		end.addScaled(v, 400);
 		var hat = self.position.copy();
-		hat.addScaled(camera.w, 250);
-		hat.addScaled(camera.v, 550);
+		hat.addScaled(w, 250);
+		hat.addScaled(v, 550);
 		var position = self.position.copy();
-		position.addScaled(camera.v, 400);
+		position.addScaled(v, 400);
 		return {
 			id: self.id,
 			type: 'arrow',
