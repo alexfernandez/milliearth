@@ -333,10 +333,20 @@ function quaternion(a, b, c, d)
 	var self = this;
 
 	// attributes
-	self.a = a || 0;
-	self.b = b || 0;
-	self.c = c || 0;
-	self.d = d || 0;
+	if (a && a.a)
+	{
+		self.a = a.a;
+		self.b = a.b;
+		self.c = a.c;
+		self.d = a.d;
+	}
+	else
+	{
+		self.a = a || 0;
+		self.b = b || 0;
+		self.c = c || 0;
+		self.d = d || 0;
+	}
 
 	/**
 	 * Initialize as a rotation: angle and axis.
@@ -461,7 +471,7 @@ function quaternionSystem(q, r, s, t)
 	}
 	else if (q.q)
 	{
-		self.q = q.q.unit();
+		self.q = new quaternion(q.q).unit();
 	}
 	else if (q.a)
 	{
