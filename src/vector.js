@@ -395,8 +395,8 @@ function quaternion(a, b, c, d)
 	 */
 	self.rotate = function(point)
 	{
-		var q = new quaternion(0, point.x, point.y, point.z);
-		var r = self.product(q.product(self.conjugate()));
+		var p = new quaternion(0, point.x, point.y, point.z);
+		var r = self.product(p).product(self.conjugate());
 		if (r.a > 1e10)
 		{
 			log.e('Rotation should not have scalar component: ' + r.a);
@@ -436,14 +436,6 @@ function quaternion(a, b, c, d)
 			return false;
 		}
 		return true;
-	}
-
-	/**
-	 * Return the imaginary part of the quaternion as a vector.
-	 */
-	self.vector = function()
-	{
-		return new vector(self.b, self.c, self.d);
 	}
 
 	/**
@@ -504,11 +496,21 @@ function quaternionSystem(q, r, s, t)
 	}
 
 	/** 
-	 * Get the axis of coordinate system.
+	 * Get the upward coordinate of coordinate system.
 	 */
-	self.getAxis = function()
+	self.getUpward = function()
 	{
-		return self.q.vector();
+		var y = new vector(0, 1, 0);
+		return self.project(y);
+	}
+
+	/**
+	 * Get the forward-looking vector.
+	 */
+	self.getForward = function()
+	{
+		var z = new vector(0, 0, 1);
+		return self.project(z);
 	}
 
 	/**
@@ -524,7 +526,7 @@ function quaternionSystem(q, r, s, t)
 	 */
 	self.pitch = function(angle)
 	{
-		turn(angle, new vector(0, 0, 1));
+		turn(angle, new vector(1, 0, 0));
 	}
 
 	/**
@@ -532,7 +534,7 @@ function quaternionSystem(q, r, s, t)
 	 */
 	self.roll = function(angle)
 	{
-		turn(angle, new vector(1, 0, 0));
+		turn(angle, new vector(0, 0, 1));
 	}
 	
 	/**
@@ -594,14 +596,6 @@ function coordinateSystem(u, v, w)
 			self.u = self.u.sum(v.scale(-uProduct)).unit();
 		}
 		self.w = self.u.vectorProduct(self.v);
-	}
-
-	/**
-	 * Get the axis of the system: the v coordinate.
-	 */
-	self.getAxis = function()
-	{
-		return self.v;
 	}
 
 	/**
