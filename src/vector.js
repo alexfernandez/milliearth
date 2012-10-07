@@ -225,15 +225,8 @@ function vector(x, y, z)
 		{
 			return false;
 		}
-		if (self.x != value.x)
-		{
-			return false;
-		}
-		if (self.y != value.y)
-		{
-			return false;
-		}
-		if (self.z != value.z)
+		var diff = self.difference(value).squaredLength();
+		if (diff > 1e-15)
 		{
 			return false;
 		}
