@@ -610,17 +610,15 @@ var gameWorld = function(id)
 		{
 			// enemy
 			robot.start(
-				new vector(distance + 2, 160, 0),
-				new vector(0, 1, 0));
+				new vector(160, distance + 2, 0),
+				new vector(1, 0, 0));
 		}
 		else
 		{
 			// player
-			var sqrt = Math.sqrt(2 * distance * distance) / 2;
 			robot.start(
-				new vector(distance + 2, -10, 0),
-				//new vector(0, distance + 6000, 0),
-				new vector(1, 0, 0));
+				new vector(-10, distance + 2, 0),
+				new vector(0, 1, 0));
 		}
 		return robot;
 	}
