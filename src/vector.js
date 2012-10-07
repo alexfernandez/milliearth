@@ -388,6 +388,15 @@ function quaternion(a, b, c, d)
 	}
 
 	/**
+	 * Return a unit quaternion, such that a^2+b^2+c^2+d^2=1.
+	 */
+	self.unit = function()
+	{
+		var length = self.a*self.a + self.b*self.b + self.c*self.c + self.d*self.d;
+		return new quaternion(self.a / length, self.b / length, self.c / length, self.d / length);
+	}
+
+	/**
 	 * Compare with another quaternion, return true if both are equal.
 	 */
 	self.equals = function(q)
@@ -424,6 +433,87 @@ function quaternion(a, b, c, d)
 	}
 }
 
+
+/**
+ * A coordinate system defined by a single quaternion.
+ */
+function quaternionSystem(q)
+{
+	// self-reference
+	var self = this;
+
+	// attributes
+	if (q && q.quaternion)
+	{
+		self.quaternion = q.quaternion.unit();
+	}
+	else
+	{
+		self.quaternion = q;
+	}
+
+	/**
+	 * Align the system with the given vector.
+	 */
+	self.alignV = function(alignment)
+	{
+		var s = Math.sqrt(1 - self.q.a * self.q.a);
+		var v = alignment.elongate(s);
+		self.q.b = v.x;
+		self.q.c = v.y;
+		self.q.d = v.z;
+		return;
+	}
+
+	/**
+	 * Project a position along the coordinate system.
+	 */
+	self.project = function(position)
+	{
+		return self.q.rotate(position);
+	}
+
+	/**
+	 * Turn on the yaw angle (left and right horizontally), radians.
+	 */
+	self.yaw = function(angle)
+	{
+		turn(angle, new vector(1, 0, 0));
+	}
+
+	/**
+	 * Turn on the pitch angle (up and down), radians.
+	 */
+	self.pitch = function(angle)
+	{
+		turn(angle, new vector(0, 1, 0));
+	}
+
+	/**
+	 * Turn on the roll angle (sideways), radians.
+	 */
+	self.roll = function(angle)
+	{
+		turn(angle, new vector(0, 0, 1));
+	}
+	
+	/**
+	 * Turn the system on the given axis by the given angle.
+	 */
+	function turn(angle, axis)
+	{
+		var r = new quaternion().init(angle, axis);
+		self.q = q.product(r);
+	}
+
+	/**
+	 * Printable representation.
+	 */
+	self.toString = function()
+	{
+		return '(q: ' + self.q + ')';
+	}
+}
 
 /**
  * A coordinate system with three axis, each determined by an orthogonal unit vector.
@@ -576,6 +666,7 @@ module.exports.planarPoint = planarPoint;
 module.exports.vector = vector;
 module.exports.polarVector = polarVector;
 module.exports.coordinateSystem = coordinateSystem;
+module.exports.quaternionSystem = quaternionSystem;
 
 module.exports.test = function() {
 	vectorTest();
