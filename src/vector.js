@@ -500,8 +500,8 @@ function quaternionSystem(q, r, s, t)
 	 */
 	self.getUpward = function()
 	{
-		var y = new vector(0, 1, 0);
-		return self.project(y);
+		var j = new vector(0, 1, 0);
+		return self.q.conjugate().rotate(j);
 	}
 
 	/**
@@ -509,8 +509,8 @@ function quaternionSystem(q, r, s, t)
 	 */
 	self.getForward = function()
 	{
-		var z = new vector(0, 0, 1);
-		return self.project(z);
+		var k = new vector(0, 0, 1);
+		return self.q.conjugate().rotate(k);
 	}
 
 	/**
