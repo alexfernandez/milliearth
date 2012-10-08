@@ -278,7 +278,7 @@ function autoPlayer(params)
 	{
 		var interval = delay / 1000;
 		computer.update(interval);
-		// engine.run(interval);
+		engine.run(interval);
 	}
 }
 
