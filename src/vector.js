@@ -693,7 +693,7 @@ function quaternionTest()
 	var q = new quaternion(0, 1, 2, 3);
 	var r = new quaternion(4, 5, 6, 7);
 	var product = q.product(r);
-	if (!product.equals(new quaternion(-38, 36, -14, 8)))
+	if (!product.equals(new quaternion(-38, 0, 16, 8)))
 	{
 		log.e('Invalid product ' + product);
 		return;
