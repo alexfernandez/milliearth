@@ -496,21 +496,30 @@ function quaternionSystem(q, r, s, t)
 	}
 
 	/** 
-	 * Get the upward coordinate of coordinate system.
+	 * Get the upward coordinate of coordinate system: j.
 	 */
-	self.getUpward = function()
+	self.upward = function()
 	{
 		var j = new vector(0, 1, 0);
 		return self.q.conjugate().rotate(j);
 	}
 
 	/**
-	 * Get the forward-looking vector.
+	 * Get the forward-looking vector: k.
 	 */
-	self.getForward = function()
+	self.forward = function()
 	{
 		var k = new vector(0, 0, 1);
 		return self.q.conjugate().rotate(k);
+	}
+
+	/**
+	 * Get the sideways vector: i.
+	 */
+	self.sideways = function()
+	{
+		var i = new vector(1, 0, 0);
+		return self.q.conjugate().rotate(i);
 	}
 
 	/**
@@ -518,7 +527,7 @@ function quaternionSystem(q, r, s, t)
 	 */
 	self.yaw = function(angle)
 	{
-		turn(angle, new vector(0, 1, 0));
+		turn(angle, self.upward());
 	}
 
 	/**
@@ -526,7 +535,7 @@ function quaternionSystem(q, r, s, t)
 	 */
 	self.pitch = function(angle)
 	{
-		turn(angle, new vector(1, 0, 0));
+		turn(-angle, self.sideways());
 	}
 
 	/**
@@ -534,7 +543,7 @@ function quaternionSystem(q, r, s, t)
 	 */
 	self.roll = function(angle)
 	{
-		turn(angle, new vector(0, 0, 1));
+		turn(-angle, self.forward());
 	}
 	
 	/**

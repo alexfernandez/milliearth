@@ -294,8 +294,8 @@ function fighterRobot(params)
 	self.getArrow = function()
 	{
 		var start = self.position.copy();
-		var v = camera.getUpward();
-		var w = camera.getForward();
+		var v = camera.upward();
+		var w = camera.forward();
 		start.addScaled(w, -400);
 		start.addScaled(v, 400);
 		var end = self.position.copy();
@@ -381,7 +381,7 @@ function fighterRobot(params)
 	 */
 	function computeViewPosition()
 	{
-		return self.position.sumScaled(camera.getUpward(), self.radius);
+		return self.position.sumScaled(camera.upward(), self.radius);
 	}
 
 	/**
@@ -416,7 +416,7 @@ function fighterRobot(params)
 	 */
 	self.accelerate = function(interval)
 	{
-		self.speed.addScaled(camera.getForward(), globalParams.motorAcceleration * interval);
+		self.speed.addScaled(camera.forward(), globalParams.motorAcceleration * interval);
 	}
 
 	/**
@@ -498,9 +498,9 @@ function fighterRobot(params)
 			id: 'projectile.' + self.id + '.' + self.projectiles,
 			world: self.world,
 		});
-		projectile.position = self.position.sum(camera.getForward().scale(self.radius + projectile.radius));
+		projectile.position = self.position.sum(camera.forward().scale(self.radius + projectile.radius));
 		projectile.speed = self.speed.copy();
-		var momentum = camera.getForward().scale(globalParams.projectileSpeed * projectile.mass);
+		var momentum = camera.forward().scale(globalParams.projectileSpeed * projectile.mass);
 		self.mass -= projectile.mass;
 		// speed and recoil
 		self.transferMomentum(projectile, momentum);
