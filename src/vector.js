@@ -481,11 +481,9 @@ function quaternionSystem(q, r, s, t)
 	{
 		var j = new vector(0, 1, 0);
 		var p = alignment.unit();
-		log.i('p ' + j.scalarProduct(p));
 		var theta = Math.acos(j.scalarProduct(p));
 		var v = j.vectorProduct(p);
 		self.q = new quaternion().init(theta, v);
-		log.i('Aligning with ' + p + ': ' + theta + ' -> ' + self.q);
 		return self;
 	}
 
