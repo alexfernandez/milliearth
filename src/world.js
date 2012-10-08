@@ -207,7 +207,6 @@ function fighterRobot(params)
 	self.projectiles = globalParams.projectiles;
 	self.color = '#080';
 	var camera = new quaternionSystem(0, 0, 0, 1);
-	log.i(camera);
 	var shootTimeout = 0;
 
 	/**
