@@ -566,107 +566,6 @@ function quaternionSystem(q, r, s, t)
 	}
 }
 
-/**
- * A coordinate system with three axis, each determined by an orthogonal unit vector.
- */
-function coordinateSystem(u, v, w)
-{
-	// self-reference
-	var self = this;
-
-	if (u && u.u)
-	{
-		// initialize using an object
-		self.u = new vector(u.u).unit();
-		self.v = new vector(u.v).unit();
-		self.w = new vector(u.w).unit();
-	}
-	else
-	{
-		self.u = u.unit();
-		self.v = v.unit();
-		self.w = w.unit();
-	}
-
-	/**
-	 * Align the j axis with the given vector.
-	 */
-	self.alignUpward = function(alignment)
-	{
-		var v = alignment.unit();
-		var vProduct = self.v.scalarProduct(v);
-		if (vProduct == 0)
-		{
-			log.e('Cannot align with perpendicular vector');
-			return;
-		}
-		self.v = v;
-		var uProduct = self.u.scalarProduct(v);
-		if (uProduct != 0)
-		{
-			self.u = self.u.sum(v.scale(-uProduct)).unit();
-		}
-		self.w = self.u.vectorProduct(self.v);
-	}
-
-	/**
-	 * Project a position along the coordinate system.
-	 */
-	self.project = function(position)
-	{
-		var x = self.u.scalarProduct(position);
-		var y = self.v.scalarProduct(position);
-		var z = self.w.scalarProduct(position);
-		return new vector(x, y, z);
-	}
-
-	/**
-	 * Turn on the yaw angle (left and right horizontally), radians.
-	 */
-	self.yaw = function(angle)
-	{
-		var p = Math.cos(angle / (Math.PI / 2));
-		var q = Math.sin(angle / (Math.PI / 2));
-		var u = self.u.scale(p).sum(self.w.scale(q));
-		var w = self.w.scale(p).sum(self.u.scale(-q));
-		self.u = u;
-		self.w = w;
-	}
-
-	/**
-	 * Turn on the pitch angle (up and down), radians.
-	 */
-	self.pitch = function(angle)
-	{
-		var p = Math.cos(angle / (Math.PI / 2));
-		var q = Math.sin(angle / (Math.PI / 2));
-		var v = self.v.scale(p).sum(self.w.scale(q));
-		var w = self.w.scale(p).sum(self.v.scale(-q));
-		self.v = v;
-		self.w = w;
-	}
-
-	/**
-	 * Turn on the roll angle (sideways), radians.
-	 */
-	self.roll = function(angle)
-	{
-		var p = Math.cos(angle / (Math.PI / 2));
-		var q = Math.sin(angle / (Math.PI / 2));
-		var u = self.u.scale(p).sum(self.v.scale(q));
-		var v = self.v.scale(p).sum(self.u.scale(-q));
-		self.u = u;
-		self.v = v;
-	}
-
-	/**
-	 * Printable representation.
-	 */
-	self.toString = function()
-	{
-		return '(u: ' + self.u + ', v: ' + self.v + ', w: ' + self.w + ')';
-	}
-}
 
 /**
  * Test vectors.
@@ -716,7 +615,6 @@ module.exports.isNumber = isNumber;
 module.exports.planarPoint = planarPoint;
 module.exports.vector = vector;
 module.exports.polarVector = polarVector;
-module.exports.coordinateSystem = coordinateSystem;
 module.exports.quaternionSystem = quaternionSystem;
 
 module.exports.test = function() {
