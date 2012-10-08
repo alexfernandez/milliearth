@@ -477,7 +477,7 @@ function quaternionSystem(q, r, s, t)
 	/**
 	 * Align the system with the given vector.
 	 */
-	self.alignV = function(alignment)
+	self.alignUpward = function(alignment)
 	{
 		var j = new vector(0, 1, 0);
 		var p = alignment.unit();
@@ -589,9 +589,9 @@ function coordinateSystem(u, v, w)
 	}
 
 	/**
-	 * Align the v axis with the given vector.
+	 * Align the j axis with the given vector.
 	 */
-	self.alignV = function(alignment)
+	self.alignUpward = function(alignment)
 	{
 		var v = alignment.unit();
 		var vProduct = self.v.scalarProduct(v);

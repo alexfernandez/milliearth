@@ -216,8 +216,8 @@ function fighterRobot(params)
 	{
 		self.position = position;
 		self.speed = speed;
-		camera = new quaternionSystem().alignV(speed);
-		camera.alignV(position);
+		camera = new quaternionSystem();
+		camera.alignUpward(position);
 	}
 
 	/**
@@ -253,7 +253,7 @@ function fighterRobot(params)
 		{
 			self.speed.addScaled(horizontalSpeed.unit(), -deceleration);
 		}
-		// camera.alignV(differenceUnit.scale(-1));
+		// camera.alignUpward(differenceUnit.scale(-1));
 	}
 
 	/**
