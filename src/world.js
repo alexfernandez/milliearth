@@ -184,7 +184,7 @@ function flyingProjectile(params)
 	self.computeCollision = function(body, momentum)
 	{
 		self.active = false;
-		body.substractDamage(globalParams.projectileCharge);
+		body.substractDamage(globalParams.projectileEnergyDensity * self.mass);
 	}
 }
 

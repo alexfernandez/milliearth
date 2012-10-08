@@ -54,7 +54,7 @@ var globalParams = new function()
 	// robot radius, in m
 	this.robotRadius = 2;
 	// starting life for players in energy, joules
-	this.robotLife = 1e9;
+	this.robotLife = 3e7;
 	// set marks every given distance, m
 	this.markDistance = 100;
 	// half-width of the speed marks, m
@@ -67,8 +67,8 @@ var globalParams = new function()
 	this.projectileMass = 1;
 	// radius of projectile, m
 	this.projectileRadius = 0.2;
-	// charge of projectile, joules
-	this.projectileCharge = 4e8;
+	// energy density of projectile, joules/kg
+	this.projectileEnergyDensity = 10.4e6;
 	// speed of projectile, m/s
 	this.projectileSpeed = Math.sqrt(this.bigG * this.meMass / this.meRadius);
 	// recharge speed for cannon, s
