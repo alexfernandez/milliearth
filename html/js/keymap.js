@@ -35,12 +35,14 @@ var keymap = new function()
 	var sent = 2;
 
 	var eventMap = {
-		65: {key: 'a', event: 'accelerate'},
+		87: {key: 'w', event: 'accelerate'},
 		83: {key: 's', event: 'brake'},
-		37: {key: '←', event: 'turnLeft'},
-		38: {key: '↑', event: 'turnUp'},
-		39: {key: '→', event: 'turnRight'},
-		40: {key: '↓', event: 'turnDown'},
+		65: {key: 'a', event: 'turnLeft'},
+		68: {key: 'd', event: 'turnRight'},
+		37: {key: '←', event: 'lookLeft'},
+		38: {key: '↑', event: 'lookUp'},
+		39: {key: '→', event: 'lookRight'},
+		40: {key: '↓', event: 'lookDown'},
 		79: {key: 'o', event: 'rollLeft'},
 		80: {key: 'p', event: 'rollRight'},
 		32: {key: 'Space', event: 'shoot', single: true},
