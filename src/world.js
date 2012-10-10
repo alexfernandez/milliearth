@@ -528,9 +528,9 @@ function fighterRobot(params)
 			id: 'projectile.' + self.id + '.' + self.projectiles,
 			world: self.world,
 		});
-		projectile.position = self.position.sum(camera.forward().scale(self.radius + projectile.radius));
+		projectile.position = self.position.sum(system.forward().scale(self.radius + projectile.radius));
 		projectile.speed = self.speed.copy();
-		var momentum = camera.forward().scale(globalParams.projectileSpeed * projectile.mass);
+		var momentum = system.forward().scale(globalParams.projectileSpeed * projectile.mass);
 		self.mass -= projectile.mass;
 		// speed and recoil
 		self.transferMomentum(projectile, momentum);
