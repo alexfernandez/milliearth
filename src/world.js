@@ -216,7 +216,7 @@ function fighterRobot(params)
 	{
 		self.position = position;
 		self.speed = speed;
-		camera = new quaternionSystem(1, 0, 0, 0);
+		camera = new quaternionSystem(1, 0, -1, 0);
 		camera.alignUpward(position);
 	}
 
