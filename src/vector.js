@@ -454,30 +454,36 @@ function quaternion(a, b, c, d)
 
 
 /**
- * A coordinate system defined by a single quaternion.
+ * A coordinate system defined by two quaternions: vehicle and camera.
  */
-function quaternionSystem(q, r, s, t)
+function quaternionSystem(vehicle, camera)
 {
 	// self-reference
 	var self = this;
 
 	// attributes
-	if (!q)
+	self.q = null;
+	if (!vehicle)
 	{
-		self.q = new quaternion(0, 0, 0, 0);
+		self.vehicle = new quaternion();
+		self.camera = new quaternion();
 	}
-	else if (q.q)
+	else if (vehicle.vehicle)
 	{
-		self.q = new quaternion(q.q).unit();
-	}
-	else if (q.a)
-	{
-		self.q = q.unit();
+		self.vehicle = new quaternion(vehicle.vehicle).unit();
+		self.camera = new quaternion(vehicle.camera).unit();
 	}
 	else
 	{
-		self.q = new quaternion(q, r, s, t).unit();
+		self.vehicle = vehicle.unit();
+		if (!camera)
+		{
+			log.e('Should supply camera quaternion');
+			return;
+		}
+		self.camera = camera.unit();
 	}
+	compute();
 
 	/**
 	 * Align the system with the given vector.
@@ -488,7 +494,7 @@ function quaternionSystem(q, r, s, t)
 		var p = alignment.unit();
 		var theta = Math.acos(j.scalarProduct(p));
 		var v = j.vectorProduct(p);
-		turn(-theta, v);
+		turnCamera(-theta, v);
 		return self;
 	}
 
@@ -503,10 +509,10 @@ function quaternionSystem(q, r, s, t)
 	/** 
 	 * Get the upward coordinate of coordinate system: j.
 	 */
-	self.upward = function()
+	self.upward = function(q)
 	{
-		var j = new vector(0, 1, 0);
-		return self.q.conjugate().rotate(j);
+		q = q || self.q;
+		return retroproject(new vector(0, 1, 0), q);
 	}
 
 	/**
@@ -514,8 +520,8 @@ function quaternionSystem(q, r, s, t)
 	 */
 	self.forward = function()
 	{
-		var k = new vector(0, 0, 1);
-		return self.q.conjugate().rotate(k);
+		q = q || self.q;
+		return retroproject(new vector(0, 0, 1));
 	}
 
 	/**
@@ -523,41 +529,93 @@ function quaternionSystem(q, r, s, t)
 	 */
 	self.sideways = function()
 	{
-		var i = new vector(1, 0, 0);
-		return self.q.conjugate().rotate(i);
+		q = q || self.q;
+		return retroproject(new vector(1, 0, 0));
 	}
 
 	/**
-	 * Turn on the yaw angle (left and right horizontally), radians.
+	 * Turn the vehicle around the pitch angle (left and right), radians.
 	 */
-	self.yaw = function(angle)
+	self.pitchVehicle = function(angle)
 	{
-		turn(angle, self.upward());
+		turnVehicle(-angle, self.sideways(self.vehicle));
 	}
 
 	/**
-	 * Turn on the pitch angle (up and down), radians.
+	 * Turn the vehicle around the yaw angle (up and down), radians.
 	 */
-	self.pitch = function(angle)
+	self.yawVehicle = function(angle)
 	{
-		turn(-angle, self.sideways());
+		turnVehicle(angle, self.upward(self.vehicle));
 	}
 
 	/**
-	 * Turn on the roll angle (sideways), radians.
+	 * Turn the vehicle around the roll angle (sideways), radians.
 	 */
-	self.roll = function(angle)
+	self.rollVehicle = function(angle)
 	{
-		turn(-angle, self.forward());
+		turnVehicle(-angle, self.forward(self.vehicle));
+	}
+
+	/**
+	 * Turn the camera around the pitch angle (up and down), radians.
+	 */
+	self.pitchCamera = function(angle)
+	{
+		turnCamera(-angle, self.sideways());
+	}
+
+	/**
+	 * Turn the camera around the yaw angle (left and right horizontally), radians.
+	 */
+	self.yawCamera = function(angle)
+	{
+		turnCamera(angle, self.upward());
+	}
+
+	/**
+	 * Turn the camera around the roll angle (sideways), radians.
+	 */
+	self.rollCamera = function(angle)
+	{
+		turnCamera(-angle, self.forward());
 	}
 	
 	/**
-	 * Turn the system on the given axis by the given angle.
+	 * Turn the vehicle on the given axis by the given angle.
 	 */
-	function turn(angle, axis)
+	function turnVehicle(angle, axis)
 	{
 		var r = new quaternion().init(angle, axis);
-		self.q = self.q.product(r);
+		self.vehicle = self.vehicle.product(r);
+		compute();
+	}
+	
+	/**
+	 * Turn the camera on the given axis by the given angle.
+	 */
+	function turnCamera(angle, axis)
+	{
+		var r = new quaternion().init(angle, axis);
+		self.camera = self.camera.product(r);
+		compute();
+	}
+
+	/**
+	 * Find the original position of a projected vector.
+	 */
+	function retroproject(position, q)
+	{
+		q = q || self.q;
+		return self.q.conjugate().rotate(position);
+	}
+
+	/**
+	 * Compute the final quaternion.
+	 */
+	function compute()
+	{
+		self.q = self.vehicle.product(self.camera);
 	}
 
 	/**
@@ -619,8 +677,9 @@ function quaternionTest()
  */
 function quaternionSystemTest()
 {
-	var q = new quaternion(1, 2, 3, 4);
-	var system = new quaternionSystem(q);
+	var q1 = new quaternion(1, 2, 3, 4);
+	var q2 = new quaternion(5, 6, 7, 8);
+	var system = new quaternionSystem(q1, q2);
 	var u = new vector(2, 5, 7);
 	system.alignUpward(u);
 	if (!u.unit().equals(system.upward()))

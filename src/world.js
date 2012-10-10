@@ -206,7 +206,7 @@ function fighterRobot(params)
 	self.type = 'robot';
 	self.projectiles = globalParams.projectiles;
 	self.color = '#080';
-	var camera = new quaternionSystem(1, 0, 0, 0);
+	var system = new quaternionSystem();
 	var shootTimeout = 0;
 
 	/**
@@ -216,8 +216,7 @@ function fighterRobot(params)
 	{
 		self.position = position;
 		self.speed = speed;
-		camera = new quaternionSystem(1, 0, -1, 0);
-		camera.alignUpward(position);
+		system.alignUpward(position);
 	}
 
 	/**
@@ -253,7 +252,7 @@ function fighterRobot(params)
 		{
 			self.speed.addScaled(horizontalSpeed.unit(), -deceleration);
 		}
-		camera.alignUpward(differenceUnit.scale(-1));
+		system.alignUpward(differenceUnit.scale(-1));
 	}
 
 	/**
@@ -293,8 +292,8 @@ function fighterRobot(params)
 	self.getArrow = function()
 	{
 		var start = self.position.copy();
-		var v = camera.upward();
-		var w = camera.forward();
+		var v = system.upward();
+		var w = system.forward();
 		start.addScaled(w, -400);
 		start.addScaled(v, 400);
 		var end = self.position.copy();
@@ -344,7 +343,7 @@ function fighterRobot(params)
 			}
 		}
 		return {
-			camera: camera,
+			camera: system.getCamera(),
 			position: computeViewPosition(),
 			speed: self.speed.length(),
 			radius: self.world.milliEarth.radius,
@@ -380,7 +379,7 @@ function fighterRobot(params)
 	 */
 	function computeViewPosition()
 	{
-		return self.position.sumScaled(camera.upward(), self.radius);
+		return self.position.sumScaled(system.upward(), self.radius);
 	}
 
 	/**
@@ -390,7 +389,7 @@ function fighterRobot(params)
 	{
 		var origin = computeViewPosition();
 		var position = body.position.difference(origin);
-		return camera.project(position);
+		return system.project(position);
 	}
 
 	/**
@@ -415,7 +414,7 @@ function fighterRobot(params)
 	 */
 	self.accelerate = function(interval)
 	{
-		self.speed.addScaled(camera.forward(), globalParams.motorAcceleration * interval);
+		self.speed.addScaled(system.forward(), globalParams.motorAcceleration * interval);
 	}
 
 	/**
@@ -433,35 +432,35 @@ function fighterRobot(params)
 	}
 
 	/**
-	 * Turn the camera left.
+	 * Turn the vehicle left.
 	 */
 	self.turnLeft = function(interval)
 	{
-		camera.yaw(globalParams.turningAngle * interval);
+		system.yawVehicle(globalParams.turningAngle * interval);
 	}
 
 	/**
-	 * Turn the camera right.
+	 * Turn the vehicle right.
 	 */
 	self.turnRight = function(interval)
 	{
-		camera.yaw(-globalParams.turningAngle * interval);
+		system.yawVehicle(-globalParams.turningAngle * interval);
 	}
 
 	/**
-	 * Turn the camera up.
+	 * Turn the vehicle up.
 	 */
 	self.turnUp = function(interval)
 	{
-		camera.pitch(-globalParams.turningAngle * interval);
+		system.pitchVehicle(-globalParams.turningAngle * interval);
 	}
 
 	/**
-	 * Turn the camera down.
+	 * Turn the vehicle down.
 	 */
 	self.turnDown = function(interval)
 	{
-		camera.pitch(globalParams.turningAngle * interval);
+		system.pitchVehicle(globalParams.turningAngle * interval);
 	}
 
 	/**
@@ -469,7 +468,7 @@ function fighterRobot(params)
 	 */
 	self.rollLeft = function(interval)
 	{
-		camera.roll(globalParams.turningAngle * interval);
+		system.rollVehicle(globalParams.turningAngle * interval);
 	}
 
 	/**
@@ -477,7 +476,7 @@ function fighterRobot(params)
 	 */
 	self.rollRight = function(interval)
 	{
-		camera.roll(-globalParams.turningAngle * interval);
+		system.rollVehicle(-globalParams.turningAngle * interval);
 	}
 
 	/**
