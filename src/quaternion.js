@@ -176,7 +176,7 @@ function coordinateSystem(q, r, s, t)
 	}
 	else if (q.a)
 	{
-		self.q = q.unit();
+		self.q = new quaternion(q).unit();
 	}
 	else
 	{
