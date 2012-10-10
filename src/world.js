@@ -253,7 +253,7 @@ function fighterRobot(params)
 		{
 			self.speed.addScaled(horizontalSpeed.unit(), -deceleration);
 		}
-		// camera.alignUpward(differenceUnit.scale(-1));
+		camera.alignUpward(differenceUnit.scale(-1));
 	}
 
 	/**
