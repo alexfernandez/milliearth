@@ -206,7 +206,7 @@ function fighterRobot(params)
 	self.type = 'robot';
 	self.projectiles = globalParams.projectiles;
 	self.color = '#080';
-	var camera = new quaternionSystem(0, 0, 0, 1);
+	var camera = new quaternionSystem(1, 0, 0, 0);
 	var shootTimeout = 0;
 
 	/**
@@ -216,7 +216,7 @@ function fighterRobot(params)
 	{
 		self.position = position;
 		self.speed = speed;
-		camera = new quaternionSystem();
+		camera = new quaternionSystem(1, 0, 0, 0);
 		camera.alignUpward(position);
 	}
 
