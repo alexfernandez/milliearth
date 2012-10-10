@@ -39,6 +39,11 @@ function isNumber(n)
  */
 function round(value)
 {
+	if (value < 1)
+	{
+		return Math.round(value * 100) / 100;
+	}
+
 	if (value < 10)
 	{
 		return Math.round(value * 10) / 10;
@@ -467,11 +472,11 @@ function quaternionSystem(q, r, s, t)
 	}
 	else if (q.a)
 	{
-		self.q = q;
+		self.q = q.unit();
 	}
 	else
 	{
-		self.q = new quaternion(q, r, s, t);
+		self.q = new quaternion(q, r, s, t).unit();
 	}
 
 	/**
@@ -479,11 +484,11 @@ function quaternionSystem(q, r, s, t)
 	 */
 	self.alignUpward = function(alignment)
 	{
-		var j = new vector(0, 1, 0);
+		var j = self.upward();
 		var p = alignment.unit();
 		var theta = Math.acos(j.scalarProduct(p));
 		var v = j.vectorProduct(p);
-		self.q = new quaternion().init(theta, v);
+		turn(-theta, v);
 		return self;
 	}
 
@@ -609,6 +614,23 @@ function quaternionTest()
 	log.success('quaternion: OK');
 }
 
+/**
+ * Test quaternion system.
+ */
+function quaternionSystemTest()
+{
+	var q = new quaternion(1, 2, 3, 4);
+	var system = new quaternionSystem(q);
+	var u = new vector(2, 5, 7);
+	system.alignUpward(u);
+	if (!u.unit().equals(system.upward()))
+	{
+		log.e('Invalid alignment: ' + system.upward() + ' should be ' + u);
+		return;
+	}
+	log.success('quaternion system: OK');
+}
+
 module.exports.isNumber = isNumber;
 module.exports.planarPoint = planarPoint;
 module.exports.vector = vector;
@@ -618,6 +640,7 @@ module.exports.quaternionSystem = quaternionSystem;
 module.exports.test = function() {
 	vectorTest();
 	quaternionTest();
+	quaternionSystemTest();
 };
 
 
