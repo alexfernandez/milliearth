@@ -25,7 +25,7 @@
  */
 var globalParams = require('./params.js').globalParams;
 var vector = require('./vector.js').vector;
-var quaternionSystem = require('./vector.js').quaternionSystem;
+var cameraSystem = require('./quaternion.js').cameraSystem;
 var util = require('./util.js');
 var parser = util.parser;
 var log = util.log;
@@ -206,17 +206,17 @@ function fighterRobot(params)
 	self.type = 'robot';
 	self.projectiles = globalParams.projectiles;
 	self.color = '#080';
-	var system = new quaternionSystem();
+	var system = new cameraSystem();
 	var shootTimeout = 0;
 
 	/**
-	 * Start a robot with position and speed. Aligns the camera to the given speed.
+	 * Start a robot with position and speed. Aligns the vehicle to the given speed.
 	 */
 	self.start = function(position, speed)
 	{
 		self.position = position;
 		self.speed = speed;
-		system.alignUpward(position);
+		system.vehicle.alignUpward(position);
 	}
 
 	/**
@@ -252,7 +252,7 @@ function fighterRobot(params)
 		{
 			self.speed.addScaled(horizontalSpeed.unit(), -deceleration);
 		}
-		system.alignUpward(differenceUnit.scale(-1));
+		system.vehicle.alignUpward(differenceUnit.scale(-1));
 	}
 
 	/**
@@ -414,7 +414,7 @@ function fighterRobot(params)
 	 */
 	self.accelerate = function(interval)
 	{
-		self.speed.addScaled(system.forward(), globalParams.motorAcceleration * interval);
+		self.speed.addScaled(system.vehicle.forward(), globalParams.motorAcceleration * interval);
 	}
 
 	/**
@@ -432,11 +432,59 @@ function fighterRobot(params)
 	}
 
 	/**
+	 * Turn the camera left.
+	 */
+	self.lookLeft = function(interval)
+	{
+		system.camera.yaw(globalParams.turningAngle * interval);
+	}
+
+	/**
+	 * Turn the camera right.
+	 */
+	self.lookRight = function(interval)
+	{
+		system.vehicle.yaw(-globalParams.turningAngle * interval);
+	}
+
+	/**
+	 * Turn the camera up.
+	 */
+	self.lookUp = function(interval)
+	{
+		system.camera.pitch(-globalParams.turningAngle * interval);
+	}
+
+	/**
+	 * Turn the camera down.
+	 */
+	self.lookDown = function(interval)
+	{
+		system.camera.pitch(globalParams.turningAngle * interval);
+	}
+
+	/**
+	 * Turn camera sideways left.
+	 */
+	self.rollLeft = function(interval)
+	{
+		system.camera.roll(globalParams.turningAngle * interval);
+	}
+
+	/**
+	 * Turn camera sideways right.
+	 */
+	self.rollRight = function(interval)
+	{
+		system.camera.roll(-globalParams.turningAngle * interval);
+	}
+
+	/**
 	 * Turn the vehicle left.
 	 */
 	self.turnLeft = function(interval)
 	{
-		system.yawVehicle(globalParams.turningAngle * interval);
+		system.vehicle.yaw(globalParams.turningAngle * interval);
 	}
 
 	/**
@@ -444,7 +492,7 @@ function fighterRobot(params)
 	 */
 	self.turnRight = function(interval)
 	{
-		system.yawVehicle(-globalParams.turningAngle * interval);
+		system.vehicle.yaw(-globalParams.turningAngle * interval);
 	}
 
 	/**
@@ -452,7 +500,7 @@ function fighterRobot(params)
 	 */
 	self.turnUp = function(interval)
 	{
-		system.pitchVehicle(-globalParams.turningAngle * interval);
+		system.vehicle.pitch(-globalParams.turningAngle * interval);
 	}
 
 	/**
@@ -460,23 +508,7 @@ function fighterRobot(params)
 	 */
 	self.turnDown = function(interval)
 	{
-		system.pitchVehicle(globalParams.turningAngle * interval);
-	}
-
-	/**
-	 * Turn sideways left.
-	 */
-	self.rollLeft = function(interval)
-	{
-		system.rollVehicle(globalParams.turningAngle * interval);
-	}
-
-	/**
-	 * Turn sideways right.
-	 */
-	self.rollRight = function(interval)
-	{
-		system.rollVehicle(-globalParams.turningAngle * interval);
+		system.vehicle.pitch(globalParams.turningAngle * interval);
 	}
 
 	/**
