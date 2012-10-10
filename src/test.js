@@ -26,6 +26,7 @@
  */
 var atescriptTest = require('./atescript.js').test;
 var vectorTest = require('./vector.js').test;
+var quaternionTest = require('./quaternion.js').test;
 var log = require('./util.js').log;
 log.debug = true;
 
@@ -36,6 +37,7 @@ function runAll()
 {
 	atescriptTest();
 	vectorTest();
+	quaternionTest();
 }
 
 runAll();
