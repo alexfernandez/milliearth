@@ -25,6 +25,7 @@
  */
 var util = require('./util.js');
 var log = util.log;
+var extend = util.extend;
 
 
 /**
@@ -454,48 +455,33 @@ function quaternion(a, b, c, d)
 
 
 /**
- * A coordinate system defined by two quaternions: vehicle and camera.
+ * A coordinate system defined by one quaternion.
  */
-function quaternionSystem(vehicle, camera)
+function coordinateSystem(q, r, s, t)
 {
 	// self-reference
 	var self = this;
+	self.setSelf = function(that)
+	{
+		self = that;
+	}
 
 	// attributes
-	self.q = null;
-	if (!vehicle)
+	if (!q)
 	{
-		self.vehicle = new quaternion();
-		self.camera = new quaternion();
+		self.q = new quaternion(1, 0, 0, 0);
 	}
-	else if (vehicle.vehicle)
+	else if (q.q)
 	{
-		self.vehicle = new quaternion(vehicle.vehicle).unit();
-		self.camera = new quaternion(vehicle.camera).unit();
+		self.q = new quaternion(q.q).unit();
+	}
+	else if (q.a)
+	{
+		self.q = q.unit();
 	}
 	else
 	{
-		self.vehicle = vehicle.unit();
-		if (!camera)
-		{
-			log.e('Should supply camera quaternion');
-			return;
-		}
-		self.camera = camera.unit();
-	}
-	compute();
-
-	/**
-	 * Align the system with the given vector.
-	 */
-	self.alignUpward = function(alignment)
-	{
-		var j = self.upward();
-		var p = alignment.unit();
-		var theta = Math.acos(j.scalarProduct(p));
-		var v = j.vectorProduct(p);
-		turnCamera(-theta, v);
-		return self;
+		self.q = new quaternion(q, r, s, t);
 	}
 
 	/**
@@ -506,13 +492,25 @@ function quaternionSystem(vehicle, camera)
 		return self.q.rotate(position);
 	}
 
+	/**
+	 * Align the quaternion with the given vector.
+	 */
+	self.alignUpward = function(alignment)
+	{
+		var j = self.upward()
+		var p = alignment.unit();
+		var theta = Math.acos(j.scalarProduct(p));
+		var v = j.vectorProduct(p);
+		turn(-theta, v);
+		return self;
+	}
+
 	/** 
 	 * Get the upward coordinate of coordinate system: j.
 	 */
-	self.upward = function(q)
+	self.upward = function()
 	{
-		q = q || self.q;
-		return retroproject(new vector(0, 1, 0), q);
+		return retroproject(new vector(0, 1, 0));
 	}
 
 	/**
@@ -520,7 +518,6 @@ function quaternionSystem(vehicle, camera)
 	 */
 	self.forward = function()
 	{
-		q = q || self.q;
 		return retroproject(new vector(0, 0, 1));
 	}
 
@@ -529,9 +526,106 @@ function quaternionSystem(vehicle, camera)
 	 */
 	self.sideways = function()
 	{
-		q = q || self.q;
 		return retroproject(new vector(1, 0, 0));
 	}
+
+	/**
+	 * Find the original position of a projected vector.
+	 */
+	function retroproject(position)
+	{
+		return self.q.conjugate().rotate(position);
+	}
+
+	/**
+	 * Turn around the pitch angle (left and right), radians.
+	 */
+	self.pitch = function(angle)
+	{
+		turn(-angle, self.sideways());
+	}
+
+	/**
+	 * Turn around the yaw angle (up and down), radians.
+	 */
+	self.yaw = function(angle)
+	{
+		turn(angle, self.upward());
+	}
+
+	/**
+	 * Turn around the roll angle (sideways), radians.
+	 */
+	self.roll = function(angle)
+	{
+		turn(-angle, self.forward());
+	}
+	
+	/**
+	 * Turn the quaternion on the given axis by the given angle.
+	 */
+	function turn(angle, axis)
+	{
+		var r = new quaternion().init(angle, axis);
+		self.q = self.q.product(r);
+		self.update();
+	}
+
+	/**
+	 * Do something here when the quaternion is updated.
+	 */
+	self.update = function()
+	{
+		// void
+	}
+
+	/**
+	 * Printable representation.
+	 */
+	self.toString = function()
+	{
+		return '(q: ' + self.q + ')';
+	}
+}
+
+
+/**
+ * A coordinate system defined by two quaternions: vehicle and an independent camera.
+ */
+function cameraSystem(vehicle, camera)
+{
+	// self-reference
+	var self = this;
+    // extend coordinateSystem
+	extend(new coordinateSystem(), self);
+
+	// attributes
+	if (!vehicle)
+	{
+		vehicle = new quaternion(1, 0, 0, 0);
+		camera = new quaternion(1, 0, 0, 0);
+	}
+	else if (vehicle.vehicle)
+	{
+		vehicle = new quaternion(vehicle.vehicle).unit();
+		camera = new quaternion(vehicle.camera).unit();
+	}
+	else
+	{
+		vehicle = vehicle.unit();
+		if (!camera)
+		{
+			log.e('Should supply camera quaternion');
+			return;
+		}
+		camera = camera.unit();
+	}
+	self.vehicle = new coordinateSystem(vehicle);
+	self.camera = new coordinateSystem(camera);
+	// make sure both elements update the camera system
+	self.vehicle.update = update;
+	self.camera.update = update;
+	update();
 
 	/**
 	 * Turn the vehicle around the pitch angle (left and right), radians.
@@ -582,16 +676,6 @@ function quaternionSystem(vehicle, camera)
 	}
 	
 	/**
-	 * Turn the vehicle on the given axis by the given angle.
-	 */
-	function turnVehicle(angle, axis)
-	{
-		var r = new quaternion().init(angle, axis);
-		self.vehicle = self.vehicle.product(r);
-		compute();
-	}
-	
-	/**
 	 * Turn the camera on the given axis by the given angle.
 	 */
 	function turnCamera(angle, axis)
@@ -602,20 +686,11 @@ function quaternionSystem(vehicle, camera)
 	}
 
 	/**
-	 * Find the original position of a projected vector.
-	 */
-	function retroproject(position, q)
-	{
-		q = q || self.q;
-		return self.q.conjugate().rotate(position);
-	}
-
-	/**
 	 * Compute the final quaternion.
 	 */
-	function compute()
+	function update()
 	{
-		self.q = self.vehicle.product(self.camera);
+		self.q = self.vehicle.q.product(self.camera.q);
 	}
 
 	/**
@@ -623,7 +698,7 @@ function quaternionSystem(vehicle, camera)
 	 */
 	self.toString = function()
 	{
-		return '(q: ' + self.q + ')';
+		return '(vehicle: ' + self.vehicle.q + ', camera: ' + self.camera.q + ')';
 	}
 }
 
@@ -673,33 +748,42 @@ function quaternionTest()
 }
 
 /**
- * Test quaternion system.
+ * Test coordinate system.
  */
-function quaternionSystemTest()
+function coordinateSystemTest()
 {
 	var q1 = new quaternion(1, 2, 3, 4);
-	var q2 = new quaternion(5, 6, 7, 8);
-	var system = new quaternionSystem(q1, q2);
+	var system = new coordinateSystem(q1);
 	var u = new vector(2, 5, 7);
 	system.alignUpward(u);
 	if (!u.unit().equals(system.upward()))
 	{
-		log.e('Invalid alignment: ' + system.upward() + ' should be ' + u);
+		log.e('Invalid coordinate alignment: ' + system.upward() + ' should be ' + u.unit());
 		return;
 	}
-	log.success('quaternion system: OK');
+	var q2 = new quaternion(5, 6, 7, 8);
+	system = new cameraSystem(q1, q2);
+	system.vehicle.alignUpward(u);
+	system.camera.alignUpward(u);
+	if (!u.unit().equals(system.upward()))
+	{
+		log.e('Invalid camera alignment: ' + system.upward() + ' should be ' + u.unit());
+		return;
+	}
+	log.success('coordinate system: OK');
 }
 
 module.exports.isNumber = isNumber;
 module.exports.planarPoint = planarPoint;
 module.exports.vector = vector;
 module.exports.polarVector = polarVector;
-module.exports.quaternionSystem = quaternionSystem;
+module.exports.coordinateSystem = coordinateSystem;
+module.exports.cameraSystem = cameraSystem;
 
 module.exports.test = function() {
 	vectorTest();
 	quaternionTest();
-	quaternionSystemTest();
+	coordinateSystemTest();
 };
 
 
