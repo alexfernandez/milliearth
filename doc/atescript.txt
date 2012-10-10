@@ -1,0 +1,65 @@
+Atescript
+===========
+
+Atescript is a very simple script language for MilliEarth.
+
+Syntax
+======
+
+The syntax is also very simple, resembling natural language. The idea is to construct macros for your MilliEarth spaceships.
+
+Examples:
+  > point at closest enemy;
+  > if enemy distance < 25m: point at it; shoot.
+
+== Terminators
+
+A statement can be terminated by several punctuation marks:
+* semicolon ';'
+* stop '.'
+
+== [statement]
+
+Can be one of the following:
+
+* [command]
+* make [variable] [value]
+* if [condition]: [block].
+* repeat: [block] until [condition];
+
+== [block]
+
+A block is one or more statements separated by semicolons ';'. Definition:
+* ([statement];)+
+
+== [command]
+
+A direct command for the controlled robot. The general syntax is:
+
+* [verb] ([suffix] )* ([parameter] )*
+
+== [verb]
+
+The verb and its suffixes are directly translated to a JavaScript function
+ with the same name, joining suffixes with camelCase. For example, in the
+ command:
+  > point at enemy;
+the verb is 'point', the suffix is 'at', and the JavaScript function will be
+ pointAt().
+
+== [parameter]
+
+An object in general.
+
+== [variable]
+
+An alphanumeric identifier. Does not contain spaces or symbols, just a
+ sequence of one or more letters, numbers and underscores. Regular
+ expression: '\w+'.
+
+== [magnitude]
+
+== [condition]
+
+Can be one of 'in', 'is'.
+
