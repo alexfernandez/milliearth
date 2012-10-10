@@ -443,8 +443,7 @@ function coordinateSystemTest()
 	}
 	var q2 = new quaternion(5, 6, 7, 8);
 	system = new cameraSystem(q1, q2);
-	system.vehicle.alignUpward(u);
-	system.camera.alignUpward(u);
+	system.alignUpward(u);
 	if (!u.unit().equals(system.upward()))
 	{
 		log.e('Invalid camera alignment: ' + system.upward() + ' should be ' + u.unit());
