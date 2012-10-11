@@ -268,7 +268,13 @@ function coordinateSystem(q, r, s, t)
 	function turn(angle, axis)
 	{
 		var r = new quaternion().init(angle, axis);
-		self.q = self.q.product(r);
+		var result = self.q.product(r);
+		if (result.length() == 0)
+		{
+			log.e('Invalid rotation ' + angle + ', ' + axis);
+			return;
+		}
+		self.q = result;
 		update();
 	}
 
