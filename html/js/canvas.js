@@ -44,7 +44,8 @@ var paintingLayer = function(params)
 	{
 		if (!projection.planar)
 		{
-			var marks = self.computeMarks(new vector(message.position), new coordinateSystem(message.camera), message.radius);
+			var system = new coordinateSystem(message.camera);
+			var marks = self.computeMarks(new vector(message.position), system, message.radius);
 			message.objects = message.objects.concat(marks);
 		}
 		// addBeacons(message.objects);
@@ -52,7 +53,18 @@ var paintingLayer = function(params)
 		adjustScale(message.objects);
 		self.clear();
 		paintObjects(message.objects);
-		paintCrosshairs();
+		var center = {
+			x: canvas.width() / 2,
+			y: canvas.height() / 2,
+			color: '#00f',
+		};
+		paintCrosshairs(center);
+		if (message.target)
+		{
+			var target = projection.project(message.target);
+			target.color = '#f00';
+			paintCrosshairs(target);
+		}
 		self.show();
 	}
 
@@ -419,40 +431,37 @@ var paintingLayer = function(params)
 	}
 
 	/**
-	 * Paint the cross-hairs to aim.
+	 * Paint the cross-hairs to aim, both vehicle and projectiles.
 	 */
-	function paintCrosshairs()
+	function paintCrosshairs(crosshairs)
 	{
 		if (projection.planar)
 		{
 			return;
 		}
-		var color = '#f00';
-		var cx = canvas.width() / 2;
-		var cy = canvas.height() / 2;
 		var l = 5;
 		var draw = {
-			strokeStyle: color,
+			strokeStyle: crosshairs.color,
 			strokeWidth: 1,
 			rounded: true,
 			opacity: opacity,
-			x1: cx,
-			y1: cy - l,
-			x2: cx,
-			y2: cy + l,
+			x1: crosshairs.x,
+			y1: crosshairs.y - l,
+			x2: crosshairs.x,
+			y2: crosshairs.y + l,
 		};
 		canvas.drawLine(draw);
-		draw.x1 = cx - l;
-		draw.y1 = cy;
-		draw.x2 = cx + l;
-		draw.y2 = cy;
+		draw.x1 = crosshairs.x - l;
+		draw.y1 = crosshairs.y;
+		draw.x2 = crosshairs.x + l;
+		draw.y2 = crosshairs.y;
 		canvas.drawLine(draw);
 		canvas.drawArc( {
-			strokeStyle: color,
+			strokeStyle: crosshairs.color,
 			strokeWidth: 1,
 			rounded: true,
-			x: cx,
-			y: cy,
+			x: crosshairs.x,
+			y: crosshairs.y,
 			radius: l,
 			opacity: opacity,
 		});
