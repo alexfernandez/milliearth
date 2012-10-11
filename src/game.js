@@ -24,7 +24,7 @@
  * Requirements.
  */
 var globalParams = require('./params.js').globalParams;
-var gameWorld = require('./world.js').gameWorld;
+var gameWorld = require('./world/world.js').gameWorld;
 var player = require('./player.js');
 var connectedPlayer = player.connectedPlayer;
 var autoPlayer = player.autoPlayer;

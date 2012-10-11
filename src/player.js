@@ -24,7 +24,7 @@
  * Requirements.
  */
 var globalParams = require('./params.js').globalParams;
-var gameWorld = require('./world.js').gameWorld;
+var gameWorld = require('./world/world.js').gameWorld;
 var scriptingEngine = require('./atescript.js').scriptingEngine;
 var util = require('./util.js');
 var parser = util.parser;
