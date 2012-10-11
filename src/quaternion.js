@@ -198,9 +198,29 @@ function coordinateSystem(q, r, s, t)
 	 */
 	self.alignUpward = function(alignment)
 	{
+		if (alignment.length() == 0)
+		{
+			return;
+		}
 		var j = self.upward()
 		var p = alignment.unit();
-		var theta = Math.acos(j.scalarProduct(p));
+		var product = j.scalarProduct(p);
+		if (product == 0)
+		{
+			// no way to align
+			return;
+		}
+		if (product > 1)
+		{
+			// rounding error; no need to align
+			return
+		}
+		var theta = Math.acos(product);
+		if (isNaN(theta))
+		{
+			log.e('NaN angle: j ' + j + ' p ' + p + ' product ' + product);
+			return;
+		}
 		var v = j.vectorProduct(p);
 		turn(-theta, v);
 		return self;
