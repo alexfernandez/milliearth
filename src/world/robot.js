@@ -37,6 +37,60 @@ var extend = util.extend;
 
 
 /**
+ * A subjective view of the world around a robot. Params:
+ * - origin: where the view starts.
+ * - system: coordinate system that defines the axis.
+ */
+function subjectiveView(params)
+{
+	// self-reference
+	var self = this;
+
+	// attributes
+	self.origin = params.origin;
+	self.system = params.system;
+
+	/**
+	 * Find out if a body is visible or is behind the horizon.
+	 */
+	self.isVisible = function(body, height)
+	{
+		var position = body.position.difference(self.origin);
+		var distance = position.length();
+		var h1 = height;
+		var d1 = Math.sqrt(h1 * h1 + 2 * h1 * globalParams.meRadius);
+		if (distance > d1)
+		{
+			var h2 = body.computeHeight() + body.radius;
+			var d2 = Math.sqrt(h2 * h2 + 2 * h2 * globalParams.meRadius);
+			if (d1 + d2 < distance)
+			{
+				// below horizon
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Project the position of a body with respect to the line of sight.
+	 */
+	self.projectBodyPosition = function(body)
+	{
+		return self.projectPosition(body.position);
+	}
+
+	/**
+	 * Project a position with respect to the line of sight.
+	 */
+	self.projectPosition = function(position)
+	{
+		var difference = position.difference(self.origin);
+		return self.system.project(difference);
+	}
+}
+
+/**
  * A fighter robot.
  */
 function fighterRobot(params)
@@ -53,6 +107,7 @@ function fighterRobot(params)
 	self.type = 'robot';
 	self.projectiles = globalParams.projectiles;
 	self.color = '#080';
+	self.world = params.world;
 	var vehicle = new coordinateSystem();
 	var cannon = new dependentSystem(vehicle);
 	var shootTimeout = 0;
@@ -112,8 +167,8 @@ function fighterRobot(params)
 		var meBody = {
 			id: 'milliEarth',
 			type: 'milliEarth',
-			radius: self.world.milliEarth.radius,
-			position: self.world.milliEarth.position,
+			radius: globalParams.meRadius,
+			position: new vector(0, 0, 0),
 		};
 		var objects = [meBody];
 		for (var id in bodies)
@@ -167,54 +222,58 @@ function fighterRobot(params)
 	 */
 	self.computeViewUpdate = function(bodies)
 	{
-		var bodies = self.world.bodiesExcept(self.id);
-		var center = self.projectBodyPosition(self.world.milliEarth);
+		var view = new subjectiveView({
+			origin: self.computeViewPosition(),
+			system: vehicle,
+		});
+		var center = view.projectBodyPosition(self.world.milliEarth);
 		var meBody = {
 			id: 'milliEarth',
 			type: 'milliEarth',
-			radius: self.world.milliEarth.radius,
+			radius: globalParams.meRadius,
 			position: center,
 		};
 		var objects = [meBody];
 		for (var id in bodies)
 		{
-			addBodyUpdate(bodies[id], objects);
+			objects.concat(getBodyUpdate(bodies[id], view));
 		}
 		var target = self.computeCannonPosition(globalParams.targetDistance);
 		return {
 			camera: vehicle.q,
-			position: self.computeViewPosition(),
+			origin: view.origin,
 			speed: self.speed.length(),
-			radius: self.world.milliEarth.radius,
-			target: projectPosition(target),
+			radius: globalParams.meRadius,
+			target: view.projectPosition(target),
 			height: self.computeHeight() - self.radius,
 			objects: objects,
 		};
 	}
 
 	/**
-	 * Add the update that corresponds to a body.
+	 * Get the update that corresponds to a body.
 	 */
-	function addBodyUpdate(body, objects)
+	function getBodyUpdate(body, view)
 	{
-		if (!isVisible(body))
+		if (!view.isVisible(body, self.computeHeight()))
 		{
-			return;
+			return [];
 		}
+		var objects = []
 		var object = {
 			id: body.id,
 			type: body.type,
 			radius: body.radius,
-			position: self.projectBodyPosition(body),
+			position: view.projectBodyPosition(body),
 			color: body.color,
 		};
 		objects.push(object);
 		if (!(body instanceof fighterRobot))
 		{
-			return;
+			return objects;
 		}
-		var start = projectPosition(body.computeViewPosition());
-		var end = projectPosition(body.computeCannonPosition());
+		var start = view.projectPosition(body.computeViewPosition());
+		var end = view.projectPosition(body.computeCannonPosition());
 		var cannon = {
 			id: self.id + '.cannon',
 			type: 'cannon',
@@ -224,28 +283,7 @@ function fighterRobot(params)
 			color: '#f00',
 		}
 		objects.push(cannon);
-	}
-
-	/**
-	 * Find out if a body is visible or is behind the horizon.
-	 */
-	function isVisible(body)
-	{
-		var position = body.position.difference(self.position);
-		var distance = position.length();
-		var h1 = self.computeHeight();
-		var d1 = Math.sqrt(h1 * h1 + 2 * h1 * self.world.milliEarth.radius);
-		if (distance > d1)
-		{
-			var h2 = body.computeHeight() + body.radius;
-			var d2 = Math.sqrt(h2 * h2 + 2 * h2 * self.world.milliEarth.radius);
-			if (d1 + d2 < distance)
-			{
-				// below horizon
-				return false;
-			}
-		}
-		return true;
+		return objects;
 	}
 
 	/**
@@ -257,30 +295,12 @@ function fighterRobot(params)
 	}
 
 	/**
-	 * Project the position of a body with respect to the line of sight.
-	 */
-	self.projectBodyPosition = function(body)
-	{
-		return projectPosition(body.position);
-	}
-
-	/**
-	 * Project a position with respect to the line of sight.
-	 */
-	function projectPosition(position)
-	{
-		var origin = self.computeViewPosition();
-		var difference = position.difference(origin);
-		return vehicle.project(difference);
-	}
-
-	/**
 	 * Compute the horizon vanishing point.
 	 */
 	self.computeHorizon = function()
 	{
 		var x = 0;
-		var r = self.world.milliEarth.radius;
+		var r = globalParams.meRadius;
 		var h = self.computeHeight();
 		var d = Math.sqrt(h * h + 2 * h * r);
 		var y = r * r / (r + h) - r - h;

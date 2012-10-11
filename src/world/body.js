@@ -54,7 +54,6 @@ function massiveBody(params)
 
 	// attributes
 	self.id = params.id;
-	self.world = params.world;
 	self.mass = params.mass;
 	self.radius = params.radius;
 	self.position = params.position || new vector(0, 0, 0);
@@ -96,7 +95,7 @@ function massiveBody(params)
 	 */
 	self.computeHeight = function()
 	{
-		return self.position.length() - self.world.milliEarth.radius;
+		return self.position.length() - globalParams.meRadius;
 	}
 
 	/**

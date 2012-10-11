@@ -86,7 +86,7 @@ var gameWorld = function(id)
 		{
 			return {};
 		}
-		return player.computeViewUpdate();
+		return player.computeViewUpdate(self.bodiesExcept(id));
 	}
 
 	/**

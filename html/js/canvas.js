@@ -45,7 +45,7 @@ var paintingLayer = function(params)
 		if (!projection.planar)
 		{
 			var system = new coordinateSystem(message.camera);
-			var marks = self.computeMarks(new vector(message.position), system, message.radius);
+			var marks = self.computeMarks(new vector(message.origin), system, message.radius);
 			message.objects = message.objects.concat(marks);
 		}
 		// addBeacons(message.objects);
