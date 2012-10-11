@@ -25,7 +25,9 @@
  */
 var globalParams = require('./params.js').globalParams;
 var vector = require('./vector.js').vector;
-var cameraSystem = require('./quaternion.js').cameraSystem;
+var quaternion = require('./quaternion.js');
+var coordinateSystem = quaternion.coordinateSystem;
+var dependentSystem = quaternion.dependentSystem;
 var util = require('./util.js');
 var parser = util.parser;
 var log = util.log;
@@ -206,7 +208,8 @@ function fighterRobot(params)
 	self.type = 'robot';
 	self.projectiles = globalParams.projectiles;
 	self.color = '#080';
-	var system = new cameraSystem();
+	var vehicle = new coordinateSystem();
+	var cannon = new dependentSystem(vehicle);
 	var shootTimeout = 0;
 
 	/**
@@ -216,7 +219,7 @@ function fighterRobot(params)
 	{
 		self.position = position;
 		self.speed = speed;
-		system.vehicle.alignUpward(position);
+		vehicle.alignUpward(position);
 	}
 
 	/**
@@ -252,7 +255,7 @@ function fighterRobot(params)
 		{
 			self.speed.addScaled(horizontalSpeed.unit(), -deceleration);
 		}
-		system.vehicle.alignUpward(differenceUnit.scale(-1));
+		vehicle.alignUpward(differenceUnit.scale(-1));
 	}
 
 	/**
@@ -292,8 +295,8 @@ function fighterRobot(params)
 	self.getArrow = function()
 	{
 		var start = self.position.copy();
-		var v = system.upward();
-		var w = system.forward();
+		var v = vehicle.upward();
+		var w = vehicle.forward();
 		start.addScaled(w, -400);
 		start.addScaled(v, 400);
 		var end = self.position.copy();
@@ -343,7 +346,7 @@ function fighterRobot(params)
 			}
 		}
 		return {
-			camera: system.q,
+			camera: vehicle.q,
 			position: computeViewPosition(),
 			speed: self.speed.length(),
 			radius: self.world.milliEarth.radius,
@@ -379,7 +382,7 @@ function fighterRobot(params)
 	 */
 	function computeViewPosition()
 	{
-		return self.position.sumScaled(system.upward(), self.radius);
+		return self.position.sumScaled(vehicle.upward(), self.radius);
 	}
 
 	/**
@@ -389,7 +392,7 @@ function fighterRobot(params)
 	{
 		var origin = computeViewPosition();
 		var position = body.position.difference(origin);
-		return system.project(position);
+		return vehicle.project(position);
 	}
 
 	/**
@@ -414,7 +417,7 @@ function fighterRobot(params)
 	 */
 	self.accelerate = function(interval)
 	{
-		self.speed.addScaled(system.vehicle.forward(), globalParams.motorAcceleration * interval);
+		self.speed.addScaled(vehicle.forward(), globalParams.motorAcceleration * interval);
 	}
 
 	/**
@@ -432,51 +435,35 @@ function fighterRobot(params)
 	}
 
 	/**
-	 * Turn the camera left.
+	 * Turn the cannon left.
 	 */
-	self.lookLeft = function(interval)
+	self.pointLeft = function(interval)
 	{
-		system.camera.yaw(globalParams.turningAngle * interval);
+		cannon.yaw(globalParams.turningAngle * interval);
 	}
 
 	/**
-	 * Turn the camera right.
+	 * Turn the cannon right.
 	 */
-	self.lookRight = function(interval)
+	self.pointRight = function(interval)
 	{
-		system.vehicle.yaw(-globalParams.turningAngle * interval);
+		cannon.yaw(-globalParams.turningAngle * interval);
 	}
 
 	/**
-	 * Turn the camera up.
+	 * Turn the cannon up.
 	 */
-	self.lookUp = function(interval)
+	self.pointUp = function(interval)
 	{
-		system.camera.pitch(-globalParams.turningAngle * interval);
+		cannon.pitch(-globalParams.turningAngle * interval);
 	}
 
 	/**
-	 * Turn the camera down.
+	 * Turn the cannon down.
 	 */
-	self.lookDown = function(interval)
+	self.pointDown = function(interval)
 	{
-		system.camera.pitch(globalParams.turningAngle * interval);
-	}
-
-	/**
-	 * Turn camera sideways left.
-	 */
-	self.rollLeft = function(interval)
-	{
-		system.camera.roll(globalParams.turningAngle * interval);
-	}
-
-	/**
-	 * Turn camera sideways right.
-	 */
-	self.rollRight = function(interval)
-	{
-		system.camera.roll(-globalParams.turningAngle * interval);
+		cannon.pitch(globalParams.turningAngle * interval);
 	}
 
 	/**
@@ -484,7 +471,7 @@ function fighterRobot(params)
 	 */
 	self.turnLeft = function(interval)
 	{
-		system.vehicle.yaw(globalParams.turningAngle * interval);
+		vehicle.yaw(globalParams.turningAngle * interval);
 	}
 
 	/**
@@ -492,7 +479,7 @@ function fighterRobot(params)
 	 */
 	self.turnRight = function(interval)
 	{
-		system.vehicle.yaw(-globalParams.turningAngle * interval);
+		vehicle.yaw(-globalParams.turningAngle * interval);
 	}
 
 	/**
@@ -500,7 +487,7 @@ function fighterRobot(params)
 	 */
 	self.turnUp = function(interval)
 	{
-		system.vehicle.pitch(-globalParams.turningAngle * interval);
+		vehicle.pitch(-globalParams.turningAngle * interval);
 	}
 
 	/**
@@ -508,7 +495,23 @@ function fighterRobot(params)
 	 */
 	self.turnDown = function(interval)
 	{
-		system.vehicle.pitch(globalParams.turningAngle * interval);
+		vehicle.pitch(globalParams.turningAngle * interval);
+	}
+
+	/**
+	 * Turn vehicle sideways left.
+	 */
+	self.rollLeft = function(interval)
+	{
+		vehicle.roll(globalParams.turningAngle * interval);
+	}
+
+	/**
+	 * Turn vehicle sideways right.
+	 */
+	self.rollRight = function(interval)
+	{
+		vehicle.roll(-globalParams.turningAngle * interval);
 	}
 
 	/**
@@ -528,9 +531,9 @@ function fighterRobot(params)
 			id: 'projectile.' + self.id + '.' + self.projectiles,
 			world: self.world,
 		});
-		projectile.position = self.position.sum(system.forward().scale(self.radius + projectile.radius));
+		projectile.position = self.position.sum(cannon.forward().scale(self.radius + projectile.radius));
 		projectile.speed = self.speed.copy();
-		var momentum = system.forward().scale(globalParams.projectileSpeed * projectile.mass);
+		var momentum = vehicle.forward().scale(globalParams.projectileSpeed * projectile.mass);
 		self.mass -= projectile.mass;
 		// speed and recoil
 		self.transferMomentum(projectile, momentum);
