@@ -39,10 +39,12 @@ var keymap = new function()
 		83: {key: 's', event: 'brake'},
 		65: {key: 'a', event: 'turnLeft'},
 		68: {key: 'd', event: 'turnRight'},
-		37: {key: '←', event: 'rollLeft'},
-		38: {key: '↑', event: 'lookUp'},
-		39: {key: '→', event: 'rollRight'},
-		40: {key: '↓', event: 'lookDown'},
+		81: {key: 'q', event: 'rollLeft'},
+		69: {key: 'e', event: 'rollRight'},
+		37: {key: '←', event: 'pointLeft'},
+		38: {key: '↑', event: 'pointUp'},
+		39: {key: '→', event: 'pointRight'},
+		40: {key: '↓', event: 'pointDown'},
 		32: {key: 'Space', event: 'shoot', single: true},
 	};
 
