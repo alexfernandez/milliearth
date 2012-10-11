@@ -269,7 +269,7 @@ function coordinateSystem(q, r, s, t)
 	{
 		var r = new quaternion().init(angle, axis);
 		self.q = self.q.product(r);
-		self.update();
+		update();
 	}
 
 	/**
@@ -283,10 +283,11 @@ function coordinateSystem(q, r, s, t)
 	/**
 	 * Tell listeners that the quaternion is updated.
 	 */
-	self.update = function()
+	var update = function()
 	{
 		for (var index in listeners)
 		{
+			log.i('here');
 			listeners[index].update(self);
 		}
 	}
@@ -322,7 +323,6 @@ function dependentSystem(primary)
 	self.primary = primary;
 	self.primary.addListener(self);
 	var last = new quaternion(1, 0, 0, 0);
-	self.update();
 
 	/**
 	 * Update the primary quaternion.
@@ -334,6 +334,7 @@ function dependentSystem(primary)
 		self.q = original.product(last);
 		log.d('original: ' + original + ' last ' + last + ' final ' + self.q);
 	}
+	self.update();
 
 	/**
 	 * Printable representation.
@@ -348,7 +349,7 @@ function dependentSystem(primary)
 /**
  * Test quaternions.
  */
-function quaternionTest()
+function testQuaternion()
 {
 	var q = new quaternion(0, 1, 2, 3);
 	var r = new quaternion(4, 5, 6, 7);
@@ -371,36 +372,46 @@ function quaternionTest()
 }
 
 /**
+ * Check that the upward vector in the coordinate system is aligned with u.
+ * Return 0 on success, 1 on error.
+ */
+function checkUpward(system, u)
+{
+	if (!u.unit().equals(system.upward()))
+	{
+		log.e('Invalid coordinate alignment: ' + system.upward() + ' should be ' + u.unit());
+		return 1;
+	}
+	return 0;
+}
+
+/**
  * Test coordinate system.
  */
-function coordinateSystemTest()
+function testCoordinateSystem()
 {
+	var errors = 0;
 	var q1 = new quaternion(1, 2, 3, 4);
 	var system = new coordinateSystem(q1);
 	var u = new vector(2, 5, 7);
 	system.alignUpward(u);
-	if (!u.unit().equals(system.upward()))
-	{
-		log.e('Invalid coordinate alignment: ' + system.upward() + ' should be ' + u.unit());
-		return;
-	}
+	errors += checkUpward(system, u);
 	var q2 = new quaternion(5, 6, 7, 8);
 	var dependent = new dependentSystem(system);
 	dependent.alignUpward(u);
-	if (!u.unit().equals(dependent.upward()))
+	errors += checkUpward(dependent, u);
+	if (errors == 0)
 	{
-		log.e('Invalid dependent alignment: ' + dependent.upward() + ' should be ' + u.unit());
-		return;
+		log.success('coordinate system: OK');
 	}
-	log.success('coordinate system: OK');
 }
 
 module.exports.coordinateSystem = coordinateSystem;
 module.exports.dependentSystem = dependentSystem;
 
 module.exports.test = function() {
-	quaternionTest();
-	coordinateSystemTest();
+	testQuaternion();
+	testCoordinateSystem();
 };
 
 
