@@ -220,7 +220,7 @@ function fighterRobot(params)
 		self.position = position;
 		self.speed = speed;
 		vehicle.alignUpward(position);
-		cannon.yaw(globalParams.turningAngle * 0.02);
+		cannon.pitch(globalParams.turningAngle * 0.02);
 	}
 
 	/**
