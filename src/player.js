@@ -169,7 +169,7 @@ function autoComputer(robot)
 		var position = object.position;
 		if (position.z < 0)
 		{
-			if (position.x > 0)
+			if (position.x < 0)
 			{
 				robot.turnLeft(interval);
 			}
