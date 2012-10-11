@@ -49,5 +49,6 @@ $(function () {
 
 	var player = new clientPlayer();
 	player.click();
+	$('#debug').click(player.toggleDebug);
 });
 

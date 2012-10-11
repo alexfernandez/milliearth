@@ -28,6 +28,8 @@ var clientPlayer = function()
 	// self-reference
 	var self = this;
 
+	// if we are debugging
+	var debug = false;
 	// keep track of the websocket
 	var websocket;
 	// check if running
@@ -256,6 +258,10 @@ var clientPlayer = function()
 			console.error('Not running');
 			return;
 		}
+		if (debug)
+		{
+			$('#debug').text(JSON.stringify(message));
+		}
 		countUpdate(message.id);
 		$('#simulation').clearCanvas();
 		viewLayer.paintUpdate(message);
@@ -337,6 +343,14 @@ var clientPlayer = function()
 	self.error = function(message)
 	{
 		$('#status').text('Server error: ' + message.message);
+	}
+
+	/**
+	 * Toggle debug.
+	 */
+	self.toggleDebug = function()
+	{
+		debug = !debug;
 	}
 }
 
