@@ -236,7 +236,7 @@ function fighterRobot(params)
 		var objects = [meBody];
 		for (var id in bodies)
 		{
-			objects.concat(getBodyUpdate(bodies[id], view));
+			objects = objects.concat(getBodyUpdate(bodies[id], view));
 		}
 		var target = self.computeCannonPosition(globalParams.targetDistance);
 		return {
@@ -450,7 +450,7 @@ function fighterRobot(params)
 		self.world.addObject(projectile);
 		self.projectiles--;
 		shootTimeout = self.world.seconds + globalParams.projectileRechargeTime;
-		log.i('Player ' + self.id + ' has fired a shot!');
+		log.d('Player ' + self.id + ' has fired a shot!');
 	}
 }
 
