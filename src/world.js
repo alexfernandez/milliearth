@@ -335,11 +335,13 @@ function fighterRobot(params)
 		{
 			addBodyUpdate(bodies[id], objects);
 		}
+		var target = self.computeCannonPosition(globalParams.targetDistance);
 		return {
 			camera: vehicle.q,
 			position: self.computeViewPosition(),
 			speed: self.speed.length(),
 			radius: self.world.milliEarth.radius,
+			target: projectPosition(target),
 			height: self.computeHeight() - self.radius,
 			objects: objects,
 		};
@@ -547,11 +549,13 @@ function fighterRobot(params)
 	}
 
 	/**
-	 * Compute the final position of the cannon.
+	 * Compute the final position of the cannon. If a length is given it is counted
+	 * from the start of the cannon.
 	 */
-	self.computeCannonPosition = function()
+	self.computeCannonPosition = function(length)
 	{
-		return self.computeViewPosition().sum(cannon.forward().scale(self.radius));
+		length = length || self.radius;
+		return self.computeViewPosition().sum(cannon.forward().scale(length));
 	}
 
 	/**
