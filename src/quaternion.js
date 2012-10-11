@@ -26,6 +26,7 @@
 var util = require('./util.js');
 var log = util.log;
 var extend = util.extend;
+var round = require('./vector.js').round;
 var vector = require('./vector.js').vector;
 
 
@@ -182,6 +183,7 @@ function coordinateSystem(q, r, s, t)
 	{
 		self.q = new quaternion(q, r, s, t);
 	}
+	var listeners = [];
 
 	/**
 	 * Project a position along the coordinate system.
@@ -271,11 +273,22 @@ function coordinateSystem(q, r, s, t)
 	}
 
 	/**
-	 * Do something here when the quaternion is updated.
+	 * Add a listener for update events.
+	 */
+	self.addListener = function(listener)
+	{
+		listeners.push(listener);
+	}
+
+	/**
+	 * Tell listeners that the quaternion is updated.
 	 */
 	self.update = function()
 	{
-		// void
+		for (var index in listeners)
+		{
+			listeners[index].update(self);
+		}
 	}
 
 	/**
@@ -289,9 +302,11 @@ function coordinateSystem(q, r, s, t)
 
 
 /**
- * A coordinate system defined by two quaternions: vehicle and an independent camera.
+ * A coordinate system that depends on another one (is mounted on it),
+ * but keeps its own quaternion.
+ * Useful for a camera, a cannon, etcetera.
  */
-function cameraSystem(vehicle, camera)
+function dependentSystem(primary)
 {
 	// self-reference
 	var self = this;
@@ -299,39 +314,25 @@ function cameraSystem(vehicle, camera)
 	extend(new coordinateSystem(), self);
 
 	// attributes
-	if (!vehicle)
+	if (!primary)
 	{
-		vehicle = new quaternion(1, 0, 0, 0);
-		camera = new quaternion(1, 0, 0, 0);
+		log.e('Must supply a primary coordinate system');
+		return;
 	}
-	else if (vehicle.vehicle)
-	{
-		vehicle = new quaternion(vehicle.vehicle).unit();
-		camera = new quaternion(vehicle.camera).unit();
-	}
-	else
-	{
-		vehicle = vehicle.unit();
-		if (!camera)
-		{
-			log.e('Should supply camera quaternion');
-			return;
-		}
-		camera = camera.unit();
-	}
-	self.vehicle = new coordinateSystem(vehicle);
-	self.camera = new coordinateSystem(camera);
-	// make sure both elements update the camera system
-	self.vehicle.update = update;
-	self.camera.update = update;
-	update();
+	self.primary = primary;
+	self.primary.addListener(self);
+	var last = new quaternion(1, 0, 0, 0);
+	self.update();
 
 	/**
-	 * Compute the final quaternion.
+	 * Update the primary quaternion.
 	 */
-	function update()
+	self.update = function()
 	{
-		self.q = self.vehicle.q.product(self.camera.q);
+		var original = self.q.product(last.conjugate());
+		last = self.primary.q;
+		self.q = original.product(last);
+		log.d('original: ' + original + ' last ' + last + ' final ' + self.q);
 	}
 
 	/**
@@ -339,7 +340,7 @@ function cameraSystem(vehicle, camera)
 	 */
 	self.toString = function()
 	{
-		return '(vehicle: ' + self.vehicle.q + ', camera: ' + self.camera.q + ')';
+		return '(primary: ' + self.primary.q + ', dependent: ' + self.q + ')';
 	}
 }
 
@@ -384,18 +385,18 @@ function coordinateSystemTest()
 		return;
 	}
 	var q2 = new quaternion(5, 6, 7, 8);
-	system = new cameraSystem(q1, q2);
-	system.alignUpward(u);
-	if (!u.unit().equals(system.upward()))
+	var dependent = new dependentSystem(system);
+	dependent.alignUpward(u);
+	if (!u.unit().equals(dependent.upward()))
 	{
-		log.e('Invalid camera alignment: ' + system.upward() + ' should be ' + u.unit());
+		log.e('Invalid dependent alignment: ' + dependent.upward() + ' should be ' + u.unit());
 		return;
 	}
 	log.success('coordinate system: OK');
 }
 
 module.exports.coordinateSystem = coordinateSystem;
-module.exports.cameraSystem = cameraSystem;
+module.exports.dependentSystem = dependentSystem;
 
 module.exports.test = function() {
 	quaternionTest();

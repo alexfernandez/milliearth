@@ -350,6 +350,7 @@ function vectorTest()
 
 
 module.exports.isNumber = isNumber;
+module.exports.round = round;
 module.exports.planarPoint = planarPoint;
 module.exports.vector = vector;
 module.exports.polarVector = polarVector;
