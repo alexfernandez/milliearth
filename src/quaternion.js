@@ -287,7 +287,6 @@ function coordinateSystem(q, r, s, t)
 	{
 		for (var index in listeners)
 		{
-			log.i('here');
 			listeners[index].update(self);
 		}
 	}
@@ -332,7 +331,6 @@ function dependentSystem(primary)
 		var original = self.q.product(last.conjugate());
 		last = self.primary.q;
 		self.q = original.product(last);
-		log.d('original: ' + original + ' last ' + last + ' final ' + self.q);
 	}
 	self.update();
 
@@ -397,9 +395,17 @@ function testCoordinateSystem()
 	system.alignUpward(u);
 	errors += checkUpward(system, u);
 	var q2 = new quaternion(5, 6, 7, 8);
+	system = new coordinateSystem(q2);
 	var dependent = new dependentSystem(system);
 	dependent.alignUpward(u);
 	errors += checkUpward(dependent, u);
+	// now turn original, check dependent is aligned
+	var q3 = new quaternion(1, 3, 5, 7);
+	system = new coordinateSystem(q3);
+	dependent = new dependentSystem(system);
+	system.alignUpward(u);
+	errors += checkUpward(dependent, u);
+	if (errors == 0)
 	if (errors == 0)
 	{
 		log.success('coordinate system: OK');
