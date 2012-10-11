@@ -323,7 +323,7 @@ function fighterRobot(params)
 	self.computeViewUpdate = function(bodies)
 	{
 		var bodies = self.world.bodiesExcept(self.id);
-		var center = self.computePosition(self.world.milliEarth);
+		var center = self.projectBodyPosition(self.world.milliEarth);
 		var meBody = {
 			id: 'milliEarth',
 			type: 'milliEarth',
@@ -337,7 +337,7 @@ function fighterRobot(params)
 		}
 		return {
 			camera: vehicle.q,
-			position: computeViewPosition(),
+			position: self.computeViewPosition(),
 			speed: self.speed.length(),
 			radius: self.world.milliEarth.radius,
 			height: self.computeHeight() - self.radius,
@@ -358,13 +358,24 @@ function fighterRobot(params)
 			id: body.id,
 			type: body.type,
 			radius: body.radius,
-			position: self.computePosition(body),
+			position: self.projectBodyPosition(body),
 			color: body.color,
 		};
-		if (object instanceof fighterRobot)
-		{
-		}
 		objects.push(object);
+		if (!(body instanceof fighterRobot))
+		{
+			return;
+		}
+		var start = projectPosition(body.computeViewPosition());
+		var end = projectPosition(body.computeCannonPosition());
+		var cannon = {
+			id: self.id + '.cannon',
+			type: 'cannon',
+			position: start,
+			start: start,
+			end: end,
+		}
+		objects.push(cannon);
 	}
 
 	/**
@@ -392,19 +403,27 @@ function fighterRobot(params)
 	/**
 	 * Compute the position of the view origin.
 	 */
-	function computeViewPosition()
+	self.computeViewPosition = function()
 	{
 		return self.position.sumScaled(vehicle.upward(), self.radius);
 	}
 
 	/**
-	 * Compute the position of a body with respect to the line of sight.
+	 * Project the position of a body with respect to the line of sight.
 	 */
-	self.computePosition = function(body)
+	self.projectBodyPosition = function(body)
 	{
-		var origin = computeViewPosition();
-		var position = body.position.difference(origin);
-		return vehicle.project(position);
+		return projectPosition(body.position);
+	}
+
+	/**
+	 * Project a position with respect to the line of sight.
+	 */
+	function projectPosition(position)
+	{
+		var origin = self.computeViewPosition();
+		var difference = position.difference(origin);
+		return vehicle.project(difference);
 	}
 
 	/**
@@ -527,11 +546,11 @@ function fighterRobot(params)
 	}
 
 	/**
-	 * Compute the position of the cannon.
+	 * Compute the final position of the cannon.
 	 */
 	self.computeCannonPosition = function()
 	{
-		return computeViewPosition().sum(cannon.forward().scale(self.radius));
+		return self.computeViewPosition().sum(cannon.forward().scale(self.radius));
 	}
 
 	/**

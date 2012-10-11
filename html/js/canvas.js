@@ -441,7 +441,7 @@ var paintingLayer = function(params)
 			{
 				self.paintArrow(object);
 			}
-			else if (object.type == 'mark')
+			else if (object.type == 'mark' || object.type == 'cannon')
 			{
 				paintLine(object);
 			}
