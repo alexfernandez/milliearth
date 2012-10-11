@@ -220,6 +220,7 @@ function fighterRobot(params)
 		self.position = position;
 		self.speed = speed;
 		vehicle.alignUpward(position);
+		cannon.yaw(globalParams.turningAngle * 0.02);
 	}
 
 	/**
@@ -332,18 +333,7 @@ function fighterRobot(params)
 		var objects = [meBody];
 		for (var id in bodies)
 		{
-			var body = bodies[id];
-			if (isVisible(body))
-			{
-				var object = {
-					id: body.id,
-					type: 'robot',
-					radius: body.radius,
-					position: self.computePosition(body),
-					color: body.color,
-				};
-				objects.push(object);
-			}
+			addBodyUpdate(bodies[id], objects);
 		}
 		return {
 			camera: vehicle.q,
@@ -353,6 +343,28 @@ function fighterRobot(params)
 			height: self.computeHeight() - self.radius,
 			objects: objects,
 		};
+	}
+
+	/**
+	 * Add the update that corresponds to a body.
+	 */
+	function addBodyUpdate(body, objects)
+	{
+		if (!isVisible(body))
+		{
+			return;
+		}
+		var object = {
+			id: body.id,
+			type: body.type,
+			radius: body.radius,
+			position: self.computePosition(body),
+			color: body.color,
+		};
+		if (object instanceof fighterRobot)
+		{
+		}
+		objects.push(object);
 	}
 
 	/**
@@ -515,6 +527,14 @@ function fighterRobot(params)
 	}
 
 	/**
+	 * Compute the position of the cannon.
+	 */
+	self.computeCannonPosition = function()
+	{
+		return computeViewPosition().sum(cannon.forward().scale(self.radius));
+	}
+
+	/**
 	 * Shoot a projectile.
 	 */
 	self.shoot = function()
@@ -531,7 +551,7 @@ function fighterRobot(params)
 			id: 'projectile.' + self.id + '.' + self.projectiles,
 			world: self.world,
 		});
-		projectile.position = computeViewPosition().sum(cannon.forward().scale(self.radius + projectile.radius));
+		projectile.position = self.computeCannonPosition();
 		projectile.speed = self.speed.copy();
 		var momentum = cannon.forward().scale(globalParams.projectileSpeed * projectile.mass);
 		self.mass -= projectile.mass;
