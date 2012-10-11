@@ -327,64 +327,6 @@ function cameraSystem(vehicle, camera)
 	update();
 
 	/**
-	 * Turn the vehicle around the pitch angle (left and right), radians.
-	 */
-	self.pitchVehicle = function(angle)
-	{
-		turnVehicle(-angle, self.sideways(self.vehicle));
-	}
-
-	/**
-	 * Turn the vehicle around the yaw angle (up and down), radians.
-	 */
-	self.yawVehicle = function(angle)
-	{
-		turnVehicle(angle, self.upward(self.vehicle));
-	}
-
-	/**
-	 * Turn the vehicle around the roll angle (sideways), radians.
-	 */
-	self.rollVehicle = function(angle)
-	{
-		turnVehicle(-angle, self.forward(self.vehicle));
-	}
-
-	/**
-	 * Turn the camera around the pitch angle (up and down), radians.
-	 */
-	self.pitchCamera = function(angle)
-	{
-		turnCamera(-angle, self.sideways());
-	}
-
-	/**
-	 * Turn the camera around the yaw angle (left and right horizontally), radians.
-	 */
-	self.yawCamera = function(angle)
-	{
-		turnCamera(angle, self.upward());
-	}
-
-	/**
-	 * Turn the camera around the roll angle (sideways), radians.
-	 */
-	self.rollCamera = function(angle)
-	{
-		turnCamera(-angle, self.forward());
-	}
-	
-	/**
-	 * Turn the camera on the given axis by the given angle.
-	 */
-	function turnCamera(angle, axis)
-	{
-		var r = new quaternion().init(angle, axis);
-		self.camera = self.camera.product(r);
-		compute();
-	}
-
-	/**
 	 * Compute the final quaternion.
 	 */
 	function update()
