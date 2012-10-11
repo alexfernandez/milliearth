@@ -597,7 +597,7 @@ var paintingLayer = function(params)
 			return;
 		}
 		var draw = {
-			strokeStyle: "#00f",
+			strokeStyle: line.color || '#00f',
 			strokeWidth: 1,
 			rounded: true,
 			opacity: opacity,

@@ -374,6 +374,7 @@ function fighterRobot(params)
 			position: start,
 			start: start,
 			end: end,
+			color: '#f00',
 		}
 		objects.push(cannon);
 	}
