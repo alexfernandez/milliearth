@@ -128,8 +128,20 @@ function fighterRobot(params)
 	 */
 	self.computeMilliEarthCollision = function(milliEarth, interval)
 	{
-		var differenceUnit = milliEarth.position.difference(self.position).unit();
+		var difference = milliEarth.position.difference(self.position);
+		var differenceUnit = difference.unit();
 		var collisionSpeed = self.speed.scalarProduct(differenceUnit);
+		var separation = difference.length() - milliEarth.radius - self.radius;
+		if (isNaN(collisionSpeed))
+		{
+			log.e('Invalid collision speed for speed ' + self.speed + ' and difference unit vector ' + differenceUnit);
+			return;
+		}
+		if (collisionSpeed < globalParams.minCollisionSpeed)
+		{
+			self.position.addScaled(differenceUnit, separation);
+			return;
+		}
 		var verticalSpeed = differenceUnit.scale(collisionSpeed);
 		var horizontalSpeed = self.speed.difference(verticalSpeed);
 		if (collisionSpeed > globalParams.minHarmSpeed)

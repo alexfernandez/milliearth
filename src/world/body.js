@@ -60,6 +60,7 @@ function massiveBody(params)
 	self.speed = params.speed || new vector(0, 0, 0);
 	self.life = params.life;
 	self.active = true;
+	self.rolling = false;
 
 	/**
 	 * Compute gravitational attraction by another body in the given interval (in seconds).
@@ -68,11 +69,17 @@ function massiveBody(params)
 	{
 		var difference = attractor.position.difference(self.position);
 		var distance = difference.length();
+		var separation = distance - self.radius - attractor.radius;
 		var factor = globalParams.bigG * attractor.mass / Math.pow(distance, 3);
 		self.speed.addScaled(difference, factor * interval);
-		if (distance < self.radius + attractor.radius)
+		if (separation <= 0)
 		{
+			self.rolling = true;
 			self.computeMilliEarthCollision(attractor, interval);
+		}
+		else
+		{
+			self.rolling = false;
 		}
 	}
 

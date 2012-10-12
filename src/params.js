@@ -55,6 +55,8 @@ var globalParams = new function()
 	this.robotRadius = 2;
 	// starting life for players in energy, joules
 	this.robotLife = 3e7;
+	// minimum speed to consider a collision, m/s
+	this.minCollisionSpeed = 0.2;
 	// set marks every given distance, m
 	this.markDistance = 100;
 	// half-width of the speed marks, m
