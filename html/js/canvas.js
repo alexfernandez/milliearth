@@ -511,7 +511,6 @@ var paintingLayer = function(params)
 		text.text = 'E';
 		text.x = cx + radius + marginText;
 		canvas.drawText(text);
-		$('#message').text(JSON.stringify(compass));
 		if (!compass.z)
 		{
 			return;
