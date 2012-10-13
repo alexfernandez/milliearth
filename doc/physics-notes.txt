@@ -93,6 +93,15 @@ http://en.wikipedia.org/wiki/Relative_effectiveness_factor
 http://en.wikipedia.org/wiki/Plastic_explosive
 http://en.wikipedia.org/wiki/Blast_wave
 
+Energy Storage
+==============
+
+The vehicle must store electric energy somehow.
+
+== References
+
+http://en.wikipedia.org/wiki/Flywheel_energy_storage
+
 License
 =======
 
