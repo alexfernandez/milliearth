@@ -1,0 +1,83 @@
+Physics Notes for MilliEarth
+============================
+
+MilliEarth attempts to have accurate physics for all elements.
+
+Ionic Motor
+===========
+
+The ionic motor accelerates particles before sending them off in a direction
+ opposite to the intended movement; the transfer of momentum between the
+ particles and the ship causes the acceleration.
+
+Suppose a vehicle of mass m uses an ionic motor; it expels an amount of mass
+ dm per unit of time dt, so the transfer is dm/dt. Each particle is expelled
+ at a speed v relative to the vehicle.
+
+The essential variables are the mass of the particles expelled per second
+ (in kg/s) and the speed of the particles (in m/s). Momentum transferred is:
+  dp = dm·v => dp/dt = v·dm/dt.
+while the energy required to accelerate the particles is:
+  dE = dm·v²/2 => dE/dt = (1/2)·v²·dm/dt
+and power is energy per second, so
+  P = (1/2)·v²·dm/dt.
+Finally, by the conservation of momentum the acceleration will be:
+  m·dv = dm·v => m·dv/dt = v·dm/dt => a = dv/dt = (v/m)·dm/dt.
+
+One important limitation of this kind of motor is that as the speed of the
+ particles increases, so does the energy needed to generate the desired
+ acceleration. In the formulas above, solving for dm/dt gives:
+  a = (v/m)·2P/v² = 2P/(v·m).
+so as v grows so does P, to keep a constant. The maximum thrust (force in the
+ desired direction) will be delivered if the speed of the particles is the
+ speed of light, c=3·10⁸m/s. But in that case the power needed will be
+ ridiculously high:
+  P = (1/2)·m·a·c,
+and using the correct relativistic equations only makes the problem worse.
+ However the amount of mass to be released per second is very small:
+  dm/dt = m·a/c.
+
+If we assume a vehicle of 200kg and a desired acceleration of ~1g (10m/s²),
+ the power at the speed of light is:
+  P = (1/2)·200·10·3·10⁸ = 2.94e12 kg·m²/s³ = 2.94e12 W,
+or almost 3 TeraWatts. The amount of mass per second is, as expected,
+ minuscule:
+  dm/dt = 200·10/3·10⁸ ~ 6.7·10^(-6) kg/s,
+or 6 milligrams per second.
+
+However, keeping the speed to a more manageable value
+ of 1000m/s:
+  P = (1/2)·200·10·1000 = 1e6 W,
+or 1MW. But in this case the amount of mass released per second is much
+ larger:
+  dm/dt = 200·10/1000 = 2 kg/s.
+
+Thus ordinary ionic motors are only able to generate a very small amount of
+ thrust, using reasonable power.
+
+== References
+
+http://en.wikipedia.org/wiki/Ion_thruster
+
+License
+=======
+
+(C) 2012 Alex Fernández.
+
+MilliEarth is published under the GPL. See the file LICENSE.txt for details.
+
+ This file is part of MilliEarth.
+
+ MilliEarth is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+ 
+ MilliEarth is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with MilliEarth.  If not, see <http://www.gnu.org/licenses/>.
+
