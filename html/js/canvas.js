@@ -65,6 +65,10 @@ var paintingLayer = function(params)
 			target.color = '#f00';
 			paintCrosshairs(target);
 		}
+		if (message.compass)
+		{
+			paintCompass(message.compass);
+		}
 		self.show();
 	}
 
@@ -464,6 +468,65 @@ var paintingLayer = function(params)
 			y: crosshairs.y,
 			radius: l,
 			opacity: opacity,
+		});
+	}
+
+	/**
+	 * Paint a compass with the current position.
+	 */
+	function paintCompass(compass)
+	{
+		var radius = 40;
+		var margin = 30;
+		var marginText = 10;
+		var cx = canvas.width() - radius - margin;
+		var cy = canvas.height() - radius - margin;
+		canvas.drawArc({
+			strokeStyle: '#888',
+			strokeWidth: 1,
+			rounded: true,
+			x: cx,
+			y: cy,
+			radius: radius,
+			opacity: opacity,
+		});
+		var text = {
+			fillStyle: '#888',
+			strokeWidth: 1,
+			x: cx,
+			y: cy - radius - marginText,
+			font: '10pt Helvetica, sans-serif',
+			text: 'N',
+			fromCenter: true,
+			opacity: opacity,
+		};
+		canvas.drawText(text);
+		text.text = 'S';
+		text.y = cy + radius + marginText;
+		canvas.drawText(text);
+		text.text = 'W';
+		text.y = cy;
+		text.x = cx - radius - marginText;
+		canvas.drawText(text);
+		text.text = 'E';
+		text.x = cx + radius + marginText;
+		canvas.drawText(text);
+		$('#message').text(JSON.stringify(compass));
+		if (!compass.z)
+		{
+			return;
+		}
+		var dx = radius * compass.x;
+		var dy = radius * compass.z;
+		canvas.drawLine({
+			strokeStyle: '#00f',
+			strokeWidth: 1,
+			rounded: true,
+			opacity: opacity,
+			x1: cx,
+			y1: cy,
+			x2: cx + dx,
+			y2: cy - dy,
 		});
 	}
 }

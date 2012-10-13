@@ -256,10 +256,20 @@ function fighterRobot(params)
 			origin: view.origin,
 			speed: self.speed.length(),
 			radius: globalParams.meRadius,
-			target: view.projectPosition(target),
 			height: self.computeHeight() - self.radius,
+			target: view.projectPosition(target),
+			compass: computeCompass(view),
 			objects: objects,
 		};
+	}
+
+	/**
+	 * Compute a unit vector that points to the North pole.
+	 */
+	function computeCompass(view)
+	{
+		var north = new vector(0, globalParams.meRadius, 0);
+		return view.projectPosition(north).unit();
 	}
 
 	/**
