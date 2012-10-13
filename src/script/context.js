@@ -571,7 +571,7 @@ function scriptingContext(params)
 		var sentence = self.current();
 		while (!endsBlock(sentence) && !self.finished())
 		{
-			log.d('Skipping ' + sentence);
+			// log.d('Skipping ' + sentence);
 			sentence = self.currentSkip();
 		}
 	}

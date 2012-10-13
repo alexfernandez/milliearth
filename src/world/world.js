@@ -86,7 +86,7 @@ var gameWorld = function(id)
 		{
 			return {};
 		}
-		return player.computeViewUpdate(bodiesExcept(id));
+		return player.computeViewUpdate(self.bodiesExcept(id));
 	}
 
 	/**
@@ -276,7 +276,7 @@ var gameWorld = function(id)
 	/**
 	 * Return all bodies except the given one.
 	 */
-	function bodiesExcept(id)
+	self.bodiesExcept = function(id)
 	{
 		var except = {};
 		iterate(function(body) {

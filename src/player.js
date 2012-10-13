@@ -139,9 +139,9 @@ function autoComputer(robot)
 	/**
 	 * Run an update of the outside world.
 	 */
-	self.update = function(interval)
+	self.update = function(interval, bodies)
 	{
-		var update = robot.computeViewUpdate();
+		var update = robot.computeViewUpdate(bodies);
 		self.speed = update.speed;
 		self.view = {};
 		self.cannon = {};
@@ -153,10 +153,9 @@ function autoComputer(robot)
 			if (object.type == 'robot')
 			{
 				object.enemy = true;
-				// log.i('position: ' + object.position);
 			}
 		}
-		update = robot.computeCannonUpdate();
+		update = robot.computeCannonUpdate(bodies);
 		for (var index in update.objects)
 		{
 			var object = update.objects[index];
@@ -334,7 +333,7 @@ function autoPlayer(params)
 	self.shortLoop = function(delay)
 	{
 		var interval = delay / 1000;
-		computer.update(interval);
+		computer.update(interval, params.world.bodiesExcept(self.id));
 		engine.run(interval);
 	}
 }
