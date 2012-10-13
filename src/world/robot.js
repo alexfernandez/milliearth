@@ -264,6 +264,26 @@ function fighterRobot(params)
 	}
 
 	/**
+	 * Compute an update of what the cannon sees.
+	 */
+	self.computeCannonUpdate = function(bodies)
+	{
+		var view = new subjectiveView({
+			origin: self.computeCannonPosition(),
+			system: cannon,
+		});
+		var objects = [];
+		for (var id in bodies)
+		{
+			objects = objects.concat(getBodyUpdate(bodies[id], view));
+		}
+		return {
+			speed: self.speed.length(),
+			objects: objects,
+		}
+	}
+
+	/**
 	 * Compute a unit vector that points to the North pole.
 	 */
 	function computeCompass(view)

@@ -131,6 +131,7 @@ function autoComputer(robot)
 
 	// attributes
 	self.view = {};
+	self.cannon = {};
 	self.scope = {};
 	self.map = {};
 	self.speed = 0;
@@ -142,6 +143,9 @@ function autoComputer(robot)
 	{
 		var update = robot.computeViewUpdate();
 		self.speed = update.speed;
+		self.view = {};
+		self.cannon = {};
+		self.scope = {};
 		for (var index in update.objects)
 		{
 			var object = update.objects[index];
@@ -151,6 +155,12 @@ function autoComputer(robot)
 				object.enemy = true;
 				// log.i('position: ' + object.position);
 			}
+		}
+		update = robot.computeCannonUpdate();
+		for (var index in update.objects)
+		{
+			var object = update.objects[index];
+			self.cannon[object.id] = object;
 			var scopeDistance = Math.sqrt(object.position.x * object.position.x + object.position.y * object.position.y);
 			if (scopeDistance < globalParams.scopeWidth && object.position.z > 0)
 			{
@@ -202,6 +212,53 @@ function autoComputer(robot)
 		else
 		{
 			robot.turnDown(interval);
+		}
+		return interval;
+	}
+
+	/**
+	 * Point the cannon at an object with position.
+	 */
+	self.pointCannonAt = function(interval, object)
+	{
+		//refresh object
+		var object = self.cannon[object.id];
+		var position = object.position;
+		if (position.z < 0)
+		{
+			if (position.x < 0)
+			{
+				robot.pointLeft(interval);
+			}
+			else
+			{
+				robot.pointRight(interval);
+			}
+			if (position.y > 0)
+			{
+				robot.pointUp(interval);
+			}
+			else
+			{
+				robot.pointDown(interval);
+			}
+			return interval;
+		}
+		if (position.x < 0)
+		{
+			robot.pointLeft(interval);
+		}
+		else
+		{
+			robot.pointRight(interval);
+		}
+		if (position.y > 0)
+		{
+			robot.pointUp(interval);
+		}
+		else
+		{
+			robot.pointDown(interval);
 		}
 		return interval;
 	}
