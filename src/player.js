@@ -273,20 +273,20 @@ function autoComputer(robot)
 		var tx = position.x / position.z / globalParams.turningAngle;
 		if (position.x < 0)
 		{
-			robot.turnLeft(Math.min(interval, -tx));
+			robot.pointLeft(Math.min(interval, tx));
 		}
 		else
 		{
-			robot.turnRight(Math.min(interval, tx));
+			robot.pointRight(Math.min(interval, tx));
 		}
 		var ty = position.y / position.z / globalParams.turningAngle;
 		if (position.y > 0)
 		{
-			robot.turnUp(Math.max(interval, ty));
+			robot.pointUp(Math.max(interval, ty));
 		}
 		else
 		{
-			robot.turnDown(Math.max(interval, -ty));
+			robot.pointDown(Math.max(interval, ty));
 		}
 		return interval;
 	}
