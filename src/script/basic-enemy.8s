@@ -21,7 +21,7 @@
 # locate enemy in view, shoot towards it
 if enemy in view:
 	repeat:
-		point at it;
+		point cannon at it;
 		until it is in scope;
 	repeat:
 		refine scope at it;
