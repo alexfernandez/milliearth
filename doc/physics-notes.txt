@@ -53,11 +53,45 @@ or 1MW. But in this case the amount of mass released per second is much
   dm/dt = 200·10/1000 = 2 kg/s.
 
 Thus ordinary ionic motors are only able to generate a very small amount of
- thrust, using reasonable power.
+ thrust, using reasonable power. In MilliEarth we go for a gigantic amount of
+ power and mass expelled, in exchange for the higher thrusts needed to
+ manoeuver in space.
 
 == References
 
 http://en.wikipedia.org/wiki/Ion_thruster
+
+Explosives
+==========
+
+In space there is no oxygen. This means that all combustive materials must
+ carry their oxidant agent (O² or an equivalent) with them to burn; and all
+ explosives to explode.
+
+Contrary to my initial naïve assumptions, explosives do carry their oxidant
+ with them; there is no time to react with atmospheric oxygen. In consequence,
+ high power explosives carry much less energy than e.g. gasoline (or even
+ butter!), but deliver it in a short fraction of a second instead of burning
+ slowly. TNT in particular yields about 2.8 megajoules (MJ) per kilogram of
+ explosive energy.
+
+Today there are plastic explosives with more than twice the explosive energy
+ of TNT per kg. It is safe to assume that in the future even higher
+ concentrations will be common.
+
+Now, how do explosives yield their explosive energy, and how would it affect
+ a robot in a vacuum? First there is the blast wave, which in the absence of
+ air would be just a rush of high-pressure, hot gas. Then the debris of the
+ explosion (with the help of some shrapnel) will cause severe damage to any
+ object within the blast radius.
+
+== References
+
+http://en.wikipedia.org/wiki/TNT_equivalent
+http://en.wikipedia.org/wiki/Trinitrotoluene#Energy_content
+http://en.wikipedia.org/wiki/Relative_effectiveness_factor
+http://en.wikipedia.org/wiki/Plastic_explosive
+http://en.wikipedia.org/wiki/Blast_wave
 
 License
 =======
