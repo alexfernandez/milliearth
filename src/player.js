@@ -268,12 +268,12 @@ function autoComputer(robot)
 	self.refineScopeAt = function(interval, object)
 	{
 		//refresh object
-		var object = self.view[object.id];
+		var object = self.cannon[object.id];
 		var position = object.position;
 		var tx = position.x / position.z / globalParams.turningAngle;
 		if (position.x < 0)
 		{
-			robot.pointLeft(Math.min(interval, tx));
+			robot.pointLeft(Math.min(interval, -tx));
 		}
 		else
 		{
@@ -282,11 +282,11 @@ function autoComputer(robot)
 		var ty = position.y / position.z / globalParams.turningAngle;
 		if (position.y > 0)
 		{
-			robot.pointUp(Math.max(interval, ty));
+			robot.pointUp(Math.min(interval, ty));
 		}
 		else
 		{
-			robot.pointDown(Math.max(interval, ty));
+			robot.pointDown(Math.min(interval, -ty));
 		}
 		return interval;
 	}
