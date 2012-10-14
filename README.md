@@ -58,6 +58,12 @@ Just edit the script that appears at the right of your computer opponent and
 
 See the enclosed file doc/atescript.txt for more info.
 
+Acknowledgements
+================
+
+Thanks to Carlos Santisteban for so many enlightening discussions about
+ elementary physics... We seem to have reversed our careers!
+
 License
 =======
 
