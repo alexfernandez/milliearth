@@ -319,7 +319,7 @@ function fighterRobot(params)
 		var cannon = {
 			id: self.id + '.cannon',
 			type: 'cannon',
-			position: start,
+			position: end,
 			start: start,
 			end: end,
 			color: '#f00',
