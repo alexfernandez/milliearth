@@ -79,11 +79,11 @@ $(function () {
 		{
 			$('.option').removeClass('selected');
 			$('#' + option).addClass('selected');
+			$('#content').empty();
 			var name = 'show' + option.charAt(0).toUpperCase() + option.slice(1);
 			var callback = self[name];
 			callback();
 			localStorage['milliEarthOption'] = option;
-			$('#content').empty();
 		}
 
 		/**
@@ -92,7 +92,6 @@ $(function () {
 		self.showKeymap = function()
 		{
 			keymap.display($('#content'));
-			console.log('keymap');
 		}
 
 		/**
@@ -100,7 +99,6 @@ $(function () {
 		 */
 		self.showPlayers = function()
 		{
-			console.log('players');
 		}
 
 		/**
@@ -108,7 +106,6 @@ $(function () {
 		 */
 		self.showCode = function()
 		{
-			console.log('code');
 		}
 
 		// init
