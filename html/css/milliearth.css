@@ -6,17 +6,27 @@ div.message {
 }
 canvas {
 	display: inline-block;
-	border:1px solid #000000;
+	border:1px solid #808080;
 	vertical-align: top;
 }
 .options {
 	display: inline-block;
-	border:1px solid #000000;
+	border: 1px solid #808080;
 	vertical-align: top;
+	list-style: none;
+	padding: 0px;
+	margin: 0px;
 }
 .option {
 	display: block;
 	border: 1px solid #cccccc;
 	vertical-align:top;
+	padding: 5px;
+}
+.content {
+	display: inline-block;
+	border: 1px solid #808080;
+	vertical-align: top;
+	padding: 5px;
 }
 
