@@ -406,7 +406,7 @@ function meGame(id)
 		{
 			return;
 		}
-		computer.install(message.contents);
+		computer.installCode(message.contents);
 	}
 
 	/**
