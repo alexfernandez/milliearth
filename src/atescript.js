@@ -79,14 +79,6 @@ function scriptingEngine(params)
 	}
 
 	/**
-	 * Load some code, prepare to run it.
-	 */
-	self.load = function(code)
-	{
-		prepare(code);
-	}
-
-	/**
 	 * Prepare a script text for interpretation.
 	 */
 	function prepare(text)

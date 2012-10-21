@@ -233,7 +233,7 @@ function meGame(id)
 		}
 		if (message.type == 'install')
 		{
-			self.installCode(message);
+			self.installCode(player, message);
 			return;
 		}
 		self.error(player, 'Unknown message type ' + message.type);
@@ -393,20 +393,21 @@ function meGame(id)
 	/**
 	 * Receive the computer code, install on computer players.
 	 */
-	self.installCode = function(message)
+	self.installCode = function(player, message)
 	{
 		if (!message.contents)
 		{
 			log.e('Empty code received');
 			return;
 		}
-		log.i('Installing code ' + message.contents);
 		var computer = findComputer();
 		if (!computer)
 		{
 			return;
 		}
-		computer.installCode(message.contents);
+		computer.installCode(message.contents, player.id);
+		log.i('Installed code for ' + player.id + ', finishing');
+		self.finish();
 	}
 
 	/**

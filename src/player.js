@@ -348,9 +348,9 @@ function autoPlayer(params)
 	/**
 	 * Set the code for the engine.
 	 */
-	self.installCode = function(code)
+	self.installCode = function(code, playerId)
 	{
-		engine.set(code);
+		// engine.set(code);
 	}
 
 	/**
