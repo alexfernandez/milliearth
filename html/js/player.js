@@ -52,7 +52,7 @@ var clientPlayer = function()
 	var viewLayer = createViewLayer($('#simulation'));
 	var globalLayer = createGlobalLayer($('#simulation'));
 	// player id sent to the server: random
-	var playerId = Math.floor(Math.random() * 0x100000000).toString(16);
+	var playerId = randomId();
 
 
 	$('#status').html('Press connect');
@@ -114,7 +114,7 @@ var clientPlayer = function()
 	 */
 	function connect()
 	{
-		var gameId = Math.floor(Math.random() * 0x100000000).toString(16);
+		var gameId = randomId();
 		// open websocket
 		var wsUrl = 'ws://' + location.host + '/serve?game=' + gameId + '&player=' + playerId;
 		websocket = new WebSocket(wsUrl);
@@ -225,7 +225,7 @@ var clientPlayer = function()
 	 */
 	self.requestUpdate = function(type)
 	{
-		var id = Math.floor(Math.random() * 0x100000000).toString(16);
+		var id = randomId();
 		var message = {
 			type: type,
 			id: id,

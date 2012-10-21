@@ -48,7 +48,7 @@ String.prototype.contains = function(str)
 };
 
 /**
- * Parser for JSON or compact messages.
+ * Parser for JSON.
  */
 var parser = new function()
 {
@@ -154,6 +154,21 @@ var log = new function()
 }
 
 /**
+ * Generate a random id in base 36 with length 8.
+ */
+function randomId()
+{
+	var random = Math.abs(Math.floor(Math.random() * 0x100000000000));
+	var result = random.toString(36).slice(-8);
+	while (result.length < 8)
+	{
+		result = '0' + result;
+	}
+	return result;
+
+}
+
+/**
  * Pad a number to the given digits.
  */
 function pad(n, digits)
@@ -209,4 +224,5 @@ module.exports.parser = parser;
 module.exports.log = log;
 module.exports.extend = extend;
 module.exports.concurrencyLock = concurrencyLock;
+module.exports.randomId = randomId;
 
