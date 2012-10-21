@@ -45,48 +45,77 @@ $(function () {
 	$(document).keyup(keymap.keyup);
 	$(document).blur(keymap.blur);
 
-	$('#keymap').click(showKeymap);
-	$('#code').click(showCode);
-	$('#players').click(showPlayers);
-	showKeymap();
-
 	var player = new clientPlayer();
 	player.click();
 	$('#debug').click(player.toggleDebug);
 
-	/**
-	 * Show the keymap in the content.
-	 */
-	function showKeymap()
+	var optionSelector = new function()
 	{
-		selectOption('keymap');
-		keymap.display($('#content'));
-	}
+		// self-reference
+		var self = this;
 
-	/**
-	 * Show the players in the content.
-	 */
-	function showPlayers()
-	{
-		selectOption('players');
-	}
+		// attributes
+		var options = ['keymap', 'code', 'players'];
 
-	/**
-	 * Show the current code in the content.
-	 */
-	function showCode()
-	{
-		selectOption('code');
-	}
+		// init
+		$('.option').each(initOption);
+		if (!localStorage['milliEarthOption'])
+		{
+			localStorage['milliEarthOption'] = options[0];
+		}
 
-	/**
-	 * Set the given option as selected.
-	 */
-	function selectOption(option)
-	{
-		$('.option').removeClass('selected');
-		$('#' + option).addClass('selected');
-		$('#content').empty();
+		/**
+		 * Init each option in the list.
+		 */
+		function initOption(index, element)
+		{
+			var id = $(element).attr('id');
+			$(element).click(function() {
+				self.select(id);
+			});
+		}
+
+		/**
+		 * Select one option.
+		 */
+		self.select = function(option)
+		{
+			$('.option').removeClass('selected');
+			$('#' + option).addClass('selected');
+			var name = 'show' + option.charAt(0).toUpperCase() + option.slice(1);
+			var callback = self[name];
+			callback();
+			localStorage['milliEarthOption'] = option;
+			$('#content').empty();
+		}
+
+		/**
+		 * Show the keymap in the content.
+		 */
+		self.showKeymap = function()
+		{
+			console.log('keymap');
+			keymap.display($('#content'));
+		}
+
+		/**
+		 * Show the players in the content.
+		 */
+		self.showPlayers = function()
+		{
+			console.log('players');
+		}
+
+		/**
+		 * Show the current code in the content.
+		 */
+		self.showCode = function()
+		{
+			console.log('code');
+		}
+
+		// init
+		self.select(localStorage['milliEarthOption']);
 	}
 });
 
