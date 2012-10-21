@@ -378,7 +378,16 @@ function meGame(id)
 	 */
 	self.sendCode = function(player)
 	{
-		log.i('sending code');
+		var computer = findComputer();
+		if (!computer)
+		{
+			return;
+		}
+		var message = {
+			type: 'code',
+			contents: computer.getCode(),
+		};
+		player.send(message);
 	}
 
 	/**
@@ -392,6 +401,28 @@ function meGame(id)
 			return;
 		}
 		log.i('Installing code ' + message.contents);
+		var computer = findComputer();
+		if (!computer)
+		{
+			return;
+		}
+		computer.install(message.contents);
+	}
+
+	/**
+	 * Find a computer player.
+	 */
+	function findComputer()
+	{
+		for (var index in players)
+		{
+			var player = players[index];
+			if (player instanceof autoPlayer)
+			{
+				return player;
+			}
+		}
+		return null;
 	}
 
 	/**

@@ -300,7 +300,7 @@ var clientPlayer = function()
 	 */
 	self.code = function(message)
 	{
-		$('#editor').val(message.code);
+		$('#editor').val(message.contents);
 	}
 
 	/**

@@ -45,6 +45,7 @@ function scriptingEngine(params)
 	// attributes
 	self.file = params.file;
 	self.ready = false;
+	self.text = null;
 	var computer = params.computer;
 	var linesRun = 0;
 	var intervalPending = 0;
@@ -70,10 +71,27 @@ function scriptingEngine(params)
 	}
 
 	/**
-	 * Prepare a text file for interpretation.
+	 * Return the current code running in the engine.
+	 */
+	self.get = function()
+	{
+		return self.text;
+	}
+
+	/**
+	 * Load some code, prepare to run it.
+	 */
+	self.load = function(code)
+	{
+		prepare(code);
+	}
+
+	/**
+	 * Prepare a script text for interpretation.
 	 */
 	function prepare(text)
 	{
+		self.text = text;
 		var pos = new parsePosition(text);
 		var sentence = new scriptingSentence();
 		while (!pos.finished())

@@ -338,6 +338,22 @@ function autoPlayer(params)
 	});
 
 	/**
+	 * Get the current code for the computer.
+	 */
+	self.getCode = function()
+	{
+		return engine.get();
+	}
+
+	/**
+	 * Set the code for the engine.
+	 */
+	self.setCode = function(code)
+	{
+		engine.set(code);
+	}
+
+	/**
 	 * Run some instructions on our engine.
 	 */
 	self.shortLoop = function(delay)
