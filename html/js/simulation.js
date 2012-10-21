@@ -45,7 +45,7 @@ $(function () {
 	$(document).keyup(keymap.keyup);
 	$(document).blur(keymap.blur);
 
-	keymap.display($('#keymap'));
+	keymap.display($('#content'));
 
 	var player = new clientPlayer();
 	player.click();

@@ -17,7 +17,8 @@
 * { font-family:tahoma; }
 div.message { border: 1px solid #ccc; }
 canvas { display: inline-block; border:1px solid #000000; vertical-align: top; }
-.keymap { display: inline-block; border:1px solid #000000; vertical-align: top; }
+.options { display: inline-block; border:1px solid #000000; vertical-align: top; }
+.option { display: block; border: 1px solid #cccccc; vertical-align:top; }
 </style>
 </head>
 <body>
@@ -35,7 +36,12 @@ Keycode: <span id="keycode">n/a</span>
 </p>
 <canvas id="simulation" width="800" height="500">
 </canvas>
-<div id="keymap" class="keymap">
+<ul class="options">
+	<li class="option" id="keymap">Keymap</li>
+	<li class="option" id="code">Code</li>
+	<li class="option" id="players">Players</li>
+</ul>
+<div id="content" class="content">
 	Keymap:
 </div>
 <div id="message" class="message">
