@@ -54,14 +54,11 @@ $(function () {
 		// self-reference
 		var self = this;
 
-		// attributes
-		var options = ['keymap', 'code', 'players'];
-
 		// init
 		$('.option').each(initOption);
 		if (!localStorage['milliEarthOption'])
 		{
-			localStorage['milliEarthOption'] = options[0];
+			localStorage['milliEarthOption'] = $('.option').attr('id');
 		}
 
 		/**
@@ -94,8 +91,8 @@ $(function () {
 		 */
 		self.showKeymap = function()
 		{
-			console.log('keymap');
 			keymap.display($('#content'));
+			console.log('keymap');
 		}
 
 		/**
