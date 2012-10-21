@@ -154,6 +154,45 @@ var log = new function()
 }
 
 /**
+ * A high resolution timer.
+ */
+var highResolutionTimer = function(delay, callback)
+{
+	// self-reference
+	var self = this;
+
+	// attributes
+	var counter = 0;
+	var start = new Date().getTime();
+
+	/**
+	 * Delayed running of the callback.
+	 */
+	function delayed()
+	{
+		callback(delay);
+		counter ++;
+		var diff = (new Date().getTime() - start) - counter * delay;
+		setTimeout(delayed, delay - diff);
+	}
+
+	/**
+	 * Show the drift of the timer.
+	 */
+	self.traceDrift = function()
+	{
+		var diff = new Date().getTime() - start;
+		var drift = diff / delay - counter;
+		log.d('Seconds: ' + Math.round(diff / 1000) + ', counter: ' + counter + ', drift: ' + drift);
+	}
+
+	// start timer
+	delayed();
+	setTimeout(delayed, delay);
+}
+
+
+/**
  * Generate a random id in base 36 with length 8.
  */
 function randomId()
@@ -224,5 +263,6 @@ module.exports.parser = parser;
 module.exports.log = log;
 module.exports.extend = extend;
 module.exports.concurrencyLock = concurrencyLock;
+module.exports.highResolutionTimer = highResolutionTimer;
 module.exports.randomId = randomId;
 

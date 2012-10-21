@@ -32,45 +32,8 @@ var util = require('./util.js');
 var parser = util.parser;
 var log = util.log;
 var extend = util.extend;
+var highResolutionTimer = util.highResolutionTimer;
 
-
-/**
- * A high resolution timer.
- */
-function timer(delay, callback)
-{
-	// self-reference
-	var self = this;
-
-	// attributes
-	var counter = 0;
-	var start = new Date().getTime();
-
-	/**
-	 * Delayed running of the callback.
-	 */
-	function delayed()
-	{
-		callback(delay);
-		counter ++;
-		var diff = (new Date().getTime() - start) - counter * delay;
-		setTimeout(delayed, delay - diff);
-	}
-
-	/**
-	 * Show the drift of the timer.
-	 */
-	self.traceDrift = function()
-	{
-		var diff = new Date().getTime() - start;
-		var drift = diff / delay - counter;
-		log.d('Seconds: ' + Math.round(diff / 1000) + ', counter: ' + counter + ', drift: ' + drift);
-	}
-
-	// start timer
-	delayed();
-	setTimeout(delayed, delay);
-}
 
 /**
  * A game object
@@ -529,8 +492,8 @@ var gameSelector = new function()
 		}
 	}
 
-	var shortTimer = new timer(shortDelay, shortLoop);
-	var longTimer = new timer(longDelay, longLoop);
+	var shortTimer = new highResolutionTimer(shortDelay, shortLoop);
+	var longTimer = new highResolutionTimer(longDelay, longLoop);
 }
 
 module.exports.gameSelector = gameSelector;
