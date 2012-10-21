@@ -45,10 +45,30 @@ $(function () {
 	$(document).keyup(keymap.keyup);
 	$(document).blur(keymap.blur);
 
-	keymap.display($('#content'));
+	$('#keymap').click(showKeymap);
+	showKeymap();
 
 	var player = new clientPlayer();
 	player.click();
 	$('#debug').click(player.toggleDebug);
+
+	/**
+	 * Show the keymap in the content.
+	 */
+	function showKeymap()
+	{
+		selectOption('keymap');
+		keymap.display($('#content'));
+	}
+
+	/**
+	 * Set the given option as selected.
+	 */
+	function selectOption(option)
+	{
+		$('.option').removeClass('selected');
+		$('#' + option).addClass('selected');
+		$('#content').empty();
+	}
 });
 
