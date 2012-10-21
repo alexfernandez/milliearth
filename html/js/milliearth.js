@@ -46,6 +46,8 @@ $(function () {
 	$(document).blur(keymap.blur);
 
 	$('#keymap').click(showKeymap);
+	$('#code').click(showCode);
+	$('#players').click(showPlayers);
 	showKeymap();
 
 	var player = new clientPlayer();
@@ -59,6 +61,22 @@ $(function () {
 	{
 		selectOption('keymap');
 		keymap.display($('#content'));
+	}
+
+	/**
+	 * Show the players in the content.
+	 */
+	function showPlayers()
+	{
+		selectOption('players');
+	}
+
+	/**
+	 * Show the current code in the content.
+	 */
+	function showCode()
+	{
+		selectOption('code');
 	}
 
 	/**
