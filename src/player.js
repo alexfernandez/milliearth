@@ -333,7 +333,7 @@ function autoPlayer(params)
 	// attributes
 	var computer = new autoComputer(self.robot);
 	var engine = new scriptingEngine({
-		file: 'basic-enemy.8s',
+		file: getFilename(params),
 		computer: computer,
 	});
 
@@ -348,9 +348,9 @@ function autoPlayer(params)
 	/**
 	 * Set the code for the engine.
 	 */
-	self.installCode = function(code, playerId)
+	self.installCode = function(code, playerId, callback)
 	{
-		// engine.set(code);
+		engine.writeScript('custom-' + playerId + '.8s', code, callback);
 	}
 
 	/**
@@ -361,6 +361,18 @@ function autoPlayer(params)
 		var interval = delay / 1000;
 		computer.update(interval, params.world.bodiesExcept(self.id));
 		engine.run(interval);
+	}
+
+	/**
+	 * Get the correct filename for the given params.
+	 */
+	function getFilename(params)
+	{
+		if ('playerId' in params)
+		{
+			return 'custom-' + params.playerId + '.8s';
+		}
+		return 'basic-enemy.8s';
 	}
 }
 

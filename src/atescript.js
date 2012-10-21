@@ -52,6 +52,7 @@ function scriptingEngine(params)
 	var callbacks = [];
 	var semaphor = new concurrencyLock();
 	var context = new scriptingContext(params);
+	var dir = 'src/script/';
 
 	readScript(self.file);
 
@@ -60,7 +61,7 @@ function scriptingEngine(params)
 	 */
 	function readScript(file)
 	{
-		fs.readFile('src/script/' + file, function(err, data) {
+		fs.readFile(dir + file, function(err, data) {
 			if (err)
 			{
 				log.e('Invalid script file ' + file);
@@ -68,6 +69,14 @@ function scriptingEngine(params)
 			}
 			prepare(data.toString());
 		});
+	}
+
+	/**
+	 * Write a script to a file.
+	 */
+	self.writeScript = function(name, text, callback)
+	{
+		fs.writeFile(dir + name, text, callback);
 	}
 
 	/**
