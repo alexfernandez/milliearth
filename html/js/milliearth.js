@@ -106,7 +106,7 @@ $(function () {
 		 */
 		self.showCode = function()
 		{
-			codeEditor.display($('#content'));
+			codeEditor.display($('#content'), player);
 		}
 
 		// init

@@ -285,6 +285,37 @@ var clientPlayer = function()
 	}
 
 	/**
+	 * Request the code for a computer player.
+	 */
+	self.requestCode = function()
+	{
+		var message = {
+			type: 'code',
+		}
+		websocket.send(JSON.stringify(message));
+	}
+
+	/**
+	 * Receive the code for a computer player.
+	 */
+	self.code = function(message)
+	{
+		$('#editor').val(message.code);
+	}
+
+	/**
+	 * Send the code for a computer player.
+	 */
+	self.sendCode = function()
+	{
+		var message = {
+			type: 'install',
+			contents: $('#editor').val(),
+		}
+		websocket.send(JSON.stringify(message));
+	}
+
+	/**
 	 * Paint the latest global update we have."
 	 */
 	function paintGlobalUpdate()

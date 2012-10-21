@@ -35,15 +35,17 @@ var codeEditor = new function()
 	/**
 	 * Display the code editor.
 	 */
-	self.display = function(element)
+	self.display = function(element, player)
 	{
 		element.append($('<div>Code Editor</div>'));
 		var edit = $('<textarea>').attr('id', 'editor').attr('name', 'code');
 		edit.attr('placeholder', 'Fetching code from server').attr('rows', '20');
-		var send = $('<input type="button" id="send" value="Send">');
+		var send = $('<input type="button" id="sendCode" value="Send code">');
 		element.append(edit);
 		element.append($('<br>'));
 		element.append(send);
+		player.requestCode();
+		$('#sendCode').click(player.sendCode);
 	}
 }
 

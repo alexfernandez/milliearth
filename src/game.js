@@ -226,6 +226,16 @@ function meGame(id)
 			self.sendGlobalUpdate(player, message.id);
 			return;
 		}
+		if (message.type == 'code')
+		{
+			self.sendCode(player);
+			return;
+		}
+		if (message.type == 'install')
+		{
+			self.installCode(message);
+			return;
+		}
 		self.error(player, 'Unknown message type ' + message.type);
 	}
 
@@ -361,6 +371,27 @@ function meGame(id)
 		{
 			players[index].send(message);
 		}
+	}
+
+	/**
+	 * Send the computer code to the given player.
+	 */
+	self.sendCode = function(player)
+	{
+		log.i('sending code');
+	}
+
+	/**
+	 * Receive the computer code, install on computer players.
+	 */
+	self.installCode = function(message)
+	{
+		if (!message.contents)
+		{
+			log.e('Empty code received');
+			return;
+		}
+		log.i('Installing code ' + message.contents);
 	}
 
 	/**
