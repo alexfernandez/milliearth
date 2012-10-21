@@ -163,6 +163,10 @@ function serve_file(status, file, response)
 		{
 			type = 'text/javascript';
 		}
+		if (file.endsWith('.css'))
+		{
+			type = 'text/css';
+		}
 		response.writeHead(status, {
 			'Content-Length': data.length,
 			'Content-Type': type
