@@ -222,6 +222,11 @@ function autoComputer(robot)
 	{
 		//refresh object
 		var object = self.cannon[object.id];
+		if (!object)
+		{
+			log.e('Object not found in cannon view');
+			return interval;
+		}
 		var position = object.position;
 		if (position.z < 0)
 		{
@@ -269,6 +274,11 @@ function autoComputer(robot)
 	{
 		//refresh object
 		var object = self.cannon[object.id];
+		if (!object)
+		{
+			log.e('Object not found in cannon view');
+			return interval;
+		}
 		var position = object.position;
 		var tx = position.x / position.z / globalParams.turningAngle;
 		if (position.x < 0)
