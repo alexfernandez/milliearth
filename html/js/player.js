@@ -110,6 +110,18 @@ var clientPlayer = function(canvas)
 	$('#connect').click(self.click);
 
 	/**
+	 * Manage a click on the canvas: reconnect if disconnected.
+	 */
+	self.canvasClicked = function()
+	{
+		if (!websocket)
+		{
+			connect();
+		}
+	}
+	canvas.click(self.canvasClicked);
+
+	/**
 	 * Connect using a websocket using a random game id.
 	 */
 	function connect()
