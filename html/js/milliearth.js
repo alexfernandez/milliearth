@@ -45,7 +45,7 @@ $(function () {
 	$(document).keyup(keymap.keyup);
 	$(document).blur(keymap.blur);
 
-	var player = new clientPlayer();
+	var player = new clientPlayer($('#simulation'));
 	player.click();
 	$('#debug').click(player.toggleDebug);
 

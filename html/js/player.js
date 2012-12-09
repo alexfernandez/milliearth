@@ -23,7 +23,7 @@
 /**
  * Player answer to server messages.
  */
-var clientPlayer = function()
+var clientPlayer = function(canvas)
 {
 	// self-reference
 	var self = this;
@@ -49,8 +49,8 @@ var clientPlayer = function()
 	var latencies = 0;
 	var latencyMap = {};
 	// layers and projections
-	var viewLayer = createViewLayer($('#simulation'));
-	var globalLayer = createGlobalLayer($('#simulation'));
+	var viewLayer = createViewLayer();
+	var globalLayer = createGlobalLayer();
 	// player id sent to the server: random
 	var playerId = randomId();
 
@@ -60,7 +60,7 @@ var clientPlayer = function()
 	/**
 	 * Create the view layer.
 	 */
-	function createViewLayer(canvas)
+	function createViewLayer()
 	{
 		var width = canvas.width();
 		var height = canvas.height();
@@ -74,7 +74,7 @@ var clientPlayer = function()
 		return new paintingLayer(viewParams);
 	}
 
-	function createGlobalLayer(canvas)
+	function createGlobalLayer()
 	{
 		var width = canvas.width();
 		var height = canvas.height();
@@ -263,7 +263,7 @@ var clientPlayer = function()
 			$('#debug').text(JSON.stringify(message));
 		}
 		countUpdate(message.id);
-		$('#simulation').clearCanvas();
+		canvas.clearCanvas();
 		viewLayer.paintUpdate(message);
 		paintGlobalUpdate();
 	}
@@ -273,7 +273,7 @@ var clientPlayer = function()
 	 */
 	self.win = function(message)
 	{
-		alert('Player wins! :)');
+		viewLayer.alert('Player wins! :)');
 	}
 
 	/**
@@ -281,7 +281,7 @@ var clientPlayer = function()
 	 */
 	self.lose = function(message)
 	{
-		alert('Player loses :(');
+		viewLayer.alert('Player loses :(');
 	}
 
 	/**

@@ -249,6 +249,24 @@ var paintingLayer = function(params)
 	}
 
 	/**
+	 * Show an alert on the canvas.
+	 */
+	self.alert = function(message)
+	{
+		console.log('Alerting of ' + message);
+		var rect = {
+			x: 0,
+			y: 0,
+			width: canvas.width(),
+			height: canvas.height(),
+			fillStyle: '#000',
+			fromCenter: false,
+			opacity: 0.50,
+		}
+		canvas.drawRect(rect);
+	}
+
+	/**
 	 * Paint some text on the canvas.
 	 */
 	self.paintText = function(message, value, units)
