@@ -254,7 +254,7 @@ var paintingLayer = function(params)
 	self.alert = function(message)
 	{
 		console.log('Alerting of ' + message);
-		var rect = {
+		canvas.drawRect({
 			x: 0,
 			y: 0,
 			width: canvas.width(),
@@ -262,8 +262,28 @@ var paintingLayer = function(params)
 			fillStyle: '#000',
 			fromCenter: false,
 			opacity: 0.50,
-		}
-		canvas.drawRect(rect);
+		});
+		var cx = canvas.width() / 2;
+		var cy = canvas.height() / 2;
+		canvas.drawRect({
+			x: cx,
+			y: cy,
+			width: 150,
+			height: 40,
+			fillStyle: '#fff',
+			fromCenter: true,
+			opacity: 1,
+		});
+		canvas.drawText( {
+			fillStyle: '#000',
+			strokeWidth: 1,
+			x: cx,
+			y: cy,
+			font: '10pt Helvetica, sans-serif',
+			text: message,
+			fromCenter: true,
+			opacity: 1,
+		});
 	}
 
 	/**
