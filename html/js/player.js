@@ -135,7 +135,7 @@ var clientPlayer = function(canvas)
 	self.requestUpdate = function(type)
 	{
 		var id = randomId();
-		milliEarth.send({
+		serverConnection.send({
 			type: type,
 			id: id,
 			events: keymap.getKeys(),

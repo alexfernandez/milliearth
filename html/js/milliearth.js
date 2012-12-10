@@ -59,7 +59,7 @@ var milliEarth = new function()
 		player = new clientPlayer($('#simulation'));
 		$('#connect').click(clickButton);
 		$('#canvas').click(clickCanvas);
-		connect();
+		self.connect();
 		optionSelector.init();
 		optionSelector.selectLast();
 	}
@@ -69,8 +69,14 @@ var milliEarth = new function()
 	 */
 	function clickButton()
 	{
-		disconnect();
-		websocket = null;
+		if (serverConnection.isConnected())
+		{
+			self.disconnect();
+		}
+		else
+		{
+			self.connect();
+		}
 	}
 
 	/**
@@ -78,16 +84,16 @@ var milliEarth = new function()
 	 */
 	function clickCanvas()
 	{
-		if (!websocket)
+		if (!serverConnection.isConnected())
 		{
-			connect();
+			self.connect();
 		}
 	}
 
 	/**
 	 * Connect using a websocket using a random game id.
 	 */
-	function connect()
+	self.connect = function()
 	{
 		var gameId = randomId();
 		serverConnection.dispatcher = self;
@@ -115,7 +121,7 @@ var milliEarth = new function()
 	/**
 	 * Disconnect from the game.
 	 */
-	function disconnect()
+	self.disconnect = function()
 	{
 		serverConnection.disconnect();
 		player.end();

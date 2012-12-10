@@ -70,7 +70,7 @@ var serverConnection = new function()
 	function close(message)
 	{
 		$('#message').text('Disconnected');
-		disconnect();
+		self.disconnect();
 	}
 
 	/**
@@ -97,25 +97,36 @@ var serverConnection = new function()
 	}
 
 	/**
-	 * Disconnect from the server.
-	 */
-	self.disconnect = function()
-	{
-		if (websocket != null)
-		{
-			websocket.close();
-		}
-		$('#connect').val('Connect');
-		websocket = null;
-		player.end();
-	}
-
-	/**
 	 * Send a message to the server.
 	 */
 	self.send = function(message)
 	{
 		websocket.send(JSON.stringify(message));
+	}
+
+	/**
+	 * Find out if the connection is open or not.
+	 */
+	self.isConnected = function()
+	{
+		return (websocket != null);
+	}
+
+	/**
+	 * Disconnect from the server.
+	 */
+	self.disconnect = function()
+	{
+		if (websocket == null)
+		{
+			// already disconnected
+			return;
+		}
+		var pending = websocket;
+		websocket = null;
+		pending.close();
+		$('#connect').val('Connect');
+		self.dispatcher.disconnect();
 	}
 }
 
