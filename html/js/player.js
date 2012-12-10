@@ -29,7 +29,7 @@ var clientPlayer = function(canvas)
 	var self = this;
 
 	// if we are debugging
-	var debugMode = false;
+	var debugElement = false;
 	// keep track of the websocket
 	var websocket;
 	// check if running
@@ -282,9 +282,9 @@ var clientPlayer = function(canvas)
 			error('Not running');
 			return;
 		}
-		if (debugMode)
+		if (debugElement)
 		{
-			$('#debug').text(JSON.stringify(message));
+			$(debugElement).text(JSON.stringify(message));
 		}
 		countUpdate(message.id);
 		canvas.clearCanvas();
@@ -401,11 +401,19 @@ var clientPlayer = function(canvas)
 	}
 
 	/**
-	 * Toggle debug.
+	 * Show debug messages on the given element.
 	 */
-	self.toggleDebug = function()
+	self.showDebug = function(element)
 	{
-		debugMode = !debugMode;
+		debugElement = element;
+	}
+
+	/**
+	 * Hide debug messages.
+	 */
+	self.hideDebug = function()
+	{
+		debugElement = null;
 	}
 }
 

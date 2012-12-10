@@ -47,7 +47,6 @@ $(function () {
 
 	var player = new clientPlayer($('#simulation'));
 	player.click();
-	$('#debug').click(player.toggleDebug);
 
 	var optionSelector = new function()
 	{
@@ -80,6 +79,7 @@ $(function () {
 			$('.option').removeClass('selected');
 			$('#' + option).addClass('selected');
 			$('#content').empty();
+			player.hideDebug();
 			var name = 'show' + option.charAt(0).toUpperCase() + option.slice(1);
 			var callback = self[name];
 			callback();
@@ -107,6 +107,14 @@ $(function () {
 		self.showCode = function()
 		{
 			codeEditor.display($('#content'), player);
+		}
+
+		/**
+		 * Debug messages from the server.
+		 */
+		self.showDebug = function()
+		{
+			player.showDebug('#content');
 		}
 
 		// init
