@@ -29,7 +29,7 @@ var clientPlayer = function(canvas)
 	var self = this;
 
 	// if we are debugging
-	var debug = false;
+	var debugMode = false;
 	// keep track of the websocket
 	var websocket;
 	// check if running
@@ -276,7 +276,7 @@ var clientPlayer = function(canvas)
 			console.error('Not running');
 			return;
 		}
-		if (debug)
+		if (debugMode)
 		{
 			$('#debug').text(JSON.stringify(message));
 		}
@@ -399,7 +399,7 @@ var clientPlayer = function(canvas)
 	 */
 	self.toggleDebug = function()
 	{
-		debug = !debug;
+		debugMode = !debugMode;
 	}
 }
 
