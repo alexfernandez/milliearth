@@ -133,7 +133,7 @@ var clientPlayer = function(canvas)
 
 		websocket.onopen = function ()
 		{
-			$('#status').text('Connected to ' + wsUrl);
+			$('#message').text('Connected to ' + wsUrl);
 		};
 
 		/**
@@ -181,7 +181,7 @@ var clientPlayer = function(canvas)
 		 */
 		websocket.onclose = function(message)
 		{
-			$('#status').text('Disconnected');
+			$('#message').text('Disconnected');
 			disconnect(false);
 		}
 		$('#connect').val('Disconnect');
@@ -216,7 +216,7 @@ var clientPlayer = function(canvas)
 	 */
 	self.start = function()
 	{
-		$('#status').text('Simulation started!');
+		$('#message').text('Simulation started!');
 		updateIntervalId = setInterval(self.requestSightUpdate, updateInterval);
 		globalIntervalId = setInterval(self.requestGlobalUpdate, globalInterval);
 		running = true;
@@ -383,7 +383,7 @@ var clientPlayer = function(canvas)
 	 */
 	self.abandoned = function(message)
 	{
-		$('#status').text('Your opponent abandoned!');
+		$('#message').text('Your opponent abandoned!');
 	}
 
 	/**
@@ -391,7 +391,7 @@ var clientPlayer = function(canvas)
 	 */
 	self.error = function(message)
 	{
-		$('#status').text('Server error: ' + message.message);
+		$('#message').text('Server error: ' + message.message);
 	}
 
 	/**
