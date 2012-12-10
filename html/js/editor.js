@@ -35,7 +35,7 @@ var codeEditor = new function()
 	/**
 	 * Display the code editor.
 	 */
-	self.display = function(element, player)
+	self.display = function(element)
 	{
 		element.append($('<div>Code Editor</div>'));
 		var edit = $('<textarea>').attr('id', 'editor').attr('name', 'code');
@@ -45,7 +45,7 @@ var codeEditor = new function()
 		element.append($('<br>'));
 		element.append(send);
 		player.requestCode();
-		$('#sendCode').click(player.sendCode);
+		$('#sendCode').click(milliEarth.sendCode);
 	}
 
 	/**

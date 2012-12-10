@@ -28,8 +28,6 @@ var clientPlayer = function(canvas)
 	// self-reference
 	var self = this;
 
-	// keep track of the websocket
-	var websocket;
 	// check if running
 	var running = false;
 	// interval between updates in milliseconds
@@ -52,8 +50,6 @@ var clientPlayer = function(canvas)
 	// player id sent to the server: random
 	var playerId = randomId();
 
-
-	$('#status').html('Press connect');
 
 	/**
 	 * Create the view layer.
@@ -93,115 +89,6 @@ var clientPlayer = function(canvas)
 	}
 
 	/**
-	 * Click on the connect or disconnect button.
-	 */
-	self.click = function()
-	{
-		if (!websocket)
-		{
-			connect();
-			return;
-		}
-		disconnect(false);
-		websocket = null;
-	}
-	$('#connect').click(self.click);
-
-	/**
-	 * Manage a click on the canvas: reconnect if disconnected.
-	 */
-	self.canvasClicked = function()
-	{
-		if (!websocket)
-		{
-			connect();
-		}
-	}
-	canvas.click(self.canvasClicked);
-
-	/**
-	 * Connect using a websocket using a random game id.
-	 */
-	function connect()
-	{
-		var gameId = randomId();
-		// open websocket
-		var wsUrl = 'ws://' + location.host + '/serve?game=' + gameId + '&player=' + playerId;
-		websocket = new WebSocket(wsUrl);
-
-		websocket.onopen = function ()
-		{
-			$('#message').text('Connected to ' + wsUrl);
-		};
-
-		/**
-		 * Connection error.
-		 */
-		websocket.onerror = function (error)
-		{
-			error(error);
-			$('#status').text('Error');
-		};
-
-		/**
-		 * Incoming message.
-		 */
-		websocket.onmessage = function (message)
-		{
-			// check it is valid JSON
-			try
-			{
-				var json = JSON.parse(message.data);
-			}
-			catch (e)
-			{
-				error('This doesn\'t look like a valid JSON: ', message.data);
-				return;
-			}
-			if (!json.type)
-			{
-				error('Missing message type: ' + json);
-				return;
-			}
-		   	if (!self[json.type])
-			{
-				error('Invalid message type ' + json.type);
-				return;
-			}
-			self[json.type](json);
-		};
-
-		/**
-		 * The websocket was closed.
-		 */
-		websocket.onclose = function(message)
-		{
-			$('#message').text('Disconnected');
-			disconnect(false);
-		}
-		$('#connect').val('Disconnect');
-	}
-
-	/**
-	 * Disconnect from the game.
-	 */
-	function disconnect(reconnect)
-	{
-		if (websocket != null)
-		{
-			websocket.close();
-		}
-		$('#connect').val('Connect');
-		websocket = null;
-		self.end();
-		if (reconnect)
-		{
-			// automatic reconnect
-			setTimeout(connect, 100);
-		}
-	}
-
-	/**
 	 * Start the game.
 	 */
 	self.start = function()
@@ -224,6 +111,13 @@ var clientPlayer = function(canvas)
 		clearInterval(updateIntervalId);
 		clearInterval(globalIntervalId);
 		running = false;
+	}
+
+	/**
+	 * Dispatch a websocket message.
+	 */
+	self.dispatch = function(message)
+	{
 	}
 
 	/**
@@ -308,37 +202,6 @@ var clientPlayer = function(canvas)
 	}
 
 	/**
-	 * Request the code for a computer player.
-	 */
-	self.requestCode = function()
-	{
-		var message = {
-			type: 'code',
-		}
-		websocket.send(JSON.stringify(message));
-	}
-
-	/**
-	 * Receive the code for a computer player.
-	 */
-	self.code = function(message)
-	{
-		codeEditor.showCode(message.contents);
-	}
-
-	/**
-	 * Send the code for a computer player.
-	 */
-	self.sendCode = function()
-	{
-		var message = {
-			type: 'install',
-			contents: $('#editor').val(),
-		}
-		websocket.send(JSON.stringify(message));
-	}
-
-	/**
 	 * Paint the latest global update we have."
 	 */
 	function paintGlobalUpdate()
@@ -397,22 +260,6 @@ var clientPlayer = function(canvas)
 	self.error = function(message)
 	{
 		$('#message').text('Server error: ' + message.message);
-	}
-
-	/**
-	 * Show debug messages on the given element.
-	 */
-	self.showDebug = function(element)
-	{
-		debugElement = element;
-	}
-
-	/**
-	 * Hide debug messages.
-	 */
-	self.hideDebug = function()
-	{
-		debugElement = null;
 	}
 }
 

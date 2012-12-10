@@ -28,7 +28,6 @@ var milliEarth = new function()
 	// self-reference
 	var self = this;
 
-
 	// attributes
 	var websocket = null;
 
@@ -58,96 +57,154 @@ var milliEarth = new function()
 		$(document).blur(keymap.blur);
 
 		var player = new clientPlayer($('#simulation'));
-		player.click();
+		$('#connect').click(clickButton);
+		$('#canvas').click(clickCanvas);
+		connect();
 	}
 
 	/**
-	 * Show debug messages from the player.
+	 * Click on the connect or disconnect button.
 	 */
-	self.showDebug = function(element)
+	function clickButton()
 	{
-		player.showDebug(element);
-	}
-}
-
-/**
- * Selector for the options on the right.
- */
-var optionSelector = new function()
-{
-	// self-reference
-	var self = this;
-
-	/**
-	 * Initialize the options.
-	 */
-	self.init = function()
-	{
-		$('.option').each(initOption);
-		if (!localStorage['milliEarthOption'])
+		if (!websocket)
 		{
-			localStorage['milliEarthOption'] = $('.option').attr('id');
+			connect();
+			return;
+		}
+		disconnect(false);
+		websocket = null;
+	}
+
+	/**
+	 * Manage a click on the canvas: reconnect if disconnected.
+	 */
+	function clickCanvas()
+	{
+		if (!websocket)
+		{
+			connect();
 		}
 	}
 
 	/**
-	 * Init each option in the list.
+	 * Connect using a websocket using a random game id.
 	 */
-	function initOption(index, element)
+	function connect()
 	{
-		var id = $(element).attr('id');
-		$(element).click(function() {
-			self.select(id);
-		});
+		var gameId = randomId();
+		// open websocket
+		var wsUrl = 'ws://' + location.host + '/serve?game=' + gameId + '&player=' + playerId;
+		websocket = new WebSocket(wsUrl);
+
+		websocket.onopen = function ()
+		{
+			$('#message').text('Connected to ' + wsUrl);
+		};
+
+		/**
+		 * Connection error.
+		 */
+		websocket.onerror = function (error)
+		{
+			error(error);
+			$('#status').text('Error');
+		};
+
+		/**
+		 * Incoming message.
+		 */
+		websocket.onmessage = dispatch;
+
+		/**
+		 * The websocket was closed.
+		 */
+		websocket.onclose = function(message)
+		{
+			$('#message').text('Disconnected');
+			disconnect(false);
+		}
+		$('#connect').val('Disconnect');
 	}
 
 	/**
-	 * Select one option.
+	 * Dispatch a websocket message.
 	 */
-	self.select = function(option)
+	function dispatch(message)
 	{
-		$('.option').removeClass('selected');
-		$('#' + option).addClass('selected');
-		$('#content').empty();
-		player.hideDebug();
-		var name = 'show' + option.charAt(0).toUpperCase() + option.slice(1);
-		var callback = self[name];
-		callback();
-		localStorage['milliEarthOption'] = option;
+		// check it is valid JSON
+		try
+		{
+			var json = JSON.parse(message.data);
+		}
+		catch (e)
+		{
+			error('This doesn\'t look like a valid JSON: ', message.data);
+			return;
+		}
+		if (!json.type)
+		{
+			error('Missing message type: ' + json);
+			return;
+		}
+		if (self[json.type])
+		{
+			self[json.type](json);
+			return;
+		}
+		player.dispatch(json);
 	}
 
 	/**
-	 * Show the keymap in the content.
+	 * Disconnect from the game.
 	 */
-	self.showKeymap = function()
+	function disconnect(reconnect)
 	{
-		keymap.display($('#content'));
+		if (websocket != null)
+		{
+			websocket.close();
+		}
+		$('#connect').val('Connect');
+		websocket = null;
+		player.end();
+		if (reconnect)
+		{
+			// automatic reconnect
+			setTimeout(connect, 100);
+		}
 	}
 
 	/**
-	 * Show the players in the content.
+	 * Request the code for a computer player.
 	 */
-	self.showPlayers = function()
+	self.requestCode = function()
 	{
+		debug('Requesting code');
+		var message = {
+			type: 'code',
+		}
+		websocket.send(JSON.stringify(message));
 	}
 
 	/**
-	 * Show the current code in the content.
+	 * Receive the code for a computer player.
 	 */
-	self.showCode = function()
+	self.code = function(message)
 	{
-		codeEditor.display($('#content'), player);
+		codeEditor.showCode(message.contents);
 	}
 
 	/**
-	 * Debug messages from the server.
+	 * Send the code for a computer player.
 	 */
-	self.showDebug = function()
+	self.sendCode = function()
 	{
-		player.showDebug('#content');
+		debug('Sending code');
+		var message = {
+			type: 'install',
+			contents: $('#editor').val(),
+		}
+		websocket.send(JSON.stringify(message));
 	}
-
-	// init
-	self.select(localStorage['milliEarthOption']);
 }
 
