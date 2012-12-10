@@ -44,16 +44,39 @@ var codeEditor = new function()
 		element.append(edit);
 		element.append($('<br>'));
 		element.append(send);
-		player.requestCode();
-		$('#sendCode').click(milliEarth.sendCode);
+		self.requestCode();
+		$('#sendCode').click(self.sendCode);
 	}
 
 	/**
-	 * Show the code received from the server.
+	 * Request the code for a computer player.
 	 */
-	self.showCode = function(code)
+	self.requestCode = function()
 	{
-		$('#editor').val(code);
+		debug('Requesting code');
+		milliEarth.send({
+			type: 'code',
+		});
+	}
+
+	/**
+	 * Show the code for a computer player.
+	 */
+	self.showCode = function(message)
+	{
+		$('#editor').val(message.contents);
+	}
+
+	/**
+	 * Send the code for a computer player.
+	 */
+	self.sendCode = function()
+	{
+		debug('Sending code');
+		milliEarth.send({
+			type: 'install',
+			contents: $('#editor').val(),
+		});
 	}
 }
 

@@ -149,9 +149,9 @@ var milliEarth = new function()
 			error('Missing message type: ' + json);
 			return;
 		}
-		if (self[json.type])
+		if (json.type == 'code')
 		{
-			self[json.type](json);
+			codeEditor.showCode(json);
 			return;
 		}
 		if (player[json.type])
@@ -174,37 +174,6 @@ var milliEarth = new function()
 		$('#connect').val('Connect');
 		websocket = null;
 		player.end();
-	}
-
-	/**
-	 * Request the code for a computer player.
-	 */
-	self.requestCode = function()
-	{
-		debug('Requesting code');
-		self.send({
-			type: 'code',
-		});
-	}
-
-	/**
-	 * Receive the code for a computer player.
-	 */
-	self.code = function(message)
-	{
-		codeEditor.showCode(message.contents);
-	}
-
-	/**
-	 * Send the code for a computer player.
-	 */
-	self.sendCode = function()
-	{
-		debug('Sending code');
-		self.send({
-			type: 'install',
-			contents: $('#editor').val(),
-		});
 	}
 
 	/**
