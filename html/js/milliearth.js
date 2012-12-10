@@ -21,104 +21,133 @@
 
 
 /**
- * Start the simulation.
+ * Main MilliEarth object.
  */
-$(function () {
+var milliEarth = new function()
+{
+	// self-reference
+	var self = this;
 
-	$('#status').html('Starting');
 
-	// if user is running mozilla then use it's built-in WebSocket
-	window.WebSocket = window.WebSocket || window.MozWebSocket;
+	// attributes
+	var websocket = null;
 
-	// if browser doesn't support WebSocket, just show some notification and exit
-	if (!window.WebSocket)
+	/**
+	 * Start the simulation.
+	 */
+	self.start = function()
 	{
-		$('#status1').html('Browser error');
-		$('#status2').html('Browser error');
-		$('#message').html('<p>Sorry, but your browser doesn\'t support WebSockets.</p>' );
-		$('#submit').hide();
-		$('input').hide();
-		return;
+		$('#status').html('Starting');
+
+		// if user is running mozilla then use it's built-in WebSocket
+		window.WebSocket = window.WebSocket || window.MozWebSocket;
+
+		// if browser doesn't support WebSocket, just show some notification and exit
+		if (!window.WebSocket)
+		{
+			$('#status1').html('Browser error');
+			$('#status2').html('Browser error');
+			$('#message').html('<p>Sorry, but your browser doesn\'t support WebSockets.</p>' );
+			$('#submit').hide();
+			$('input').hide();
+			return;
+		}
+
+		$(document).keydown(keymap.keydown);
+		$(document).keyup(keymap.keyup);
+		$(document).blur(keymap.blur);
+
+		var player = new clientPlayer($('#simulation'));
+		player.click();
 	}
 
-	$(document).keydown(keymap.keydown);
-	$(document).keyup(keymap.keyup);
-	$(document).blur(keymap.blur);
-
-	var player = new clientPlayer($('#simulation'));
-	player.click();
-
-	var optionSelector = new function()
+	/**
+	 * Show debug messages from the player.
+	 */
+	self.showDebug = function(element)
 	{
-		// self-reference
-		var self = this;
+		player.showDebug(element);
+	}
+}
 
-		// init
+/**
+ * Selector for the options on the right.
+ */
+var optionSelector = new function()
+{
+	// self-reference
+	var self = this;
+
+	/**
+	 * Initialize the options.
+	 */
+	self.init = function()
+	{
 		$('.option').each(initOption);
 		if (!localStorage['milliEarthOption'])
 		{
 			localStorage['milliEarthOption'] = $('.option').attr('id');
 		}
-
-		/**
-		 * Init each option in the list.
-		 */
-		function initOption(index, element)
-		{
-			var id = $(element).attr('id');
-			$(element).click(function() {
-				self.select(id);
-			});
-		}
-
-		/**
-		 * Select one option.
-		 */
-		self.select = function(option)
-		{
-			$('.option').removeClass('selected');
-			$('#' + option).addClass('selected');
-			$('#content').empty();
-			player.hideDebug();
-			var name = 'show' + option.charAt(0).toUpperCase() + option.slice(1);
-			var callback = self[name];
-			callback();
-			localStorage['milliEarthOption'] = option;
-		}
-
-		/**
-		 * Show the keymap in the content.
-		 */
-		self.showKeymap = function()
-		{
-			keymap.display($('#content'));
-		}
-
-		/**
-		 * Show the players in the content.
-		 */
-		self.showPlayers = function()
-		{
-		}
-
-		/**
-		 * Show the current code in the content.
-		 */
-		self.showCode = function()
-		{
-			codeEditor.display($('#content'), player);
-		}
-
-		/**
-		 * Debug messages from the server.
-		 */
-		self.showDebug = function()
-		{
-			player.showDebug('#content');
-		}
-
-		// init
-		self.select(localStorage['milliEarthOption']);
 	}
-});
+
+	/**
+	 * Init each option in the list.
+	 */
+	function initOption(index, element)
+	{
+		var id = $(element).attr('id');
+		$(element).click(function() {
+			self.select(id);
+		});
+	}
+
+	/**
+	 * Select one option.
+	 */
+	self.select = function(option)
+	{
+		$('.option').removeClass('selected');
+		$('#' + option).addClass('selected');
+		$('#content').empty();
+		player.hideDebug();
+		var name = 'show' + option.charAt(0).toUpperCase() + option.slice(1);
+		var callback = self[name];
+		callback();
+		localStorage['milliEarthOption'] = option;
+	}
+
+	/**
+	 * Show the keymap in the content.
+	 */
+	self.showKeymap = function()
+	{
+		keymap.display($('#content'));
+	}
+
+	/**
+	 * Show the players in the content.
+	 */
+	self.showPlayers = function()
+	{
+	}
+
+	/**
+	 * Show the current code in the content.
+	 */
+	self.showCode = function()
+	{
+		codeEditor.display($('#content'), player);
+	}
+
+	/**
+	 * Debug messages from the server.
+	 */
+	self.showDebug = function()
+	{
+		player.showDebug('#content');
+	}
+
+	// init
+	self.select(localStorage['milliEarthOption']);
+}
 

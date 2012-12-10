@@ -28,8 +28,6 @@ var clientPlayer = function(canvas)
 	// self-reference
 	var self = this;
 
-	// if we are debugging
-	var debugElement = false;
 	// keep track of the websocket
 	var websocket;
 	// check if running
@@ -282,10 +280,10 @@ var clientPlayer = function(canvas)
 			error('Not running');
 			return;
 		}
-		if (debugElement)
+		if (optionSelector.debugShown)
 		{
 			var contents = JSON.stringify(message, null, '\t');
-			$(debugElement).html($('<pre>').text(contents));
+			optionSelector.display($('<pre>').text(contents));
 		}
 		countUpdate(message.id);
 		canvas.clearCanvas();
