@@ -176,7 +176,7 @@ var clientPlayer = function(canvas)
 		websocket.onclose = function(message)
 		{
 			$('#status').text('Disconnected');
-			disconnect();
+			disconnect(false);
 		}
 		$('#connect').val('Disconnect');
 	}
