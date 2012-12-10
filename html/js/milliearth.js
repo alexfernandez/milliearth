@@ -97,7 +97,7 @@ var milliEarth = new function()
 	/**
 	 * Dispatch a message from the server.
 	 */
-	function dispatch(json)
+	self.dispatch = function(json)
 	{
 		if (json.type == 'code')
 		{

@@ -23,7 +23,7 @@
 /**
  * Connection to the server.
  */
-var serverConnection = new function(dispatcher)
+var serverConnection = new function()
 {
 	// self-reference
 	var self = this;
@@ -38,6 +38,7 @@ var serverConnection = new function(dispatcher)
 	self.connect = function(gameId, playerId)
 	{
 		var wsUrl = 'ws://' + location.host + '/serve?game=' + gameId + '&player=' + playerId;
+		debug('Connecting to ' + wsUrl);
 		websocket = new WebSocket(wsUrl);
 		websocket.onopen = open;
 		websocket.onerror = error;
@@ -51,7 +52,7 @@ var serverConnection = new function(dispatcher)
 	 */
 	function open()
 	{
-		$('#message').text('Connected to ' + wsUrl);
+		$('#message').text('Connected to ' + location.host);
 	}
 
 	/**
@@ -92,7 +93,7 @@ var serverConnection = new function(dispatcher)
 			error('Missing message type: ' + json);
 			return;
 		}
-		dispatcher.dispatch(json);
+		self.dispatcher.dispatch(json);
 	}
 
 	/**
