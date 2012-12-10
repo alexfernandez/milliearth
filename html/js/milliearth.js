@@ -72,7 +72,7 @@ var milliEarth = new function()
 			connect();
 			return;
 		}
-		disconnect(false);
+		disconnect();
 		websocket = null;
 	}
 
@@ -122,7 +122,7 @@ var milliEarth = new function()
 		websocket.onclose = function(message)
 		{
 			$('#message').text('Disconnected');
-			disconnect(false);
+			disconnect();
 		}
 		$('#connect').val('Disconnect');
 	}
@@ -158,7 +158,7 @@ var milliEarth = new function()
 	/**
 	 * Disconnect from the game.
 	 */
-	function disconnect(reconnect)
+	function disconnect()
 	{
 		if (websocket != null)
 		{
@@ -167,11 +167,6 @@ var milliEarth = new function()
 		$('#connect').val('Connect');
 		websocket = null;
 		player.end();
-		if (reconnect)
-		{
-			// automatic reconnect
-			setTimeout(connect, 100);
-		}
 	}
 
 	/**
