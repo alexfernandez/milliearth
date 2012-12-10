@@ -69,7 +69,7 @@ function gamePlayer(params)
 	 */
 	self.hasLost = function()
 	{
-		if (!self.robot || !self.robot.active)
+		if (!self.robot || !self.robot.alive)
 		{
 			return true;
 		}

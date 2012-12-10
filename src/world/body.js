@@ -59,7 +59,7 @@ function massiveBody(params)
 	self.position = params.position || new vector(0, 0, 0);
 	self.speed = params.speed || new vector(0, 0, 0);
 	self.life = params.life;
-	self.active = true;
+	self.alive = true;
 	self.rolling = false;
 
 	/**
@@ -90,7 +90,7 @@ function massiveBody(params)
 	{
 		if (self.checkOutOfBounds())
 		{
-			self.active = false;
+			self.alive = false;
 			return;
 		}
 		var scaledSpeed = self.speed.scale(interval);
@@ -114,7 +114,7 @@ function massiveBody(params)
 		log.i(self.id + ' damaged: ' + energy + ', life: ' + self.life);
 		if (self.life <= 0)
 		{
-			self.active = false;
+			self.alive = false;
 		}
 	}
 
@@ -191,7 +191,7 @@ function flyingProjectile(params)
 	 */
 	self.computeCollision = function(body, momentum)
 	{
-		self.active = false;
+		self.alive = false;
 		body.substractDamage(globalParams.projectileEnergyDensity * self.mass);
 	}
 }

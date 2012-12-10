@@ -59,7 +59,7 @@ var gameWorld = function(id)
 	self.getUpdate = function(id)
 	{
 		var player = bodies[id];
-		if (!player || !player.active)
+		if (!player || !player.alive)
 		{
 			return {};
 		}
@@ -72,7 +72,7 @@ var gameWorld = function(id)
 	self.getGlobalUpdate = function(id)
 	{
 		var player = bodies[id];
-		if (!player || !player.active)
+		if (!player || !player.alive)
 		{
 			return {};
 		}
@@ -144,7 +144,7 @@ var gameWorld = function(id)
 				computeCollision(body, bodiesArray[j]);
 			}
 			body.move(interval);
-			if (!body.active)
+			if (!body.alive)
 			{
 				log.i('Removing ' + body.id);
 				delete bodies[body.id];
