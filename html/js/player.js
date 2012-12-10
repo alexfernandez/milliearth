@@ -114,19 +114,6 @@ var clientPlayer = function(canvas)
 	}
 
 	/**
-	 * Dispatch a JSON message.
-	 */
-	self.dispatch = function(json)
-	{
-		if (!self[json.type])
-		{   
-			error('Invalid message type ' + json.type);
-			return;
-		}   
-		self[json.type](json);
-	}
-
-	/**
 	 * Request a line-of-sight update from the server.
 	 */
 	self.requestSightUpdate = function(type)
@@ -148,12 +135,11 @@ var clientPlayer = function(canvas)
 	self.requestUpdate = function(type)
 	{
 		var id = randomId();
-		var message = {
+		milliEarth.send({
 			type: type,
 			id: id,
 			events: keymap.getKeys(),
-		};
-		websocket.send(JSON.stringify(message));
+		});
 		latencyMap[id] = new Date().getTime();
 	}
 

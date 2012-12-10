@@ -33,9 +33,9 @@ var milliEarth = new function()
 	var player = null;
 
 	/**
-	 * Start the simulation.
+	 * Initialize the simulation.
 	 */
-	self.start = function()
+	self.init = function()
 	{
 		$('#status').html('Starting');
 
@@ -60,6 +60,7 @@ var milliEarth = new function()
 		player = new clientPlayer($('#simulation'));
 		$('#connect').click(clickButton);
 		$('#canvas').click(clickCanvas);
+		optionSelector.init();
 		connect();
 	}
 
@@ -153,7 +154,12 @@ var milliEarth = new function()
 			self[json.type](json);
 			return;
 		}
-		player.dispatch(json);
+		if (player[json.type])
+		{
+			player[json.type](json);
+			return;
+		}
+		error('Invalid message type ' + json.type);
 	}
 
 	/**
@@ -176,10 +182,9 @@ var milliEarth = new function()
 	self.requestCode = function()
 	{
 		debug('Requesting code');
-		var message = {
+		self.send({
 			type: 'code',
-		}
-		websocket.send(JSON.stringify(message));
+		});
 	}
 
 	/**
@@ -196,10 +201,17 @@ var milliEarth = new function()
 	self.sendCode = function()
 	{
 		debug('Sending code');
-		var message = {
+		self.send({
 			type: 'install',
 			contents: $('#editor').val(),
-		}
+		});
+	}
+
+	/**
+	 * Send a message to the server.
+	 */
+	self.send = function(message)
+	{
 		websocket.send(JSON.stringify(message));
 	}
 }
