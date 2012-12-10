@@ -172,7 +172,7 @@ var paintingLayer = function(params)
 			var object = objects[id];
 			if (!object.type)
 			{
-				console.error('Object without type: ' + JSON.stringify(object));
+				error('Object without type: ' + JSON.stringify(object));
 			}
 			else if (object.type == 'milliEarth')
 			{
@@ -192,7 +192,7 @@ var paintingLayer = function(params)
 			}
 			else
 			{
-				console.error('Unknown object type ' + object.type);
+				error('Unknown object type ' + object.type);
 			}
 		}
 	}
@@ -253,7 +253,7 @@ var paintingLayer = function(params)
 	 */
 	self.alert = function(message)
 	{
-		console.log('Alerting of ' + message);
+		debug('Alerting: ' + message);
 		canvas.drawRect({
 			x: 0,
 			y: 0,

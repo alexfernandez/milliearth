@@ -141,9 +141,8 @@ var clientPlayer = function(canvas)
 		 */
 		websocket.onerror = function (error)
 		{
-			console.error(error);
+			error(error);
 			$('#status').text('Error');
-			$('#message').text(error);
 		};
 
 		/**
@@ -158,19 +157,17 @@ var clientPlayer = function(canvas)
 			}
 			catch (e)
 			{
-				console.error('This doesn\'t look like a valid JSON: ', message.data);
+				error('This doesn\'t look like a valid JSON: ', message.data);
 				return;
 			}
 			if (!json.type)
 			{
-				console.error('Missing message type: ' + json);
-				$('#message').text('Invalid server message');
+				error('Missing message type: ' + json);
 				return;
 			}
 		   	if (!self[json.type])
 			{
-				console.error('Invalid message type ' + json.type);
-				$('#message').text('Invalid server message with type ' + json.type);
+				error('Invalid message type ' + json.type);
 				return;
 			}
 			self[json.type](json);
@@ -269,7 +266,7 @@ var clientPlayer = function(canvas)
 	{
 		if (!running)
 		{
-			console.error('Not running');
+			error('Not running');
 			return;
 		}
 		globalMessage = message;
@@ -282,7 +279,7 @@ var clientPlayer = function(canvas)
 	{
 		if (!running)
 		{
-			console.error('Not running');
+			error('Not running');
 			return;
 		}
 		if (debugMode)

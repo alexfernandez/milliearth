@@ -78,7 +78,7 @@ var screenProjection = function(params)
 		}
 		if (factorx == 1 && factory == 1)
 		{
-			console.error('Out of bounds?');
+			error('Out of bounds?');
 			return;
 		}
 		scale *= Math.min(factorx, factory);

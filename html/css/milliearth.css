@@ -33,4 +33,7 @@ canvas {
 	vertical-align: top;
 	padding: 5px;
 }
+.error {
+	color: #c00000;
+}
 

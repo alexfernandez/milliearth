@@ -1,7 +1,6 @@
 "use strict";
 /**
- * MilliEarth require from node.js.
- * Allows use of a node.js file in the browser.
+ * MilliEarth log functions.
  * (C) 2012 Alex Fernández.
  *
  * This file is part of MilliEarth.
@@ -22,17 +21,19 @@
 
 
 /**
- * Global to hold the exported values.
+ * Show a debug message.
  */
-var module = {exports: {}};
+function debug(message)
+{
+	console.log(message);
+}
 
 /**
- * Adapt the require to import from the browser.
+ * Show an error message.
  */
-function require(file)
+function error(message)
 {
-	debug('requiring ' + file);
-	$.getScript('/src/' + file);
-	return module.exports;
+	console.error(message);
+	$('#message').html($('<span class="error">').text(message));
 }
 
