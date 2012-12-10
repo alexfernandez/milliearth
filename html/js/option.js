@@ -113,7 +113,11 @@ var optionSelector = new function()
 	 */
 	self.display = function(contents)
 	{
-		$('#contents').html(contents);
+		if (!self.debugShown)
+		{
+			return;
+		}
+		$('#content').html(contents);
 	}
 }
 
