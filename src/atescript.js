@@ -210,6 +210,10 @@ function testBasicEnemy()
 			},
 			od: enemy,
 		},
+		pointCannonAt: function(interval, object) {
+			basicComputer.scope.id = object;
+			return interval;
+		},
 		pointAt: function(interval, object) {
 			basicComputer.scope.id = object;
 			return interval;
