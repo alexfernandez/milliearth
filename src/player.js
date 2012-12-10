@@ -404,7 +404,8 @@ var playerSelector = new function()
 		{
 			if (id != player.id)
 			{
-				rivals.push(players[id]);
+				var rival = { id: id };
+				rivals.push(rival);
 			}
 		}
 		player.send({
