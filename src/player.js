@@ -378,6 +378,43 @@ function autoPlayer(params)
 	}
 }
 
+/**
+ * A selector for human players.
+ */
+var playerSelector = new function()
+{
+	// self-reference
+	var self = this;
+
+	// attributes
+	var players = {};
+
+	self.add = function(player)
+	{
+		players[player.id] = player;
+	}
+
+	/**
+	 * Send the list of rivals to the given player.
+	 */
+	self.sendRivals = function(player)
+	{
+		var rivals = [];
+		for (var rival in players)
+		{
+			if (rival.id != player.id)
+			{
+				rivals.push(rival);
+			}
+		}
+		player.send({
+			type: 'rivals',
+			rivals: rivals,
+		});
+	}
+}
+
 module.exports.connectedPlayer = connectedPlayer;
 module.exports.autoPlayer = autoPlayer;
+module.exports.playerSelector = playerSelector;
 

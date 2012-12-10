@@ -28,6 +28,7 @@ var gameWorld = require('./world/world.js').gameWorld;
 var player = require('./player.js');
 var connectedPlayer = player.connectedPlayer;
 var autoPlayer = player.autoPlayer;
+var playerSelector = player.playerSelector;
 var util = require('./util.js');
 var parser = util.parser;
 var log = util.log;
@@ -68,6 +69,7 @@ function meGame(id)
 			connection: connection,
 		});
 		self.add(player);
+		playerSelector.add(player);
 		connection.on('message', function(message) {
 				if (message.type != 'utf8')
 				{
@@ -199,6 +201,11 @@ function meGame(id)
 		{
 			self.processEvents(player, message.events);
 			self.sendGlobalUpdate(player, message.id);
+			return;
+		}
+		if (message.type == 'rivals')
+		{
+			playerSelector.sendRivals(player);
 			return;
 		}
 		self.error(player, 'Unknown message type ' + message.type);
@@ -430,7 +437,6 @@ function meGame(id)
 			return;
 		}
 	}
-
 }
 
 
