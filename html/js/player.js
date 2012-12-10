@@ -161,10 +161,16 @@ var clientPlayer = function(canvas)
 				console.error('This doesn\'t look like a valid JSON: ', message.data);
 				return;
 			}
-			if (!json.type || !self[json.type])
+			if (!json.type)
 			{
-				console.error(json);
-				$('#status').text('Invalid message type ' + json.type);
+				console.error('Missing message type: ' + json);
+				$('#message').text('Invalid server message');
+				return;
+			}
+		   	if (!self[json.type])
+			{
+				console.error('Invalid message type ' + json.type);
+				$('#message').text('Invalid server message with type ' + json.type);
 				return;
 			}
 			self[json.type](json);
