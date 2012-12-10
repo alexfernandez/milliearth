@@ -114,7 +114,7 @@ var log = new function()
 	var self = this;
 
 	// attributes
-	self.debug = false;
+	self.debugMode = false;
 
 	/**
 	 * Log an error message, with ERROR priority.
@@ -145,7 +145,7 @@ var log = new function()
 	 */
 	self.d = function(message)
 	{
-		if (!self.debug)
+		if (!self.debugMode)
 		{
 			return;
 		}

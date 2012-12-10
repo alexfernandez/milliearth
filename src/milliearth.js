@@ -58,7 +58,7 @@ function processArguments(args)
 		var arg = args.shift();
 		if (arg == '-d')
 		{
-			log.debug = true;
+			log.debugMode = true;
 		}
 		else if (isNumber(arg))
 		{
