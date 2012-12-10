@@ -198,16 +198,11 @@ var clientPlayer = function(canvas)
 		}
 		$('#connect').val('Connect');
 		websocket = null;
-		if (running)
+		self.end();
+		if (reconnect)
 		{
-			clearInterval(updateIntervalId);
-			clearInterval(globalIntervalId);
-			running = false;
-			if (reconnect)
-			{
-				// automatic reconnect
-				setTimeout(connect, 100);
-			}
+			// automatic reconnect
+			setTimeout(connect, 100);
 		}
 	}
 
@@ -220,6 +215,20 @@ var clientPlayer = function(canvas)
 		updateIntervalId = setInterval(self.requestSightUpdate, updateInterval);
 		globalIntervalId = setInterval(self.requestGlobalUpdate, globalInterval);
 		running = true;
+	}
+
+	/**
+	 * End the game.
+	 */
+	self.end = function()
+	{
+		if (!running)
+		{
+			return;
+		}
+		clearInterval(updateIntervalId);
+		clearInterval(globalIntervalId);
+		running = false;
 	}
 
 	/**
