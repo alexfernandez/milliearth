@@ -86,10 +86,11 @@ var optionSelector = new function()
 	}
 
 	/**
-	 * Show the players in the content.
+	 * Show the rivals in the content.
 	 */
-	self.showPlayers = function()
+	self.showRivals = function()
 	{
+		rivalList.requestRivals();
 	}
 
 	/**
