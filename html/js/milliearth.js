@@ -110,6 +110,11 @@ var milliEarth = new function()
 			codeEditor.showCode(json);
 			return;
 		}
+		if (json.type == 'rivals')
+		{
+			rivalList.receiveRivals(json);
+			return;
+		}
 		if (player[json.type])
 		{
 			player[json.type](json);

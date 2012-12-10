@@ -46,6 +46,7 @@ var rivalList = new function()
 	 */
 	self.receiveRivals = function(message)
 	{
+		debug(message.rivals);
 	}
 }
 
