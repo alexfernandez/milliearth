@@ -30,6 +30,7 @@ var milliEarth = new function()
 
 	// attributes
 	var websocket = null;
+	var player = null;
 
 	/**
 	 * Start the simulation.
@@ -56,7 +57,7 @@ var milliEarth = new function()
 		$(document).keyup(keymap.keyup);
 		$(document).blur(keymap.blur);
 
-		var player = new clientPlayer($('#simulation'));
+		player = new clientPlayer($('#simulation'));
 		$('#connect').click(clickButton);
 		$('#canvas').click(clickCanvas);
 		connect();
@@ -94,7 +95,7 @@ var milliEarth = new function()
 	{
 		var gameId = randomId();
 		// open websocket
-		var wsUrl = 'ws://' + location.host + '/serve?game=' + gameId + '&player=' + playerId;
+		var wsUrl = 'ws://' + location.host + '/serve?game=' + gameId + '&player=' + player.playerId;
 		websocket = new WebSocket(wsUrl);
 
 		websocket.onopen = function ()

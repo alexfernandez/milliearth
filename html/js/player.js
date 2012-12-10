@@ -48,7 +48,7 @@ var clientPlayer = function(canvas)
 	var viewLayer = createViewLayer();
 	var globalLayer = createGlobalLayer();
 	// player id sent to the server: random
-	var playerId = randomId();
+	self.playerId = randomId();
 
 
 	/**
@@ -114,10 +114,16 @@ var clientPlayer = function(canvas)
 	}
 
 	/**
-	 * Dispatch a websocket message.
+	 * Dispatch a JSON message.
 	 */
-	self.dispatch = function(message)
+	self.dispatch = function(json)
 	{
+		if (!self[json.type])
+		{   
+			error('Invalid message type ' + json.type);
+			return;
+		}   
+		self[json.type](json);
 	}
 
 	/**
