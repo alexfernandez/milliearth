@@ -400,11 +400,11 @@ var playerSelector = new function()
 	self.sendRivals = function(player)
 	{
 		var rivals = [];
-		for (var rival in players)
+		for (var id in players)
 		{
-			if (rival.id != player.id)
+			if (id != player.id)
 			{
-				rivals.push(rival);
+				rivals.push(players[id]);
 			}
 		}
 		player.send({

@@ -185,6 +185,11 @@ function meGame(id)
 			self.installCode(player, message);
 			return;
 		}
+		if (message.type == 'rivals')
+		{
+			playerSelector.sendRivals(player);
+			return;
+		}
 		// the remaining messages are only valid if the game is active
 		if (!self.active)
 		{
@@ -201,11 +206,6 @@ function meGame(id)
 		{
 			self.processEvents(player, message.events);
 			self.sendGlobalUpdate(player, message.id);
-			return;
-		}
-		if (message.type == 'rivals')
-		{
-			playerSelector.sendRivals(player);
 			return;
 		}
 		self.error(player, 'Unknown message type ' + message.type);
