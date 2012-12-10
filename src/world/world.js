@@ -51,36 +51,13 @@ var gameWorld = function(id)
 		life: globalParams.meLife,
 	});
 	self.seconds = 0;
-	self.active = false;
 	var bodies = {};
-
-	/**
-	 * Start the world.
-	 */
-	self.start = function()
-	{
-		self.active = true;
-		self.seconds = 0;
-	};
-
-	/**
-	 * Stop the world turning.
-	 */
-	self.stop = function()
-	{
-		self.active = false;
-	}
 
 	/**
 	 * Get an update message for the player with the given id.
 	 */
 	self.getUpdate = function(id)
 	{
-		if (!self.active)
-		{
-			log.e('World not active');
-			return {};
-		}
 		var player = bodies[id];
 		if (!player || !player.active)
 		{
@@ -94,11 +71,6 @@ var gameWorld = function(id)
 	 */
 	self.getGlobalUpdate = function(id)
 	{
-		if (!self.active)
-		{
-			log.e('World not active');
-			return {};
-		}
 		var player = bodies[id];
 		if (!player || !player.active)
 		{
@@ -157,10 +129,6 @@ var gameWorld = function(id)
 	 */
 	self.shortLoop = function(delay)
 	{
-		if (!self.active)
-		{
-			return;
-		}
 		var interval = delay / 1000;
 		self.seconds += interval;
 		var bodiesArray = [];

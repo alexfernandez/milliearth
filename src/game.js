@@ -45,6 +45,7 @@ function meGame(id)
 
 	self.id = id;
 	self.world = new gameWorld(id);
+	self.active = false;
 	var players = [];
 
 	/**
@@ -95,7 +96,7 @@ function meGame(id)
 				log.i('Client ' + connection.remoteAddress + ' disconnected.');
 				self.close(player);
 		});
-		if (self.world.active)
+		if (self.active)
 		{
 			self.startAfter(player);
 		}
@@ -122,7 +123,7 @@ function meGame(id)
 				type: 'start',
 				players: playerIds
 		});
-		self.world.start();
+		self.active = true;
 		log.d('Game ' + self.id + ' started!');
 	}
 
@@ -167,16 +168,27 @@ function meGame(id)
 	 */
 	self.message = function(player, message)
 	{
-		if (!self.world.active)
-		{
-			self.error(player, 'Game not started');
-			return;
-		}
 		if (!message.type)
 		{
 			self.error(player, 'Missing game type');
 		}
 		log.d('Player ' + player.id + ' sent a message ' + message.type);
+		if (message.type == 'code')
+		{
+			self.sendCode(player);
+			return;
+		}
+		if (message.type == 'install')
+		{
+			self.installCode(player, message);
+			return;
+		}
+		// the remaining messages are only valid if the game is active
+		if (!self.active)
+		{
+			self.error(player, 'Game not started');
+			return;
+		}
 		if (message.type == 'update')
 		{
 			self.processEvents(player, message.events);
@@ -189,16 +201,6 @@ function meGame(id)
 			self.sendGlobalUpdate(player, message.id);
 			return;
 		}
-		if (message.type == 'code')
-		{
-			self.sendCode(player);
-			return;
-		}
-		if (message.type == 'install')
-		{
-			self.installCode(player, message);
-			return;
-		}
 		self.error(player, 'Unknown message type ' + message.type);
 	}
 
@@ -207,7 +209,7 @@ function meGame(id)
 	 */
 	self.close = function(player)
 	{
-		if (!self.world.active)
+		if (!self.active)
 		{
 			return;
 		}
@@ -394,6 +396,10 @@ function meGame(id)
 	 */
 	self.shortLoop = function(delay)
 	{
+		if (!self.active)
+		{
+			return;
+		}
 		self.world.shortLoop(delay);
 		var playersCopy = players.slice();
 		for (var index in playersCopy)
@@ -419,7 +425,7 @@ function meGame(id)
 	 */
 	self.longLoop = function(delay)
 	{
-		if (!self.world.active)
+		if (!self.active)
 		{
 			return;
 		}
