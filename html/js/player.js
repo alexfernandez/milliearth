@@ -284,7 +284,8 @@ var clientPlayer = function(canvas)
 		}
 		if (debugElement)
 		{
-			$(debugElement).text(JSON.stringify(message));
+			var contents = JSON.stringify(message, null, '\t');
+			$(debugElement).html($('<pre>').text(contents));
 		}
 		countUpdate(message.id);
 		canvas.clearCanvas();
