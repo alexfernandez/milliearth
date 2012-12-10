@@ -264,7 +264,7 @@ function meGame(id)
 			type: 'lose',
 		};
 		player.send(lose);
-		player.disconnect();
+		player.endGame();
 		remove(player);
 	}
 
@@ -289,7 +289,7 @@ function meGame(id)
 		gameSelector.remove(self.id);
 		for (var index in players)
 		{
-			players[index].disconnect();
+			players[index].endGame();
 		}
 		log.i('Game ' + self.id + ' finished');
 	}

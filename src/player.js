@@ -57,11 +57,11 @@ function gamePlayer(params)
 	}
 
 	/**
-	 * Disconnect the player.
+	 * End the game for the player.
 	 */
-	self.disconnect = function()
+	self.endGame = function()
 	{
-		log.i(self.id + ' disconnected');
+		log.i(self.id + ' game ended');
 	}
 
 	/**
@@ -113,11 +113,13 @@ function connectedPlayer(params)
 	}
 
 	/**
-	 * Disconnect the player.
+	 * End the game for the player: let them know.
 	 */
-	self.disconnect = function()
+	self.endGame = function()
 	{
-		self.connection.close();
+		self.send({
+			type: 'end',
+		});
 	}
 }
 
