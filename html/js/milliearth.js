@@ -29,7 +29,6 @@ var milliEarth = new function()
 	var self = this;
 
 	// attributes
-	var websocket = null;
 	var player = null;
 
 	/**
@@ -60,8 +59,9 @@ var milliEarth = new function()
 		player = new clientPlayer($('#simulation'));
 		$('#connect').click(clickButton);
 		$('#canvas').click(clickCanvas);
-		optionSelector.init();
 		connect();
+		optionSelector.init();
+		optionSelector.selectLast();
 	}
 
 	/**
@@ -69,11 +69,6 @@ var milliEarth = new function()
 	 */
 	function clickButton()
 	{
-		if (!websocket)
-		{
-			connect();
-			return;
-		}
 		disconnect();
 		websocket = null;
 	}
@@ -95,60 +90,15 @@ var milliEarth = new function()
 	function connect()
 	{
 		var gameId = randomId();
-		// open websocket
-		var wsUrl = 'ws://' + location.host + '/serve?game=' + gameId + '&player=' + player.playerId;
-		websocket = new WebSocket(wsUrl);
-
-		websocket.onopen = function ()
-		{
-			$('#message').text('Connected to ' + wsUrl);
-		};
-
-		/**
-		 * Connection error.
-		 */
-		websocket.onerror = function (error)
-		{
-			error(error);
-			$('#status').text('Error');
-		};
-
-		/**
-		 * Incoming message.
-		 */
-		websocket.onmessage = dispatch;
-
-		/**
-		 * The websocket was closed.
-		 */
-		websocket.onclose = function(message)
-		{
-			$('#message').text('Disconnected');
-			disconnect();
-		}
-		$('#connect').val('Disconnect');
+		serverConnection.dispatcher = self;
+		serverConnection.connect(gameId, player.playerId);
 	}
 
 	/**
-	 * Dispatch a websocket message.
+	 * Dispatch a message from the server.
 	 */
-	function dispatch(message)
+	function dispatch(json)
 	{
-		// check it is valid JSON
-		try
-		{
-			var json = JSON.parse(message.data);
-		}
-		catch (e)
-		{
-			error('This doesn\'t look like a valid JSON: ', message.data);
-			return;
-		}
-		if (!json.type)
-		{
-			error('Missing message type: ' + json);
-			return;
-		}
 		if (json.type == 'code')
 		{
 			codeEditor.showCode(json);
@@ -167,21 +117,8 @@ var milliEarth = new function()
 	 */
 	function disconnect()
 	{
-		if (websocket != null)
-		{
-			websocket.close();
-		}
-		$('#connect').val('Connect');
-		websocket = null;
+		serverConnection.disconnect();
 		player.end();
-	}
-
-	/**
-	 * Send a message to the server.
-	 */
-	self.send = function(message)
-	{
-		websocket.send(JSON.stringify(message));
 	}
 }
 

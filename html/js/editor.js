@@ -54,7 +54,7 @@ var codeEditor = new function()
 	self.requestCode = function()
 	{
 		debug('Requesting code');
-		milliEarth.send({
+		serverConnection.send({
 			type: 'code',
 		});
 	}
@@ -73,7 +73,7 @@ var codeEditor = new function()
 	self.sendCode = function()
 	{
 		debug('Sending code');
-		milliEarth.send({
+		serverConnection.send({
 			type: 'install',
 			contents: $('#editor').val(),
 		});

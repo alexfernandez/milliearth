@@ -70,6 +70,14 @@ var optionSelector = new function()
 	}
 
 	/**
+	 * Select the last option selected.
+	 */
+	self.selectLast = function()
+	{
+		self.select(localStorage['milliEarthOption']);
+	}
+
+	/**
 	 * Show the keymap in the content.
 	 */
 	self.showKeymap = function()
@@ -107,8 +115,5 @@ var optionSelector = new function()
 	{
 		$('#contents').html(contents);
 	}
-
-	// init
-	self.select(localStorage['milliEarthOption']);
 }
 
