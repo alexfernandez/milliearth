@@ -47,6 +47,21 @@ var rivalList = new function()
 	self.receiveRivals = function(message)
 	{
 		debug(message.rivals);
+		var contents = $('<div>');
+		if (message.rivals.length == 0)
+		{
+			contents.append($('<h3>').html('No rivals'));
+			optionSelector.display(contents);
+			return;
+		}
+		var contents = $('<div>').append($('<h3>').html('Rivals'));
+		for (var index in message.rivals)
+		{
+			var rival = message.rivals[index];
+			var box = $('<div class="rival">').html(rival.id);
+			contents.append(box);
+		}
+		optionSelector.display(contents);
 	}
 }
 
