@@ -41,7 +41,7 @@ var serverConnection = new function()
 		debug('Connecting to ' + wsUrl);
 		websocket = new WebSocket(wsUrl);
 		websocket.onopen = open;
-		websocket.onerror = error;
+		websocket.onerror = self.error;
 		websocket.onmessage = receive;
 		websocket.onclose = close;
 		$('#connect').val('Disconnect');
@@ -58,7 +58,7 @@ var serverConnection = new function()
 	/**
 	 * Error on the websocket.
 	 */
-	function error(message)
+	self.error = function(message)
 	{
 		error(message);
 		$('#status').text('Error');
