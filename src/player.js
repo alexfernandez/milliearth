@@ -226,7 +226,7 @@ function autoComputer(robot)
 		var object = self.cannon[object.id];
 		if (!object)
 		{
-			log.e('Object not found in cannon view');
+			// log.e('Object not found in cannon view');
 			return interval;
 		}
 		var position = object.position;
@@ -278,7 +278,7 @@ function autoComputer(robot)
 		var object = self.cannon[object.id];
 		if (!object)
 		{
-			log.e('Object not found in cannon view');
+			// log.e('Object not found in cannon view');
 			return interval;
 		}
 		var position = object.position;
