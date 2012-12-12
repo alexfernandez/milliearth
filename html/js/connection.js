@@ -30,6 +30,7 @@ var serverConnection = new function()
 
 	// attributes
 	var websocket = null;
+	var initialized = false;
 	self.dispatcher = null;
 
 	/**
@@ -40,19 +41,20 @@ var serverConnection = new function()
 		var wsUrl = 'ws://' + location.host + '/serve?game=' + gameId + '&player=' + playerId;
 		debug('Connecting to ' + wsUrl);
 		websocket = new WebSocket(wsUrl);
-		websocket.onopen = open;
+		websocket.onopen = opened;
 		websocket.onerror = self.error;
 		websocket.onmessage = receive;
-		websocket.onclose = close;
+		websocket.onclose = closed;
 		$('#connect').val('Disconnect');
 	}
 
 	/**
 	 * The websocket is open.
 	 */
-	function open()
+	function opened()
 	{
 		$('#message').text('Connected to ' + location.host);
+		initialized = true;
 	}
 
 	/**
@@ -67,7 +69,7 @@ var serverConnection = new function()
 	/**
 	 * The websocket closes.
 	 */
-	function close(message)
+	function closed(message)
 	{
 		$('#message').text('Disconnected');
 		self.disconnect();
@@ -104,6 +106,11 @@ var serverConnection = new function()
 		if (websocket == null)
 		{
 			error('No connection');
+			return;
+		}
+		if (!initialized)
+		{
+			error('Websocket not open yet');
 			return;
 		}
 		websocket.send(JSON.stringify(message));
