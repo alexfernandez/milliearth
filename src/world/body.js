@@ -28,10 +28,11 @@ var vector = require('../vector.js').vector;
 var quaternion = require('../quaternion.js');
 var coordinateSystem = quaternion.coordinateSystem;
 var dependentSystem = quaternion.dependentSystem;
-var util = require('../util.js');
+var util = require('../util/util.js');
 var parser = util.parser;
-var log = util.log;
 var extend = util.extend;
+var log = require('../util/log.js');
+var info = log.info;
 
 
 /**
@@ -111,7 +112,7 @@ function massiveBody(params)
 	self.substractDamage = function(energy)
 	{
 		self.life -= energy;
-		log.i(self.id + ' damaged: ' + energy + ', life: ' + self.life);
+		info(self.id + ' damaged: ' + energy + ', life: ' + self.life);
 		if (self.life <= 0)
 		{
 			self.alive = false;

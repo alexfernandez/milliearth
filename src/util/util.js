@@ -106,54 +106,6 @@ var concurrencyLock = function()
 }
 
 /**
- * Message log.
- */
-var log = new function()
-{
-	// self-reference
-	var self = this;
-
-	// attributes
-	self.debugMode = false;
-
-	/**
-	 * Log an error message, with ERROR priority.
-	 */
-	self.e = function(message)
-	{
-		console.error('\u001b[31m' + iso(new Date()) + ' ' + message + '\u001b[0m');
-	}
-
-	/**
-	 * Log a success message in green, for tests.
-	 */
-	self.success = function(message)
-	{
-		console.log('\u001b[32m' + iso(new Date()) + ' ' + message + '\u001b[0m');
-	}
-
-	/**
-	 * Log a message with INFO priority.
-	 */
-	self.i = function(message)
-	{
-		console.log(iso(new Date()) + ' ' + message);
-	}
-
-	/**
-	 * Log a trace message with DEBUG priority.
-	 */
-	self.d = function(message)
-	{
-		if (!self.debugMode)
-		{
-			return;
-		}
-		self.i(message);
-	}
-}
-
-/**
  * A high resolution timer.
  */
 var highResolutionTimer = function(delay, callback)
@@ -260,7 +212,6 @@ function extend(parent, child)
 }
 
 module.exports.parser = parser;
-module.exports.log = log;
 module.exports.extend = extend;
 module.exports.concurrencyLock = concurrencyLock;
 module.exports.highResolutionTimer = highResolutionTimer;

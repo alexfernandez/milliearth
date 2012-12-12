@@ -30,10 +30,12 @@ var vector = require('../vector.js').vector;
 var quaternion = require('../quaternion.js');
 var coordinateSystem = quaternion.coordinateSystem;
 var dependentSystem = quaternion.dependentSystem;
-var util = require('../util.js');
+var util = require('../util/util.js');
 var parser = util.parser;
-var log = util.log;
 var extend = util.extend;
+var log = require('../util/log.js');
+var debug = log.debug;
+var error = log.error;
 
 
 /**
@@ -134,7 +136,7 @@ function fighterRobot(params)
 		var separation = difference.length() - milliEarth.radius - self.radius;
 		if (isNaN(collisionSpeed))
 		{
-			log.e('Invalid collision speed for speed ' + self.speed + ' and difference unit vector ' + differenceUnit);
+			error('Invalid collision speed for speed ' + self.speed + ' and difference unit vector ' + differenceUnit);
 			return;
 		}
 		if (collisionSpeed < globalParams.minCollisionSpeed)
@@ -492,7 +494,7 @@ function fighterRobot(params)
 		self.world.addObject(projectile);
 		self.projectiles--;
 		shootTimeout = self.world.seconds + globalParams.projectileRechargeTime;
-		log.d('Player ' + self.id + ' has fired a shot!');
+		debug('Player ' + self.id + ' has fired a shot!');
 	}
 }
 
