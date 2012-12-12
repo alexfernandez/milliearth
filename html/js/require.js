@@ -31,7 +31,10 @@ var module = {exports: {}};
  */
 function require(file)
 {
-	debug('requiring ' + file);
+	if (typeof debug != 'undefined')
+	{
+		debug('requiring ' + file);
+	}
 	$.getScript('/src/' + file);
 	return module.exports;
 }
