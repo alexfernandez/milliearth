@@ -59,9 +59,8 @@ var milliEarth = new function()
 		player = new clientPlayer($('#simulation'));
 		$('#connect').click(clickButton);
 		$('#canvas').click(clickCanvas);
-		self.connect();
 		optionSelector.init();
-		optionSelector.selectLast();
+		self.connect(player.id, optionSelector.selectLast);
 	}
 
 	/**
@@ -93,11 +92,11 @@ var milliEarth = new function()
 	/**
 	 * Connect using a websocket using a random game id.
 	 */
-	self.connect = function()
+	self.connect = function(playerId, callback)
 	{
 		var gameId = randomId();
 		serverConnection.dispatcher = self;
-		serverConnection.connect(gameId, player.playerId);
+		serverConnection.connect(gameId, playerId, callback);
 	}
 
 	/**

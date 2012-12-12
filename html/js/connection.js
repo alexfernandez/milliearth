@@ -36,12 +36,12 @@ var serverConnection = new function()
 	/**
 	 * Connect using a websocket with game id and player id.
 	 */
-	self.connect = function(gameId, playerId)
+	self.connect = function(gameId, playerId, callback)
 	{
 		var wsUrl = 'ws://' + location.host + '/serve?game=' + gameId + '&player=' + playerId;
 		debug('Connecting to ' + wsUrl);
 		websocket = new WebSocket(wsUrl);
-		websocket.onopen = opened;
+		websocket.onopen = getOpener(callback);
 		websocket.onerror = self.error;
 		websocket.onmessage = receive;
 		websocket.onclose = closed;
@@ -49,12 +49,16 @@ var serverConnection = new function()
 	}
 
 	/**
-	 * The websocket is open.
+	 * Get an opener function called after the websocket is open,
+	 * which initializes and run the callback.
 	 */
-	function opened()
+	function getOpener(callback)
 	{
-		$('#message').text('Connected to ' + location.host);
-		initialized = true;
+		return function() {
+			$('#message').text('Connected to ' + location.host);
+			initialized = true;
+			callback();
+		};
 	}
 
 	/**
