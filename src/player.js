@@ -163,9 +163,9 @@ function connectedPlayer(params)
 	/**
 	 * Receive an error from the connection.
 	 */
-	function connectionError(error)
+	function connectionError(message)
 	{
-		error('Error ' + error);
+		error('Error ' + message);
 	}
 
 	/**
@@ -186,11 +186,10 @@ function connectedPlayer(params)
 	self.error = function(message)
 	{
 		error('Player ' + self.id + ' error: ' + message);
-		var error = {
+		self.send({
 			type: 'error',
 			message: message
-		};
-		self.send(error);
+		});
 	}
 
 	/**
