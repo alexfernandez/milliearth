@@ -28,10 +28,13 @@ var parsePosition = require('./script/parse.js').parsePosition;
 var scriptingParams = require('./script/parse.js').scriptingParams;
 var scriptingSentence = require('./script/parse.js').scriptingSentence;
 var scriptingContext = require('./script/context.js').scriptingContext;
-var util = require('./util.js');
-var log = util.log;
+var util = require('./util/util.js');
 var extend = util.extend;
 var concurrencyLock = util.concurrencyLock;
+var log = require('./util/log.js');
+var debug = log.debug;
+var info = log.info;
+var error = log.error;
 
 
 /**
@@ -64,7 +67,7 @@ function scriptingEngine(params)
 		fs.readFile(dir + file, function(err, data) {
 			if (err)
 			{
-				log.e('Invalid script file ' + file);
+				error('Invalid script file ' + file);
 				return;
 			}
 			prepare(data.toString());
@@ -139,7 +142,7 @@ function scriptingEngine(params)
 		}
 		if (context.finished())
 		{
-			log.d('Context finished');
+			debug('Context finished');
 			context.restart();
 		}
 		var run = context.run(intervalPending, callback);
@@ -177,14 +180,14 @@ function testArithmetic()
 	engine.run(0.1, function(computer) {
 		if (!computer.finished)
 		{
-			log.e('Script not finished');
+			error('Script not finished');
 			return;
 		}
 		if (computer.x != 10)
 		{
-			log.e('x should be 10, not ' + computer.x);
+			error('x should be 10, not ' + computer.x);
 		}
-		log.success('Scripting arithmetic: OK');
+		success('Scripting arithmetic: OK');
 	});
 }
 
@@ -253,21 +256,21 @@ function testBasicEnemy()
 				iterate();
 				return;
 			}
-			log.e('Script not finished');
+			error('Script not finished');
 			return;
 		}
 		else
 		{
 			if (iterations < expected)
 			{
-				log.e('Finished too soon: ' + iterations + ' iterations');
+				error('Finished too soon: ' + iterations + ' iterations');
 			}
 		}
 		if (!enemy.dead)
 		{
-			log.e('Enemy should be dead by now');
+			error('Enemy should be dead by now');
 		}
-		log.success('Scripting basic enemy: OK');
+		success('Scripting basic enemy: OK');
 	};
 	iterate();
 }

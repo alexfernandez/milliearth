@@ -35,11 +35,15 @@ var urlParser = require('url');
 var fs = require('fs');
 var globalParams = require('./params.js').globalParams;
 var isNumber = require('./vector.js').isNumber;
-var log = require('./util.js').log;
 var gameSelector = require('./game.js').gameSelector;
 var player = require('./player.js');
 var playerSelector = player.playerSelector;
 var connectedPlayer = player.connectedPlayer;
+var log = require('./util/log.js');
+var debug = log.debug;
+var info = log.info;
+var error = log.error;
+var debugMode = log.debugMode;
 
 /**
  * Globals.
@@ -48,7 +52,7 @@ var port = globalParams.port;
 processArguments(process.argv.slice(2));
 var clients = [];
 var server = http.createServer(serve).listen(port, function() {
-	log.i('Server running at http://127.0.0.1:' + port + '/');
+	info('Server running at http://127.0.0.1:' + port + '/');
 });
 
 /**
@@ -61,7 +65,7 @@ function processArguments(args)
 		var arg = args.shift();
 		if (arg == '-d')
 		{
-			log.debugMode = true;
+			debugMode = true;
 		}
 		else if (isNumber(arg))
 		{
@@ -69,7 +73,7 @@ function processArguments(args)
 		}
 		else
 		{
-			log.e('Usage: milliearth [-d] [port]');
+			error('Usage: milliearth [-d] [port]');
 			return;
 		}
 	}
@@ -89,10 +93,10 @@ var wsServer = new webSocketServer({
  */
 wsServer.on('request', function(request) {
 	var url = urlParser.parse(request.resource, true);
-	log.d('Connection to ' + url.pathname);
+	debug('Connection to ' + url.pathname);
 	if (url.pathname != '/serve')
 	{
-		log.e('Invalid URL ' + url.pathname);
+		error('Invalid URL ' + url.pathname);
 		return;
 	}
 	// check client parameters
@@ -100,7 +104,7 @@ wsServer.on('request', function(request) {
 	var playerId = url.query.player;
 	if (!gameId || !playerId)
 	{
-		log.e('Invalid parameters: game ' + gameId + ', player ' + playerId);
+		error('Invalid parameters: game ' + gameId + ', player ' + playerId);
 		return;
 	}
 	var connection = request.accept(null, request.origin);
@@ -111,7 +115,7 @@ wsServer.on('request', function(request) {
 	playerSelector.add(player);
 	var game = gameSelector.find(gameId);
 	game.add(player);
-	log.i('Connection from ' + connection.remoteAddress + ' accepted');
+	info('Connection from ' + connection.remoteAddress + ' accepted');
 });
 
 /**

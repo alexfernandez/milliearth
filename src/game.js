@@ -27,11 +27,14 @@ var globalParams = require('./params.js').globalParams;
 var gameWorld = require('./world/world.js').gameWorld;
 var player = require('./player.js');
 var autoPlayer = player.autoPlayer;
-var util = require('./util.js');
+var util = require('./util/util.js');
 var parser = util.parser;
-var log = util.log;
 var extend = util.extend;
 var highResolutionTimer = util.highResolutionTimer;
+var log = require('./util/log.js');
+var debug = log.debug;
+var info = log.info;
+var error = log.error;
 
 
 /**
@@ -61,7 +64,7 @@ function meGame(id)
 		{
 			self.start();
 		}
-		log.i('Player ' + player.id + ' joined the game ' + self.id + '; ' + players.length + ' connected');
+		info('Player ' + player.id + ' joined the game ' + self.id + '; ' + players.length + ' connected');
 	}
 
 	/**
@@ -74,7 +77,7 @@ function meGame(id)
 			players[index].startGame(self);
 		}
 		self.active = true;
-		log.d('Game ' + self.id + ' started!');
+		debug('Game ' + self.id + ' started!');
 	}
 
 	/**
@@ -149,17 +152,17 @@ function meGame(id)
 		}
 		if (!removeFromList(player))
 		{
-			log.e('Could not remove ' + player.id + ' from players list');
+			error('Could not remove ' + player.id + ' from players list');
 			return;
 		}
 		if (players.length == 0)
 		{
-			log.e('nobody left!?');
+			error('nobody left!?');
 			return
 		}
 		if (players.length > 1)
 		{
-			log.e('Too many (' + players.length + ') people left!?');
+			error('Too many (' + players.length + ') people left!?');
 			return;
 		}
 		var rival = players[0];
@@ -167,7 +170,7 @@ function meGame(id)
 			type: 'abandoned',
 			life: rival.life,
 		};
-		log.i('Player ' + player.id + ' disconnected; ' + rival.id + ' won by points');
+		info('Player ' + player.id + ' disconnected; ' + rival.id + ' won by points');
 		rival.send(abandoned);
 		self.finish();
 	}
@@ -224,7 +227,7 @@ function meGame(id)
 		{
 			players[index].endGame();
 		}
-		log.i('Game ' + self.id + ' finished');
+		info('Game ' + self.id + ' finished');
 	}
 
 	/**
@@ -279,7 +282,7 @@ function meGame(id)
 		var computer = findComputer();
 		if (!computer)
 		{
-			log.i('No computer opponent; cannot fetch code');
+			info('No computer opponent; cannot fetch code');
 			return;
 		}
 		var message = {
@@ -296,7 +299,7 @@ function meGame(id)
 	{
 		if (!message.contents)
 		{
-			log.e('Empty code received');
+			error('Empty code received');
 			return;
 		}
 		var computer = findComputer();
@@ -305,7 +308,7 @@ function meGame(id)
 			return;
 		}
 		computer.installCode(message.contents, player.id);
-		log.i('Installed code for ' + player.id + ', finishing');
+		info('Installed code for ' + player.id + ', finishing');
 		self.finish();
 	}
 
@@ -427,7 +430,7 @@ var gameSelector = new function()
 		}
 		if (count > 0)
 		{
-			log.i('games in progress: ' + count);
+			info('games in progress: ' + count);
 		}
 	}
 

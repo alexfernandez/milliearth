@@ -26,10 +26,13 @@
 var globalParams = require('./params.js').globalParams;
 var gameWorld = require('./world/world.js').gameWorld;
 var scriptingEngine = require('./atescript.js').scriptingEngine;
-var util = require('./util.js');
+var util = require('./util/util.js');
 var parser = util.parser;
-var log = util.log;
 var extend = util.extend;
+var log = require('./util/log.js');
+var debug = log.debug;
+var info = log.info;
+var error = log.error;
 
 
 /**
@@ -63,7 +66,7 @@ function gamePlayer(params)
 	 */
 	self.postStart = function(game)
 	{
-		log.i(self.id + ' game started');
+		info(self.id + ' game started');
 		self.send({
 			type: 'start',
 			players: game.getPlayerIds(),
@@ -75,7 +78,7 @@ function gamePlayer(params)
 	 */
 	self.send = function(message)
 	{
-		log.d('Auto: ' + parser.convert(message));
+		debug('Auto: ' + parser.convert(message));
 	}
 
 	/**
@@ -83,7 +86,7 @@ function gamePlayer(params)
 	 */
 	self.endGame = function()
 	{
-		log.i(self.id + ' game ended');
+		info(self.id + ' game ended');
 	}
 
 	/**
@@ -140,7 +143,7 @@ function connectedPlayer(params)
 			self.error('Missing message type');
 			return;
 		}
-		log.d('Player ' + self.id + ' sent a message ' + message.type);
+		debug('Player ' + self.id + ' sent a message ' + message.type);
 		if (message.type == 'rivals')
 		{
 			self.send({
@@ -162,7 +165,7 @@ function connectedPlayer(params)
 	 */
 	function connectionError(error)
 	{
-		log.e('Error ' + error);
+		error('Error ' + error);
 	}
 
 	/**
@@ -170,7 +173,7 @@ function connectedPlayer(params)
 	 */
 	function connectionClosed()
 	{
-		log.i('Client ' + connection.remoteAddress + ' disconnected.');
+		info('Client ' + connection.remoteAddress + ' disconnected.');
 		if (self.game)
 		{
 			self.game.remove(self);
@@ -182,7 +185,7 @@ function connectedPlayer(params)
 	 */
 	self.error = function(message)
 	{
-		log.e('Player ' + self.id + ' error: ' + message);
+		error('Player ' + self.id + ' error: ' + message);
 		var error = {
 			type: 'error',
 			message: message
@@ -206,7 +209,7 @@ function connectedPlayer(params)
 		var callback = self.robot[name];
 		if (!callback)
 		{
-			log.e('Event ' + name + ' for player ' + self.id + ' without callback');
+			error('Event ' + name + ' for player ' + self.id + ' without callback');
 			return;
 		}
 		callback(period / 1000);
@@ -337,7 +340,7 @@ function autoComputer(robot)
 		var object = self.cannon[object.id];
 		if (!object)
 		{
-			// log.e('Object not found in cannon view');
+			// error('Object not found in cannon view');
 			return interval;
 		}
 		var position = object.position;
@@ -389,7 +392,7 @@ function autoComputer(robot)
 		var object = self.cannon[object.id];
 		if (!object)
 		{
-			// log.e('Object not found in cannon view');
+			// error('Object not found in cannon view');
 			return interval;
 		}
 		var position = object.position;

@@ -30,9 +30,11 @@ var parsePosition = parse.parsePosition;
 var scriptingParams = parse.scriptingParams;
 var scriptingSentence = parse.scriptingSentence;
 var storage = parse.storage;
-var util = require('../util.js');
-var log = util.log;
+var util = require('../util/util.js');
 var extend = util.extend;
+var log = require('../util/log.js');
+var debug = log.debug;
+var error = log.error;
 
 
 /**
@@ -109,7 +111,7 @@ function scriptingContext(params)
 		var context = stack.current();
 		if (!context)
 		{
-			log.e('All blocks closed; cannot add ' + sentence);
+			error('All blocks closed; cannot add ' + sentence);
 			return;
 		}
 		context.add(sentence);
@@ -137,7 +139,7 @@ function scriptingContext(params)
 			self.runSentence();
 			run++;
 		}
-		log.d('Run ' + run + ' lines');
+		debug('Run ' + run + ' lines');
 		return run;
 	}
 
@@ -161,7 +163,7 @@ function scriptingContext(params)
 			}
 			return;
 		}
-		log.d('Running: ' + sentence);
+		debug('Running: ' + sentence);
 		var token = sentence.currentSkip();
 		if (token == 'if')
 		{
@@ -189,7 +191,7 @@ function scriptingContext(params)
 		}
 		else
 		{
-			log.e('Invalid token ' + token + ' in sentence ' + sentence + '; skipping');
+			error('Invalid token ' + token + ' in sentence ' + sentence + '; skipping');
 		}
 		self.skip();
 	}
@@ -252,12 +254,12 @@ function scriptingContext(params)
 			}
 			else
 			{
-				log.e('Invalid token ' + token + ' in value within ' + sentence);
+				error('Invalid token ' + token + ' in value within ' + sentence);
 			}
 		}
 		if (value === null)
 		{
-			log.e('No value');
+			error('No value');
 		}
 		return value;
 	}
@@ -285,7 +287,7 @@ function scriptingContext(params)
 	{
 		if (!token)
 		{
-			log.e('Empty token');
+			error('Empty token');
 			return false;
 		}
 		if (computer.hasOwnProperty(token))
@@ -307,7 +309,7 @@ function scriptingContext(params)
 			var delay = callback(stack.interval, parameter);
 			if (!delay && delay !== 0)
 			{
-				log.e('Invalid delay for command ' + command + ': ' + delay);
+				error('Invalid delay for command ' + command + ': ' + delay);
 			}
 			stack.interval -= delay;
 			return;
@@ -318,7 +320,7 @@ function scriptingContext(params)
 			command += trailing.charAt(0).toUpperCase() + trailing.slice(1);
 			return doCommand(command, sentence);
 		}
-		log.e('Invalid command ' + command);
+		error('Invalid command ' + command);
 	}
 
 	/**
@@ -351,7 +353,7 @@ function scriptingContext(params)
 			}
 			else
 			{
-				log.e('Invalid parameter ' + token);
+				error('Invalid parameter ' + token);
 			}
 		}
 		return parameter;
@@ -381,7 +383,7 @@ function scriptingContext(params)
 	{
 		if (!sentence.checkSkip(':'))
 		{
-			log.e('Invalid repeat sentence ' + sentence);
+			error('Invalid repeat sentence ' + sentence);
 			return false;
 		}
 		marked = self.position + 1;
@@ -417,7 +419,7 @@ function scriptingContext(params)
 	{
 		if (!marked)
 		{
-			log.e('Invalid mark');
+			error('Invalid mark');
 			return;
 		}
 		for (var i = marked; i <= self.position; i++)
@@ -446,7 +448,7 @@ function scriptingContext(params)
 		// attribute comparisons
 		if (!(computer.hasOwnProperty(subject)))
 		{
-			log.e('Invalid attribute ' + subject);
+			error('Invalid attribute ' + subject);
 			return false;
 		}
 		var attribute = computer[subject];
@@ -462,7 +464,7 @@ function scriptingContext(params)
 		{
 			return evaluateBiggerThan(attribute, sentence);
 		}
-		log.e('Invalid particle ' + particle);
+		error('Invalid particle ' + particle);
 		return false;
 	}
 
@@ -490,7 +492,7 @@ function scriptingContext(params)
 		var container = computer[containerAttribute];
 		if (!container)
 		{
-			log.e('Invalid container attribute ' + containerAttribute);
+			error('Invalid container attribute ' + containerAttribute);
 			return false;
 		}
 		for (var key in container)
@@ -511,7 +513,7 @@ function scriptingContext(params)
 	{
 		if (!self.it)
 		{
-			log.e('Invalid reference to it');
+			error('Invalid reference to it');
 			return;
 		}
 		if (!sentence.checkSkip('is'))
@@ -571,7 +573,7 @@ function scriptingContext(params)
 		var sentence = self.current();
 		while (!endsBlock(sentence) && !self.finished())
 		{
-			// log.d('Skipping ' + sentence);
+			// debug('Skipping ' + sentence);
 			sentence = self.currentSkip();
 		}
 	}

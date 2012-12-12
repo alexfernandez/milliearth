@@ -24,9 +24,10 @@
 /**
  * Requirements.
  */
-var util = require('../util.js');
-var log = util.log;
+var util = require('../util/util.js');
 var extend = util.extend;
+var log = require('../util/log.js');
+var error = log.error;
 
 
 /**
@@ -89,7 +90,7 @@ function storage(contents)
 			self.skip();
 			return true;
 		}
-		log.e('Invalid element ' + self.current() + ', expecting: ' + element + ' in ' + self);
+		error('Invalid element ' + self.current() + ', expecting: ' + element + ' in ' + self);
 		return false;
 	}
 
@@ -233,13 +234,13 @@ function scriptingSentence()
 	{
 		if (!self.isTerminator())
 		{
-			log.e('Unexpected token ' + self.current() + ' instead of terminator');
+			error('Unexpected token ' + self.current() + ' instead of terminator');
 			return false;
 		};
 		self.skip();
 		if (!self.finished())
 		{
-			log.e('Sentence continues after terminator: ' + self);
+			error('Sentence continues after terminator: ' + self);
 		}
 		return true;
 	}

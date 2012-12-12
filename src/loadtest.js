@@ -32,8 +32,10 @@ String.prototype.endsWith = function(suffix)
  * Requirements.
  */
 var WebSocketClient = require('websocket').client;
-var util = require('./util.js');
-var log = util.log;
+var log = require('./util/log.js');
+var debug = log.debug;
+var info = log.info;
+var error = log.error;
 
 /**
  * Globals.
@@ -97,11 +99,11 @@ var latency = new function()
 			total -= removed;
 		}
 		index++;
-		log.d('Index: ' + index);
+		debug('Index: ' + index);
 		if (index > max)
 		{
 			var mean = total / measurements.length;
-			log.i('Mean latency: ' + mean);
+			info('Mean latency: ' + mean);
 			index = 0;
 		}
 	}
@@ -128,12 +130,12 @@ function gamePlayer(gameId, playerId)
 	{
 		var client = new WebSocketClient();
 		client.on('connectFailed', function(error) {
-				log.e('Connect Error: ' + error.toString());
+				error('Connect Error: ' + error.toString());
 		});
 		client.on('connect', connect);
 		var url = 'ws://' + server + '/serve?game=' + gameId + '&player=' + playerId;
 		client.connect(url, []);
-		log.i('WebSocket client connected to ' + url);
+		info('WebSocket client connected to ' + url);
 	}
 
 	/**
@@ -143,15 +145,15 @@ function gamePlayer(gameId, playerId)
 	{
 		connection = localConnection;
 		connection.on('error', function(error) {
-				log.e("Connection error: " + error.toString());
+				error("Connection error: " + error.toString());
 		});
 		connection.on('close', function() {
-				log.i('Connection closed');
+				info('Connection closed');
 		});
 		connection.on('message', function(message) {
 				if (message.type != 'utf8')
 				{
-					log.e('Invalid message type ' + message.type);
+					error('Invalid message type ' + message.type);
 					return;
 				}
 				if (lastCall)
@@ -168,7 +170,7 @@ function gamePlayer(gameId, playerId)
 				}
 				catch(e)
 				{
-					log.e('Invalid JSON: ' + message.utf8Data);
+					error('Invalid JSON: ' + message.utf8Data);
 					return;
 				}
 				receive(json);
@@ -183,12 +185,12 @@ function gamePlayer(gameId, playerId)
 	{
 		if (!message || !message.type)
 		{
-			log.e('Wrong message ' + JSON.stringify(message));
+			error('Wrong message ' + JSON.stringify(message));
 			return;
 		}
 		if (message.type == 'start')
 		{
-			log.i('Starting game for ' + self.playerId);
+			info('Starting game for ' + self.playerId);
 			setInterval(requestUpdate, Math.round(1000 / requestsSecond));
 			return;
 		}

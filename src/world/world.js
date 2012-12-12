@@ -27,10 +27,13 @@ var globalParams = require('../params.js').globalParams;
 var vector = require('../vector.js').vector;
 var massiveBody = require('./body.js').massiveBody;
 var fighterRobot = require('./robot.js').fighterRobot;
-var util = require('../util.js');
+var util = require('../util/util.js');
 var parser = util.parser;
-var log = util.log;
 var extend = util.extend;
+var log = require('../util/log.js');
+var debug = log.debug;
+var info = log.info;
+var error = log.error;
 
 
 /**
@@ -118,7 +121,7 @@ var gameWorld = function(id)
 	{
 		if (object.id in bodies)
 		{
-			log.e('Error: object ' + object.id + ' already exists');
+			error('Error: object ' + object.id + ' already exists');
 			return;
 		}
 		bodies[object.id] = object;
@@ -146,7 +149,7 @@ var gameWorld = function(id)
 			body.move(interval);
 			if (!body.alive)
 			{
-				log.i('Removing ' + body.id);
+				info('Removing ' + body.id);
 				delete bodies[body.id];
 			}
 		}
@@ -196,7 +199,7 @@ var gameWorld = function(id)
 		var safety = globalParams.safetyDistance * globalParams.safetyDistance;
 		if (d2 + safety < min2)
 		{
-			log.d("Direct collision: " + d2 + ' < ' + min2);
+			debug("Direct collision: " + d2 + ' < ' + min2);
 			return true;
 		}
 		// quick trajectory check
@@ -224,7 +227,7 @@ var gameWorld = function(id)
 		var mind = d2 - q*q/(4*ds2);
 		if (mind + safety < min2)
 		{
-			log.d("Speeding collision: " + mind + ' < ' + min2 + ' from ' + d2 + ' at ' + tm);
+			debug("Speeding collision: " + mind + ' < ' + min2 + ' from ' + d2 + ' at ' + tm);
 			return true;
 		}
 		return false;

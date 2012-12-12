@@ -23,8 +23,11 @@
 /**
  * Requirements.
  */
-var util = require('./util.js');
-var log = util.log;
+var log = require('./util/log.js');
+var debug = log.debug;
+var info = log.info;
+var error = log.error;
+var success = log.success;
 
 
 /**
@@ -196,7 +199,7 @@ function vector(x, y, z)
 		/*
 		   if (!isVector(value))
 		   {
-		   log.e('Vector product value ' + value + ' is not a vector');
+		   error('Vector product value ' + value + ' is not a vector');
 		   return 0;
 		   }
 		   */
@@ -211,7 +214,7 @@ function vector(x, y, z)
 		/*
 		   if (!isVector(value))
 		   {
-		   log.e('Vector product value ' + value + ' is not a vector');
+		   error('Vector product value ' + value + ' is not a vector');
 		   return new vector(0, 0, 0);
 		   }
 		   */
@@ -338,14 +341,14 @@ function vectorTest()
 	var s = a.scalarProduct(new vector(3, 4, 5));
 	if (s != 26)
 	{
-		log.e('Invalid scalar product: ' + s + ' != 26');
+		error('Invalid scalar product: ' + s + ' != 26');
 	}
 	var v = a.vectorProduct(new vector(3, 4, 5));
 	if (!v.equals(new vector(-2, 4, -2)))
 	{
-		log.e('Invalid vector product: ' + v + ' != (-2, 4, -2)');
+		error('Invalid vector product: ' + v + ' != (-2, 4, -2)');
 	}
-	log.success('vector: OK');
+	success('vector: OK');
 }
 
 

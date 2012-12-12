@@ -23,11 +23,13 @@
 /**
  * Requirements.
  */
-var util = require('./util.js');
-var log = util.log;
+var util = require('./util/util.js');
 var extend = util.extend;
 var round = require('./vector.js').round;
 var vector = require('./vector.js').vector;
+var log = require('./util/log.js');
+var error = log.error;
+var success = log.success;
 
 
 /**
@@ -105,7 +107,7 @@ function quaternion(a, b, c, d)
 		var r = self.product(p).product(self.conjugate());
 		if (r.a > 1e10)
 		{
-			log.e('Rotation should not have scalar component: ' + r.a);
+			error('Rotation should not have scalar component: ' + r.a);
 			return new vector(0, 0, 0);
 		}
 		return new vector(r.b, r.c, r.d);
@@ -218,7 +220,7 @@ function coordinateSystem(q, r, s, t)
 		var theta = Math.acos(product);
 		if (isNaN(theta))
 		{
-			log.e('NaN angle: j ' + j + ' p ' + p + ' product ' + product);
+			error('NaN angle: j ' + j + ' p ' + p + ' product ' + product);
 			return;
 		}
 		var v = j.vectorProduct(p);
@@ -291,7 +293,7 @@ function coordinateSystem(q, r, s, t)
 		var result = self.q.product(r);
 		if (result.length() == 0)
 		{
-			log.e('Invalid rotation ' + angle + ', ' + axis);
+			error('Invalid rotation ' + angle + ', ' + axis);
 			return;
 		}
 		self.q = result;
@@ -342,7 +344,7 @@ function dependentSystem(primary)
 	// attributes
 	if (!primary)
 	{
-		log.e('Must supply a primary coordinate system');
+		error('Must supply a primary coordinate system');
 		return;
 	}
 	self.primary = primary;
@@ -380,7 +382,7 @@ function testQuaternion()
 	var product = q.product(r);
 	if (!product.equals(new quaternion(-38, 0, 16, 8)))
 	{
-		log.e('Invalid product ' + product);
+		error('Invalid product ' + product);
 		return;
 	}
 	var s = new quaternion().init(Math.PI / 2, new vector(1, 0, 0));
@@ -389,10 +391,10 @@ function testQuaternion()
 	var result = new vector(0, 0, 1);
 	if (!rotation.equals(result))
 	{
-		log.e('Invalid rotation ' + rotation.toPrecision() + ', should be ' + result);
+		error('Invalid rotation ' + rotation.toPrecision() + ', should be ' + result);
 		return;
 	}
-	log.success('quaternion: OK');
+	success('quaternion: OK');
 }
 
 /**
@@ -403,7 +405,7 @@ function checkUpward(system, u)
 {
 	if (!u.unit().equals(system.upward()))
 	{
-		log.e('Invalid coordinate alignment: ' + system.upward() + ' should be ' + u.unit());
+		error('Invalid coordinate alignment: ' + system.upward() + ' should be ' + u.unit());
 		return 1;
 	}
 	return 0;
@@ -434,7 +436,7 @@ function testCoordinateSystem()
 	if (errors == 0)
 	if (errors == 0)
 	{
-		log.success('coordinate system: OK');
+		success('coordinate system: OK');
 	}
 }
 
