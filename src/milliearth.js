@@ -37,6 +37,9 @@ var globalParams = require('./params.js').globalParams;
 var isNumber = require('./vector.js').isNumber;
 var log = require('./util.js').log;
 var gameSelector = require('./game.js').gameSelector;
+var player = require('./player.js');
+var playerSelector = player.playerSelector;
+var connectedPlayer = player.connectedPlayer;
 
 /**
  * Globals.
@@ -101,8 +104,13 @@ wsServer.on('request', function(request) {
 		return;
 	}
 	var connection = request.accept(null, request.origin);
+	var player = new connectedPlayer({
+		id: playerId,
+		connection: connection,
+	});
+	playerSelector.add(player);
 	var game = gameSelector.find(gameId);
-	game.connect(playerId, connection);
+	game.add(player);
 	log.i('Connection from ' + connection.remoteAddress + ' accepted');
 });
 

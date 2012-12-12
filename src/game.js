@@ -26,9 +26,7 @@
 var globalParams = require('./params.js').globalParams;
 var gameWorld = require('./world/world.js').gameWorld;
 var player = require('./player.js');
-var connectedPlayer = player.connectedPlayer;
 var autoPlayer = player.autoPlayer;
-var playerSelector = player.playerSelector;
 var util = require('./util.js');
 var parser = util.parser;
 var log = util.log;
@@ -55,57 +53,15 @@ function meGame(id)
 	self.add = function(player)
 	{
 		players.push(player);
-		log.i('Player ' + player.id + ' connected to game ' + self.id + '; ' + players.length + ' connected');
-	}
-
-	/**
-	 * Connect a new player.
-	 */
-	self.connect = function(id, connection)
-	{
-		var player = new connectedPlayer({
-			id: id,
-			world: self.world,
-			connection: connection,
-		});
-		self.add(player);
-		playerSelector.add(player);
-		connection.on('message', function(message) {
-				if (message.type != 'utf8')
-				{
-					self.error(index, 'Invalid message type ' + message.type);
-					return;
-				}
-				var info;
-				try
-				{
-					info = parser.parse(message.utf8Data);
-				}
-				catch (e)
-				{
-					self.error(index, 'Invalid JSON: ' + message.utf8Data);
-					return;
-				}
-				self.message(player, info);
-		});
-
-		connection.on('error', function(error) {
-				log.e('Error ' + error);
-		});
-
-		// when a connection is closed check winner
-		connection.on('close', function() {
-				log.i('Client ' + connection.remoteAddress + ' disconnected.');
-				self.close(player);
-		});
 		if (self.active)
 		{
-			self.startAfter(player);
+			player.startGame(self);
 		}
-		else if (players.length == 2)
+		else if (players.length >= 2)
 		{
 			self.start();
 		}
+		log.i('Player ' + player.id + ' joined the game ' + self.id + '; ' + players.length + ' connected');
 	}
 
 	/**
@@ -113,31 +69,25 @@ function meGame(id)
 	 */
 	self.start = function()
 	{
-		var playerIds = [];
-		for (var i = 0; i < players.length; i++)
+		for (var index in players)
 		{
-			if (players[i])
-			{
-				playerIds.push(players[i].id);
-			}
+			players[index].startGame(self);
 		}
-		self.broadcast({
-				type: 'start',
-				players: playerIds
-		});
 		self.active = true;
 		log.d('Game ' + self.id + ' started!');
 	}
 
 	/**
-	 * Start a player after the game has started.
+	 * Get the ids of every player.
 	 */
-	self.startAfter = function(player)
+	self.getPlayerIds = function()
 	{
-		player.send({
-				type: 'start',
-				players: [player.id]
-		});
+		var playerIds = [];
+		for (var index in players)
+		{
+			playerIds.push(players[index].id);
+		}
+		return playerIds;
 	}
 
 	/**
@@ -153,28 +103,10 @@ function meGame(id)
 	}
 
 	/**
-	 * Send an error to the client.
-	 */
-	self.error = function(player, message)
-	{
-		log.e('Player ' + player.id + ' error: ' + message);
-		var error = {
-			type: 'error',
-			message: message
-		};
-		player.send(error);
-	}
-
-	/**
 	 * One of the players has sent a message.
 	 */
 	self.message = function(player, message)
 	{
-		if (!message.type)
-		{
-			self.error(player, 'Missing game type');
-		}
-		log.d('Player ' + player.id + ' sent a message ' + message.type);
 		if (message.type == 'code')
 		{
 			self.sendCode(player);
@@ -183,11 +115,6 @@ function meGame(id)
 		if (message.type == 'install')
 		{
 			self.installCode(player, message);
-			return;
-		}
-		if (message.type == 'rivals')
-		{
-			playerSelector.sendRivals(player);
 			return;
 		}
 		// the remaining messages are only valid if the game is active

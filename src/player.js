@@ -46,7 +46,29 @@ function gamePlayer(params)
 
 	// attributes
 	self.id = params.id;
-	self.robot = params.world.addRobot(self.id);
+	self.game = null;
+
+	/**
+	 * Start a game.
+	 */
+	self.startGame = function(game)
+	{
+		self.game = game;
+		self.robot = game.world.addRobot(self.id);
+		self.postStart(game);
+	}
+
+	/**
+	 * Do any initialization after the game has started.
+	 */
+	self.postStart = function(game)
+	{
+		log.i(self.id + ' game started');
+		self.send({
+			type: 'start',
+			players: game.getPlayerIds(),
+		});
+	}
 
 	/**
 	 * Keep a message for the auto player.
@@ -89,6 +111,84 @@ function connectedPlayer(params)
 
 	// attributes
 	self.connection = params.connection;
+	self.connection.on('message', receiveMessage);
+	self.connection.on('error', connectionError);
+	self.connection.on('close', connectionClosed);
+
+	/**
+	 * Receive a message through the connection.
+	 */
+	function receiveMessage(payload)
+	{
+		if (payload.type != 'utf8')
+		{
+			self.error(index, 'Invalid message type ' + payload.type);
+			return;
+		}
+		var message;
+		try
+		{
+			message = parser.parse(payload.utf8Data);
+		}
+		catch (e)
+		{
+			self.error(index, 'Invalid JSON: ' + payload.utf8Data);
+			return;
+		}
+		if (!message.type)
+		{
+			self.error('Missing message type');
+			return;
+		}
+		log.d('Player ' + self.id + ' sent a message ' + message.type);
+		if (message.type == 'rivals')
+		{
+			self.send({
+				type: 'rivals',
+				rivals: playerSelector.getRivals(self.id),
+			});
+			return;
+		}
+		if (!self.game)
+		{
+			self.error('No game');
+			return;
+		}
+		self.game.message(self, message);
+	}
+
+	/**
+	 * Receive an error from the connection.
+	 */
+	function connectionError(error)
+	{
+		log.e('Error ' + error);
+	}
+
+	/**
+	 * The connection was closed; check winner if applicable.
+	 */
+	function connectionClosed()
+	{
+		log.i('Client ' + connection.remoteAddress + ' disconnected.');
+		if (self.game)
+		{
+			self.game.close(self);
+		}
+	}
+
+	/**
+	 * Send an error to the client.
+	 */
+	self.error = function(message)
+	{
+		log.e('Player ' + self.id + ' error: ' + message);
+		var error = {
+			type: 'error',
+			message: message
+		};
+		self.send(error);
+	}
 
 	/**
 	 * Send a message to the player.
@@ -110,6 +210,17 @@ function connectedPlayer(params)
 			return;
 		}
 		callback(period / 1000);
+	}
+
+	/**
+	 * Do any initialization after the game has started.
+	 */
+	self.postStart = function(game)
+	{
+		self.send({
+			type: 'start',
+			players: game.getPlayerIds(),
+		});
 	}
 
 	/**
@@ -333,11 +444,20 @@ function autoPlayer(params)
 	extend(new gamePlayer(params), self);
 
 	// attributes
-	var computer = new autoComputer(self.robot);
-	var engine = new scriptingEngine({
-		file: getFilename(params),
-		computer: computer,
-	});
+	var computer = null;
+	var engine = null;
+
+	/**
+	 * Do any initialization after the game has started.
+	 */
+	self.postStart = function(game)
+	{
+		computer = new autoComputer(self.robot);
+		engine = new scriptingEngine({
+			file: getFilename(params),
+			computer: computer,
+		});
+	}
 
 	/**
 	 * Get the current code for the computer.
@@ -361,7 +481,7 @@ function autoPlayer(params)
 	self.shortLoop = function(delay)
 	{
 		var interval = delay / 1000;
-		computer.update(interval, params.world.bodiesExcept(self.id));
+		computer.update(interval, self.game.world.bodiesExcept(self.id));
 		engine.run(interval);
 	}
 
@@ -397,21 +517,18 @@ var playerSelector = new function()
 	/**
 	 * Send the list of rivals to the given player.
 	 */
-	self.sendRivals = function(player)
+	self.getRivals = function(playerId)
 	{
 		var rivals = [];
 		for (var id in players)
 		{
-			if (id != player.id)
+			if (id != playerId)
 			{
 				var rival = { id: id };
 				rivals.push(rival);
 			}
 		}
-		player.send({
-			type: 'rivals',
-			rivals: rivals,
-		});
+		return rivals;
 	}
 }
 
