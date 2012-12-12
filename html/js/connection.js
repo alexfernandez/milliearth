@@ -57,7 +57,10 @@ var serverConnection = new function()
 		return function() {
 			$('#message').text('Connected to ' + location.host);
 			initialized = true;
-			callback();
+			if (callback)
+			{
+				callback();
+			}
 		};
 	}
 
