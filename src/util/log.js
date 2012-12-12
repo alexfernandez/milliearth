@@ -1,6 +1,6 @@
 'use strict';
 /**
- * MilliEarth log.
+ * MilliEarth log functions.
  * (C) 2012 Alex Fernández.
  *
  * This file is part of MilliEarth.
@@ -20,53 +20,68 @@
  */
 
 
+// debug mode: set to true to show debug messages.
+var debugMode = false;
+
 /**
- * Message log.
+ * Show a debug message.
  */
-var log = new function()
+function debug(message)
 {
-	// self-reference
-	var self = this;
-
-	// attributes
-	self.debugMode = false;
-
-	/**
-	 * Log an error message, with ERROR priority.
-	 */
-	self.e = function(message)
+	if (!self.debugMode)
 	{
+		return;
+	}
+	console.log(message);
+}
+
+/**
+ * Show an info message.
+ */
+function info(message)
+{
+	if (!window)
+	{
+		// on node, add date to trace
+		message = iso(new Date()) + ' ' + message;
+	}
+	console.log(message);
+}
+
+/**
+ * Log an error message, with ERROR priority.
+ */
+function error(message)
+{
+	if (typeof(message) == 'object')
+	{
+		message = 'Error';
+	}
+	if (window)
+	{
+		// on browser show on message panel
+		console.error(message);
+		$('#message').html($('<span class="error">').text(message));
+	}
+	else
+	{
+		// on node show in red with date
 		console.error('\u001b[31m' + iso(new Date()) + ' ' + message + '\u001b[0m');
-	}
-
-	/**
-	 * Log a success message in green, for tests.
-	 */
-	self.success = function(message)
-	{
-		console.log('\u001b[32m' + iso(new Date()) + ' ' + message + '\u001b[0m');
-	}
-
-	/**
-	 * Log a message with INFO priority.
-	 */
-	self.i = function(message)
-	{
-		console.log(iso(new Date()) + ' ' + message);
-	}
-
-	/**
-	 * Log a trace message with DEBUG priority.
-	 */
-	self.d = function(message)
-	{
-		if (!self.debugMode)
-		{
-			return;
-		}
-		self.i(message);
 	}
 }
 
-module.exports.log = log;
+/**
+ * Log a success message in green, for tests.
+ */
+function success(message)
+{
+	// only on node; show in green
+	console.log('\u001b[32m' + iso(new Date()) + ' ' + message + '\u001b[0m');
+}
+
+module.exports.debugMode = debugMode;
+module.exports.debug = debug;
+module.exports.info = info;
+module.exports.error = error;
+module.exports.success = success;
 
