@@ -24,6 +24,43 @@
 var debugMode = false;
 
 /**
+ * Find out if we are in a browser.
+ */
+function inBrowser()
+{
+	return (typeof window != 'undefined');
+}
+
+/**
+ * Pad a number to the given digits.
+ */
+function pad(n, digits)
+{
+	var padded = n.toString();
+	while (padded.length < digits)
+	{
+		padded = '0' + padded;
+	}
+	return padded;
+}
+
+/**
+ * Return an ISO8601 formatted date for now.
+ * From https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Date#Example.3a_ISO_8601_formatted_dates
+ */
+function isoDate()
+{
+	var date = new Date();
+	return date.getUTCFullYear() + '-'
+		+ pad(date.getUTCMonth() + 1, 2) + '-'
+		+ pad(date.getUTCDate(), 2) + 'T'
+		+ pad(date.getUTCHours(), 2) + ':'
+		+ pad(date.getUTCMinutes(), 2) + ':'
+		+ pad(date.getUTCSeconds(), 2) + '.'
+		+ pad(date.getUTCMilliseconds(), 3) + 'Z'
+}
+
+/**
  * Show a debug message.
  */
 function debug(message)
@@ -40,10 +77,10 @@ function debug(message)
  */
 function info(message)
 {
-	if (!window)
+	if (!inBrowser())
 	{
 		// on node, add date to trace
-		message = iso(new Date()) + ' ' + message;
+		message = isoDate() + ' ' + message;
 	}
 	console.log(message);
 }
@@ -57,7 +94,7 @@ function error(message)
 	{
 		message = 'Error';
 	}
-	if (window)
+	if (inBrowser())
 	{
 		// on browser show on message panel
 		console.error(message);
@@ -66,7 +103,7 @@ function error(message)
 	else
 	{
 		// on node show in red with date
-		console.error('\u001b[31m' + iso(new Date()) + ' ' + message + '\u001b[0m');
+		console.error('\u001b[31m' + isoDate() + ' ' + message + '\u001b[0m');
 	}
 }
 
@@ -76,7 +113,7 @@ function error(message)
 function success(message)
 {
 	// only on node; show in green
-	console.log('\u001b[32m' + iso(new Date()) + ' ' + message + '\u001b[0m');
+	console.log('\u001b[32m' + isoDate() + ' ' + message + '\u001b[0m');
 }
 
 module.exports.debugMode = debugMode;

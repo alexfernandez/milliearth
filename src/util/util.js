@@ -160,40 +160,12 @@ function randomId()
 }
 
 /**
- * Pad a number to the given digits.
- */
-function pad(n, digits)
-{
-	var padded = n.toString();
-	while (padded.length < digits)
-	{
-		padded = '0' + padded;
-	}
-	return padded;
-}
-
-/**
  * Read a number from a string, starting in start and with digits.
  */
 function read(string, start, digits)
 {
 	var substring = string.substring(start, start + digits);
 	return parseInt(substring);
-}
-
-/**
- * Return an ISO8601 formatted date.
- * From https://developer.mozilla.org/en/Core_JavaScript_1.5_Reference/Objects/Date#Example.3a_ISO_8601_formatted_dates
- */
-function iso(date)
-{
-	return date.getUTCFullYear() + '-'
-	+ pad(date.getUTCMonth() + 1, 2) + '-'
-	+ pad(date.getUTCDate(), 2) + 'T'
-	+ pad(date.getUTCHours(), 2) + ':'
-	+ pad(date.getUTCMinutes(), 2) + ':'
-	+ pad(date.getUTCSeconds(), 2) + '.'
-	+ pad(date.getUTCMilliseconds(), 3) + 'Z'
 }
 
 /**
@@ -212,8 +184,8 @@ function extend(parent, child)
 }
 
 module.exports.parser = parser;
-module.exports.extend = extend;
 module.exports.concurrencyLock = concurrencyLock;
 module.exports.highResolutionTimer = highResolutionTimer;
 module.exports.randomId = randomId;
+module.exports.extend = extend;
 
