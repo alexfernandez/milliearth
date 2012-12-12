@@ -173,7 +173,7 @@ function connectedPlayer(params)
 		log.i('Client ' + connection.remoteAddress + ' disconnected.');
 		if (self.game)
 		{
-			self.game.close(self);
+			self.game.remove(self);
 		}
 	}
 

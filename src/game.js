@@ -139,20 +139,19 @@ function meGame(id)
 	}
 
 	/**
-	 * The connection has been closed.
+	 * Remove a player from the game.
 	 */
-	self.close = function(player)
+	self.remove = function(player)
 	{
 		if (!self.active)
 		{
 			return;
 		}
-		if (!remove(player))
+		if (!removeFromList(player))
 		{
 			log.e('Could not remove ' + player.id + ' from players list');
 			return;
 		}
-		self.world.stop();
 		if (players.length == 0)
 		{
 			log.e('nobody left!?');
@@ -176,7 +175,7 @@ function meGame(id)
 	/**
 	 * Remove a player from the list.
 	 */
-	function remove(player)
+	function removeFromList(player)
 	{
 		for (var index in players)
 		{
@@ -199,7 +198,7 @@ function meGame(id)
 		};
 		player.send(lose);
 		player.endGame();
-		remove(player);
+		removeFromList(player);
 	}
 
 	/**
