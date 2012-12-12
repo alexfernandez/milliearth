@@ -101,6 +101,11 @@ var serverConnection = new function()
 	 */
 	self.send = function(message)
 	{
+		if (websocket == null)
+		{
+			error('No connection');
+			return;
+		}
 		websocket.send(JSON.stringify(message));
 	}
 
