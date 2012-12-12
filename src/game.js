@@ -279,6 +279,7 @@ function meGame(id)
 		var computer = findComputer();
 		if (!computer)
 		{
+			log.i('No computer opponent; cannot fetch code');
 			return;
 		}
 		var message = {
