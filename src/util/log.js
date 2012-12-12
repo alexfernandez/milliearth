@@ -20,16 +20,16 @@
  */
 
 
-// debug mode: set to true to show debug messages.
-var debugMode = false;
-
 /**
- * Find out if we are in a browser.
+ * Find out if we are in a browser or in node.
  */
 function inBrowser()
 {
 	return (typeof window != 'undefined');
 }
+
+// debug mode: if in node, set to true to show debug messages.
+var debugMode = inBrowser();
 
 /**
  * Pad a number to the given digits.
