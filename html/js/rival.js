@@ -46,7 +46,6 @@ var rivalList = new function()
 	 */
 	self.receiveRivals = function(message)
 	{
-		debug(message.rivals);
 		var contents = $('<div>');
 		if (message.rivals.length == 0)
 		{
