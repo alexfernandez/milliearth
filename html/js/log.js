@@ -33,6 +33,10 @@ function debug(message)
  */
 function error(message)
 {
+	if (typeof(message) == 'object')
+	{
+		message = 'Error';
+	}
 	console.error(message);
 	$('#message').html($('<span class="error">').text(message));
 }
