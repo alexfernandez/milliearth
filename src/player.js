@@ -110,10 +110,10 @@ function connectedPlayer(params)
 	extend(new gamePlayer(params), self);
 
 	// attributes
-	self.connection = params.connection;
-	self.connection.on('message', receiveMessage);
-	self.connection.on('error', connectionError);
-	self.connection.on('close', connectionClosed);
+	var connection = params.connection;
+	connection.on('message', receiveMessage);
+	connection.on('error', connectionError);
+	connection.on('close', connectionClosed);
 
 	/**
 	 * Receive a message through the connection.
@@ -195,7 +195,7 @@ function connectedPlayer(params)
 	 */
 	self.send = function(message)
 	{
-		self.connection.sendUTF(parser.convert(message));
+		connection.sendUTF(parser.convert(message));
 	}
 
 	/**

@@ -120,7 +120,7 @@ function meGame(id)
 		// the remaining messages are only valid if the game is active
 		if (!self.active)
 		{
-			self.error(player, 'Game not started');
+			player.error('Game not started');
 			return;
 		}
 		if (message.type == 'update')
@@ -135,7 +135,7 @@ function meGame(id)
 			self.sendGlobalUpdate(player, message.id);
 			return;
 		}
-		self.error(player, 'Unknown message type ' + message.type);
+		player.error('Unknown message type ' + message.type);
 	}
 
 	/**
