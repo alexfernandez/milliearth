@@ -65,7 +65,7 @@ function isoDate()
  */
 function debug(message)
 {
-	if (!self.debugMode)
+	if (!debugMode)
 	{
 		return;
 	}
