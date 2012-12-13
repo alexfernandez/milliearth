@@ -94,18 +94,6 @@ function meGame(gameId)
 	}
 
 	/**
-	 * Start a game with one computer player.
-	 */
-	self.autostart = function()
-	{
-		var player = new autoPlayer({
-			playerId: 'computer1',
-			world: self.world,
-		});
-		self.add(player);
-	}
-
-	/**
 	 * One of the players has sent a message.
 	 */
 	self.message = function(player, message)
@@ -386,14 +374,24 @@ var gameSelector = new function()
 	var games = {};
 
 	/**
+	 * Create a game with a random game id.
+	 */
+	self.create = function()
+	{
+		var gameId = randomId();
+		games[gameId] = new meGame(gameId);
+		return games[gameId];
+	}
+
+	/**
 	 * Find any given game, or create if not present.
 	 */
 	self.find = function(gameId)
 	{
 		if (!(gameId in games))
 		{
-			games[gameId] = new meGame(gameId);
-			games[gameId].autostart();
+			error('Game ' + gameId + ' not found');
+			return null;
 		}
 		return games[gameId];
 	}

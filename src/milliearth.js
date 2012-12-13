@@ -98,17 +98,16 @@ wsServer.on('request', function(request) {
 		return;
 	}
 	// check client parameters
-	var gameId = url.query.game;
 	var playerId = url.query.player;
-	if (!gameId || !playerId)
+	if (!playerId)
 	{
-		error('Invalid parameters: game ' + gameId + ', player ' + playerId);
+		var message = 'Missing player id';
+		error(message);
+		request.reject(401, message);
 		return;
 	}
 	var connection = request.accept(null, request.origin);
 	var player = playerSelector.add(playerId, connection);
-	var game = gameSelector.find(gameId);
-	game.add(player);
 	info('Connection from ' + connection.remoteAddress + ' accepted');
 });
 

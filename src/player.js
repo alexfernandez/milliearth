@@ -150,12 +150,41 @@ function connectedPlayer(params)
 			});
 			return;
 		}
+		if (message.type == 'fight')
+		{
+			self.fight(message);
+			return;
+		}
 		if (!self.game)
 		{
 			self.error('No game');
 			return;
 		}
 		self.game.message(self, message);
+	}
+
+	/**
+	 * Fight a human or a computer on the server.
+	 */
+	self.fight = function(message)
+	{
+		var rival = null;
+		if (message.playerId)
+		{
+		}
+		else if (message.scriptId)
+		{
+		}
+		else
+		{
+			// fight default computer
+			rival = new autoPlayer({
+				playerId: 'computer1',
+			});
+		}
+		var game = gameSelector.create();
+		game.add(self);
+		game.add(rival);
 	}
 
 	/**
