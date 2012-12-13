@@ -36,16 +36,13 @@ var rivalList = new function()
 	 */
 	self.requestRivals = function()
 	{
-		debug('Requesting rivals');
 		var name = getPlayerName();
 		if (!name)
 		{
 			error('Please set your name first');
 			var contents = $('<div>');
-			contents.append($('<div class="heading">').html('Please set your name: '));
-			contents.append($('<input id="playerName">'));
+			addNameInput(contents);
 			optionSelector.display(contents);
-			$('#playerName').change(readPlayerName);
 			return;
 		}
 		serverConnection.send({
@@ -60,6 +57,9 @@ var rivalList = new function()
 	self.receiveRivals = function(message)
 	{
 		var contents = $('<div>');
+		var nameHolder = $('<div id="nameHolder">');
+		nameHolder.html('Your name: ' + getPlayerName());
+		contents.append(nameHolder);
 		if (message.rivals.length == 0)
 		{
 			contents.append($('<div class="heading">').html('No rivals'));
@@ -74,6 +74,17 @@ var rivalList = new function()
 			contents.append(box);
 		}
 		optionSelector.display(contents);
+		$('#nameHolder').click(editPlayerName);
+	}
+
+	/**
+	 * Add the inputs to enter name.
+	 */
+	function addNameInput(element)
+	{
+		contents.append($('<div class="heading">').html('Please set your name: '));
+		contents.append($('<input id="playerName">'));
+		$('#playerName').change(readPlayerName);
 	}
 
 	/**
@@ -101,6 +112,15 @@ var rivalList = new function()
 		debug('Setting name: ' + name);
 		localStorage['playerName'] = name;
 		self.requestRivals();
+	}
+
+	/**
+	 * Set the player name to be edited.
+	 */
+	function editPlayerName()
+	{
+		$('#nameHolder').empty();
+		addNameInput($('#nameHolder').val());
 	}
 }
 
