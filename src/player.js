@@ -147,6 +147,10 @@ function connectedPlayer(params)
 		debug('Player ' + self.playerId + ' sent a message ' + message.type);
 		if (message.type == 'rivals')
 		{
+			if (message.name)
+			{
+				self.name = message.name;
+			}
 			self.send({
 				type: 'rivals',
 				rivals: playerSelector.getRivals(self.playerId),
