@@ -88,6 +88,15 @@ function gamePlayer(params)
 	self.endGame = function()
 	{
 		info(self.playerId + ' game ended');
+		self.game = false;
+		self.postEnd();
+	}
+
+	/**
+	 * Do any tasks after the game has ended.
+	 */
+	self.postEnd = function()
+	{
 	}
 
 	/**
@@ -262,7 +271,7 @@ function connectedPlayer(params)
 	/**
 	 * End the game for the player: let them know.
 	 */
-	self.endGame = function()
+	self.postEnd = function()
 	{
 		self.send({
 			type: 'end',
@@ -388,9 +397,15 @@ var playerSelector = new function()
 		{
 			return null;
 		}
+		var free = false;
+		if (!rival.game)
+		{
+			free = true;
+		}
 		return {
 			playerId: rivalId,
 			name: rival.name,
+			free: free,
 		};
 
 	}
