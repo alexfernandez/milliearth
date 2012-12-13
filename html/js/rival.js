@@ -36,8 +36,20 @@ var rivalList = new function()
 	 */
 	self.requestRivals = function()
 	{
+		var name = getPlayerName();
+		if (!name)
+		{
+			error('Please set your name first');
+			var contents = $('<div');
+			contents.append($('<div class="heading">').html('Please set your name: '));
+			contents.append($('<input id="playerName">'));
+			optionSelector.display(contents);
+			$('#playerName').change(function(event) { debug(event); });
+			return;
+		}
 		serverConnection.send({
 			type: 'rivals',
+			name: name,
 		});
 	}
 
@@ -61,6 +73,26 @@ var rivalList = new function()
 			contents.append(box);
 		}
 		optionSelector.display(contents);
+	}
+
+	/**
+	 * Get the latest name for the player.
+	 */
+	function getPlayerName()
+	{
+		if (!localStorage['playerId'])
+		{
+			return null;
+		}
+		return localStorage['playerId'];
+	}
+
+	/**
+	 * Set the player name.
+	 */
+	function setPlayerName(name)
+	{
+		localStorage['playerId'] = name;
 	}
 }
 
