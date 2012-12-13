@@ -105,17 +105,17 @@ var gameWorld = function(gameId)
 		var distance = globalParams.meRadius + robot.radius;
 		if (size % 2)
 		{
-			// enemy
-			robot.start(
-				new vector(100, distance + 2, 0),
-				new vector(1, 0, 0));
-		}
-		else
-		{
 			// player
 			robot.start(
 				new vector(-10, distance + 2, 0),
 				new vector(0, 1, 0));
+		}
+		else
+		{
+			// enemy
+			robot.start(
+				new vector(100, distance + 2, 0),
+				new vector(1, 0, 0));
 		}
 		info('Added robot for ' + playerId);
 		return robot;
