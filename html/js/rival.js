@@ -70,7 +70,12 @@ var rivalList = new function()
 		for (var index in message.rivals)
 		{
 			var rival = message.rivals[index];
-			var box = $('<div class="rival">').html(rival.playerId);
+			if (!rival.name)
+			{
+				error('Rival ' + rival.playerId + ' has no name');
+				return;
+			}
+			var box = $('<div class="rival">').html(rival.name);
 			contents.append(box);
 		}
 		optionSelector.display(contents);
