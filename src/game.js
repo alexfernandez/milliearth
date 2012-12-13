@@ -25,8 +25,6 @@
  */
 var globalParams = require('./params.js').globalParams;
 var gameWorld = require('./world/world.js').gameWorld;
-var player = require('./player.js');
-var autoPlayer = player.autoPlayer;
 var util = require('./util/util.js');
 var parser = util.parser;
 var extend = util.extend;
@@ -308,7 +306,7 @@ function meGame(gameId)
 		for (var index in players)
 		{
 			var player = players[index];
-			if (player instanceof autoPlayer)
+			if (player.computer)
 			{
 				return player;
 			}

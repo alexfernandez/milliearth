@@ -48,6 +48,7 @@ function gamePlayer(params)
 	// attributes
 	self.playerId = params.playerId;
 	self.game = null;
+	self.computer = null;
 
 	/**
 	 * Start a game.
@@ -274,7 +275,7 @@ function autoPlayer(params)
 	extend(new gamePlayer(params), self);
 
 	// attributes
-	var computer = null;
+	self.computer = null;
 	var engine = null;
 
 	/**
@@ -283,8 +284,8 @@ function autoPlayer(params)
 	self.postStart = function(game)
 	{
 		var script = getFilename(params);
-		computer = new autoComputer(self.robot, script);
-		engine = computer.getEngine();
+		self.computer = new autoComputer(self.robot, script);
+		engine = self.computer.getEngine();
 	}
 
 	/**
@@ -309,7 +310,7 @@ function autoPlayer(params)
 	self.shortLoop = function(delay)
 	{
 		var interval = delay / 1000;
-		computer.update(interval, self.game.world.bodiesExcept(self.playerId));
+		self.computer.update(interval, self.game.world.bodiesExcept(self.playerId));
 		engine.run(interval);
 	}
 
