@@ -23,9 +23,6 @@
 /**
  * Requirements.
  */
-var globalParams = require('./params.js').globalParams;
-var gameWorld = require('./world/world.js').gameWorld;
-var scriptingEngine = require('./atescript.js').scriptingEngine;
 var autoComputer = require('./computer.js').autoComputer;
 var util = require('./util/util.js');
 var parser = util.parser;
@@ -256,11 +253,9 @@ function autoPlayer(params)
 	 */
 	self.postStart = function(game)
 	{
-		computer = new autoComputer(self.robot);
-		engine = new scriptingEngine({
-			file: getFilename(params),
-			computer: computer,
-		});
+		var script = getFilename(params);
+		computer = new autoComputer(self.robot, script);
+		engine = computer.getEngine();
 	}
 
 	/**

@@ -24,11 +24,7 @@
  * Requirements.
  */
 var globalParams = require('./params.js').globalParams;
-var gameWorld = require('./world/world.js').gameWorld;
 var scriptingEngine = require('./atescript.js').scriptingEngine;
-var util = require('./util/util.js');
-var parser = util.parser;
-var extend = util.extend;
 var log = require('./util/log.js');
 var debug = log.debug;
 var info = log.info;
@@ -37,18 +33,31 @@ var error = log.error;
 
 /**
  * A computer that controls an auto player.
+ * Any attributes and functions here can be used by scripts, so be careful!
  */
-function autoComputer(robot)
+function autoComputer(robot, script)
 {
 	// self-reference
 	var self = this;
 
 	// attributes
+	var engine = new scriptingEngine({
+		file: script,
+		computer: self,
+	});
 	self.view = {};
 	self.cannon = {};
 	self.scope = {};
 	self.map = {};
 	self.speed = 0;
+
+	/**
+	 * Get the engine.
+	 */
+	self.getEngine = function()
+	{
+		return engine;
+	}
 
 	/**
 	 * Run an update of the outside world.
