@@ -37,7 +37,7 @@ var serverConnection = new function()
 	 */
 	self.connect = function(callback)
 	{
-		var wsUrl = 'ws://' + location.host + '/serve?player=' + clientPlayer.playerId;
+		var wsUrl = 'ws://' + location.host + '/serve?player=' + getPlayerId();
 		debug('Connecting to ' + wsUrl);
 		websocket = new WebSocket(wsUrl);
 		websocket.onopen = getOpener(callback);
@@ -45,6 +45,14 @@ var serverConnection = new function()
 		websocket.onmessage = receive;
 		websocket.onclose = closed;
 		$('#connect').val('Disconnect');
+	}
+
+	/**
+	 * Get the player id.
+	 */
+	function getPlayerId()
+	{
+		return randomId();
 	}
 
 	/**

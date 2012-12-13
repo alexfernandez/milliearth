@@ -45,11 +45,8 @@ var clientPlayer = new function()
 	var latencies = 0;
 	var latencyMap = {};
 	// canvas and layers
-	var canvas = $('#simulation');
 	self.viewLayer = null;
 	self.globalLayer = null;
-	// player id sent to the server: random
-	self.playerId = randomId();
 
 	/**
 	 * Initialize the views.
