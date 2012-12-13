@@ -66,7 +66,7 @@ var rivalList = new function()
 			optionSelector.display(contents);
 			return;
 		}
-		var contents = $('<div>').append($('<div class="heading">').html('Rivals'));
+		contents.append($('<div class="heading">').html('Rivals'));
 		for (var index in message.rivals)
 		{
 			var rival = message.rivals[index];
