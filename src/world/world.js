@@ -62,8 +62,14 @@ var gameWorld = function(gameId)
 	self.getUpdate = function(playerId)
 	{
 		var player = bodies[playerId];
-		if (!player || !player.alive)
+		if (!player)
 		{
+			error('Player ' + playerId + ' not found; no updates');
+			return {};
+		}
+		if (!player.alive)
+		{
+			error('Player ' + playerId + ' not alive; cannot get updates');
 			return {};
 		}
 		return player.computeViewUpdate(self.bodiesExcept(playerId));
