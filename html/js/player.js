@@ -23,7 +23,7 @@
 /**
  * Player answer to server messages.
  */
-var clientPlayer = function(canvas)
+var clientPlayer = new function()
 {
 	// self-reference
 	var self = this;
@@ -44,7 +44,8 @@ var clientPlayer = function(canvas)
 	// latency total and map
 	var latencies = 0;
 	var latencyMap = {};
-	// layers and projections
+	// canvas and layers
+	var canvas = $('#simulation');
 	var viewLayer = createViewLayer();
 	var globalLayer = createGlobalLayer();
 	// player id sent to the server: random

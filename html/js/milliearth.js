@@ -29,7 +29,6 @@ var milliEarth = new function()
 	var self = this;
 
 	// attributes
-	var player = null;
 
 	/**
 	 * Initialize the simulation.
@@ -56,7 +55,6 @@ var milliEarth = new function()
 		$(document).keyup(keymap.keyup);
 		$(document).blur(keymap.blur);
 
-		player = new clientPlayer($('#simulation'));
 		$('#connect').click(clickButton);
 		$('#canvas').click(clickCanvas);
 		optionSelector.init();
@@ -94,7 +92,7 @@ var milliEarth = new function()
 	 */
 	self.connect = function(callback)
 	{
-		serverConnection.connect(player, callback);
+		serverConnection.connect(callback);
 	}
 
 	/**
