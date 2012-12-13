@@ -82,8 +82,9 @@ var rivalList = new function()
 	 */
 	function addNameInput(element, message)
 	{
-		element.append($('<span>').html('Please set your name: '));
+		element.append($('<span>').html(message));
 		var input = $('<input id="playerName">');
+		input.val(getPlayerName);
 		input.change(readPlayerName);
 		element.append(input);
 	}
@@ -105,7 +106,7 @@ var rivalList = new function()
 	 */
 	function readPlayerName()
 	{
-		var name = $('#playerName');
+		var name = $('#playerName').val();
 		if (!name)
 		{
 			return;
