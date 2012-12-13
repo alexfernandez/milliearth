@@ -36,15 +36,16 @@ var rivalList = new function()
 	 */
 	self.requestRivals = function()
 	{
+		debug('Requesting rivals');
 		var name = getPlayerName();
 		if (!name)
 		{
 			error('Please set your name first');
-			var contents = $('<div');
+			var contents = $('<div>');
 			contents.append($('<div class="heading">').html('Please set your name: '));
 			contents.append($('<input id="playerName">'));
 			optionSelector.display(contents);
-			$('#playerName').change(function(event) { debug(event); });
+			$('#playerName').change(readPlayerName);
 			return;
 		}
 		serverConnection.send({
@@ -80,19 +81,26 @@ var rivalList = new function()
 	 */
 	function getPlayerName()
 	{
-		if (!localStorage['playerId'])
+		if (!localStorage['playerName'])
 		{
 			return null;
 		}
-		return localStorage['playerId'];
+		return localStorage['playerName'];
 	}
 
 	/**
 	 * Set the player name.
 	 */
-	function setPlayerName(name)
+	function readPlayerName()
 	{
-		localStorage['playerId'] = name;
+		var name = $('#playerName');
+		if (!name)
+		{
+			return;
+		}
+		debug('Setting name: ' + name);
+		localStorage['playerName'] = name;
+		self.requestRivals();
 	}
 }
 
