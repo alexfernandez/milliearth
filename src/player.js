@@ -220,6 +220,7 @@ function connectedPlayer(params)
 		if (self.game)
 		{
 			self.game.remove(self);
+			self.game = null;
 		}
 	}
 
