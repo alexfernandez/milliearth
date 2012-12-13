@@ -50,6 +50,7 @@ function gamePlayer(params)
 	self.playerId = params.playerId;
 	self.game = null;
 	self.computer = null;
+	self.name = null;
 
 	/**
 	 * Start a game.
@@ -360,13 +361,34 @@ var playerSelector = new function()
 		var rivals = [];
 		for (var rivalId in players)
 		{
-			if (rivalId != playerId)
+			var rival = getValidRival(rivalId, playerId);
+			if (rival)
 			{
-				var rival = { playerId: rivalId };
 				rivals.push(rival);
 			}
 		}
 		return rivals;
+	}
+
+	/**
+	 * Check out if the player makes a valid rival; if so, return it.
+	 */
+	function getValidRival(rivalId, playerId)
+	{
+		if (rivalId == playerId)
+		{
+			return null;
+		}
+		var rival = players[rivalId];
+		if (!rival.name)
+		{
+			return null;
+		}
+		return {
+			playerId: rivalId,
+			name: rival.name,
+		};
+
 	}
 }
 
