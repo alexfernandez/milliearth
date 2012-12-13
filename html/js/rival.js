@@ -69,17 +69,29 @@ var rivalList = new function()
 		contents.append($('<div class="heading">').html('Rivals'));
 		for (var index in message.rivals)
 		{
-			var rival = message.rivals[index];
-			if (!rival.name)
-			{
-				error('Rival ' + rival.playerId + ' has no name');
-				return;
-			}
-			var box = $('<div class="rival">').html(rival.name);
+			var box = createRivalBox(message.rivals[index]);
 			contents.append(box);
 		}
 		optionSelector.display(contents);
 		$('#nameHolder').click(editPlayerName);
+	}
+
+	/**
+	 * Create the box to show a rival.
+	 */
+	function createRivalBox(rival)
+	{
+		if (!rival.name)
+		{
+			error('Rival ' + rival.playerId + ' has no name');
+			return;
+		}
+		var box = $('<div class="rival">').html(rival.name);
+		if (rival.free)
+		{
+			box.addClass('free');
+		}
+		return box;
 	}
 
 	/**
