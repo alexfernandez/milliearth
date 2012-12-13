@@ -37,7 +37,7 @@ var info = log.info;
 
 /**
  * A massive body. Params:
- * - id: unique identifier.
+ * - bodyId: unique identifier.
  * - mass: the mass of the body, kg.
  * - radius: body size, m.
  * - position: a vector, m3.
@@ -54,7 +54,7 @@ function massiveBody(params)
 	}
 
 	// attributes
-	self.id = params.id;
+	self.bodyId = params.bodyId;
 	self.mass = params.mass;
 	self.radius = params.radius;
 	self.position = params.position || new vector(0, 0, 0);
@@ -112,7 +112,7 @@ function massiveBody(params)
 	self.substractDamage = function(energy)
 	{
 		self.life -= energy;
-		info(self.id + ' damaged: ' + energy + ', life: ' + self.life);
+		info(self.bodyId + ' damaged: ' + energy + ', life: ' + self.life);
 		if (self.life <= 0)
 		{
 			self.alive = false;

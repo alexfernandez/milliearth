@@ -179,17 +179,17 @@ function fighterRobot(params)
 	self.computeGlobalUpdate = function(bodies)
 	{
 		var meBody = {
-			id: 'milliEarth',
+			bodyId: 'milliEarth',
 			type: 'milliEarth',
 			radius: globalParams.meRadius,
 			position: new vector(0, 0, 0),
 		};
 		var objects = [meBody];
-		for (var id in bodies)
+		for (var bodyId in bodies)
 		{
-			var body = bodies[id];
+			var body = bodies[bodyId];
 			objects.push({
-				id: id,
+				bodyId: bodyId,
 				type: body.type,
 				radius: body.radius,
 				position: body.position,
@@ -223,7 +223,7 @@ function fighterRobot(params)
 		var position = self.position.copy();
 		position.addScaled(v, 400);
 		return {
-			id: self.id,
+			bodyId: self.bodyId,
 			type: 'arrow',
 			position: position,
 			points: [start, end, hat]
@@ -242,15 +242,15 @@ function fighterRobot(params)
 		});
 		var center = view.projectBodyPosition(self.world.milliEarth);
 		var meBody = {
-			id: 'milliEarth',
+			bodyId: 'milliEarth',
 			type: 'milliEarth',
 			radius: globalParams.meRadius,
 			position: center,
 		};
 		var objects = [meBody];
-		for (var id in bodies)
+		for (var bodyId in bodies)
 		{
-			objects = objects.concat(getBodyUpdate(bodies[id], view));
+			objects = objects.concat(getBodyUpdate(bodies[bodyId], view));
 		}
 		var target = self.computeCannonPosition(globalParams.targetDistance);
 		return {
@@ -275,9 +275,9 @@ function fighterRobot(params)
 			system: cannon,
 		});
 		var objects = [];
-		for (var id in bodies)
+		for (var bodyId in bodies)
 		{
-			objects = objects.concat(getBodyUpdate(bodies[id], view));
+			objects = objects.concat(getBodyUpdate(bodies[bodyId], view));
 		}
 		return {
 			speed: self.speed.length(),
@@ -305,7 +305,7 @@ function fighterRobot(params)
 		}
 		var objects = []
 		var object = {
-			id: body.id,
+			bodyId: body.bodyId,
 			type: body.type,
 			radius: body.radius,
 			position: view.projectBodyPosition(body),
@@ -319,7 +319,7 @@ function fighterRobot(params)
 		var start = view.projectPosition(body.computeViewPosition());
 		var end = view.projectPosition(body.computeCannonPosition());
 		var cannon = {
-			id: self.id + '.cannon',
+			bodyId: self.bodyId + '.cannon',
 			type: 'cannon',
 			position: end,
 			start: start,
@@ -481,7 +481,7 @@ function fighterRobot(params)
 			return;
 		}
 		var projectile = new flyingProjectile({
-			id: 'projectile.' + self.id + '.' + self.projectiles,
+			bodyId: 'projectile.' + self.bodyId + '.' + self.projectiles,
 			world: self.world,
 		});
 		projectile.position = self.computeCannonPosition();
@@ -494,7 +494,7 @@ function fighterRobot(params)
 		self.world.addObject(projectile);
 		self.projectiles--;
 		shootTimeout = self.world.seconds + globalParams.projectileRechargeTime;
-		debug('Player ' + self.id + ' has fired a shot!');
+		debug('Player ' + self.bodyId + ' has fired a shot!');
 	}
 }
 

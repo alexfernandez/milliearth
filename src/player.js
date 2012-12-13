@@ -46,7 +46,7 @@ function gamePlayer(params)
 	}
 
 	// attributes
-	self.id = params.id;
+	self.playerId = params.playerId;
 	self.game = null;
 
 	/**
@@ -55,7 +55,7 @@ function gamePlayer(params)
 	self.startGame = function(game)
 	{
 		self.game = game;
-		self.robot = game.world.addRobot(self.id);
+		self.robot = game.world.addRobot(self.playerId);
 		self.postStart(game);
 	}
 
@@ -64,7 +64,7 @@ function gamePlayer(params)
 	 */
 	self.postStart = function(game)
 	{
-		info(self.id + ' game started');
+		info(self.playerId + ' game started');
 		self.send({
 			type: 'start',
 			players: game.getPlayerIds(),
@@ -84,7 +84,7 @@ function gamePlayer(params)
 	 */
 	self.endGame = function()
 	{
-		info(self.id + ' game ended');
+		info(self.playerId + ' game ended');
 	}
 
 	/**
@@ -141,12 +141,12 @@ function connectedPlayer(params)
 			self.error('Missing message type');
 			return;
 		}
-		debug('Player ' + self.id + ' sent a message ' + message.type);
+		debug('Player ' + self.playerId + ' sent a message ' + message.type);
 		if (message.type == 'rivals')
 		{
 			self.send({
 				type: 'rivals',
-				rivals: playerSelector.getRivals(self.id),
+				rivals: playerSelector.getRivals(self.playerId),
 			});
 			return;
 		}
@@ -183,7 +183,7 @@ function connectedPlayer(params)
 	 */
 	self.error = function(message)
 	{
-		error('Player ' + self.id + ' error: ' + message);
+		error('Player ' + self.playerId + ' error: ' + message);
 		self.send({
 			type: 'error',
 			message: message
@@ -206,7 +206,7 @@ function connectedPlayer(params)
 		var callback = self.robot[name];
 		if (!callback)
 		{
-			error('Event ' + name + ' for player ' + self.id + ' without callback');
+			error('Event ' + name + ' for player ' + self.playerId + ' without callback');
 			return;
 		}
 		callback(period / 1000);
@@ -280,7 +280,7 @@ function autoPlayer(params)
 	self.shortLoop = function(delay)
 	{
 		var interval = delay / 1000;
-		computer.update(interval, self.game.world.bodiesExcept(self.id));
+		computer.update(interval, self.game.world.bodiesExcept(self.playerId));
 		engine.run(interval);
 	}
 
@@ -310,7 +310,7 @@ var playerSelector = new function()
 
 	self.add = function(player)
 	{
-		players[player.id] = player;
+		players[player.playerId] = player;
 	}
 
 	/**
@@ -319,11 +319,11 @@ var playerSelector = new function()
 	self.getRivals = function(playerId)
 	{
 		var rivals = [];
-		for (var id in players)
+		for (var rivalId in players)
 		{
-			if (id != playerId)
+			if (rivalId != playerId)
 			{
-				var rival = { id: id };
+				var rival = { playerId: rivalId };
 				rivals.push(rival);
 			}
 		}

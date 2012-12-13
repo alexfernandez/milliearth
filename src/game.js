@@ -40,13 +40,13 @@ var error = log.error;
 /**
  * A game object
  */
-function meGame(id)
+function meGame(gameId)
 {
 	// self-reference
 	var self = this;
 
-	self.id = id;
-	self.world = new gameWorld(id);
+	self.gameId = gameId;
+	self.world = new gameWorld(gameId);
 	self.active = false;
 	var players = [];
 
@@ -64,7 +64,7 @@ function meGame(id)
 		{
 			self.start();
 		}
-		info('Player ' + player.id + ' joined the game ' + self.id + '; ' + players.length + ' connected');
+		info('Player ' + player.playerId + ' joined the game ' + self.gameId + '; ' + players.length + ' connected');
 	}
 
 	/**
@@ -77,7 +77,7 @@ function meGame(id)
 			players[index].startGame(self);
 		}
 		self.active = true;
-		debug('Game ' + self.id + ' started!');
+		debug('Game ' + self.gameId + ' started!');
 	}
 
 	/**
@@ -88,7 +88,7 @@ function meGame(id)
 		var playerIds = [];
 		for (var index in players)
 		{
-			playerIds.push(players[index].id);
+			playerIds.push(players[index].playerId);
 		}
 		return playerIds;
 	}
@@ -99,7 +99,7 @@ function meGame(id)
 	self.autostart = function()
 	{
 		var player = new autoPlayer({
-			id: 'computer1',
+			playerId: 'computer1',
 			world: self.world,
 		});
 		self.add(player);
@@ -129,13 +129,13 @@ function meGame(id)
 		if (message.type == 'update')
 		{
 			self.processEvents(player, message.events);
-			self.sendUpdate(player, message.id);
+			self.sendUpdate(player, message.requestId);
 			return;
 		}
 		if (message.type == 'global')
 		{
 			self.processEvents(player, message.events);
-			self.sendGlobalUpdate(player, message.id);
+			self.sendGlobalUpdate(player, message.requestId);
 			return;
 		}
 		player.error('Unknown message type ' + message.type);
@@ -152,7 +152,7 @@ function meGame(id)
 		}
 		if (!removeFromList(player))
 		{
-			error('Could not remove ' + player.id + ' from players list');
+			error('Could not remove ' + player.playerId + ' from players list');
 			return;
 		}
 		if (players.length == 0)
@@ -170,7 +170,7 @@ function meGame(id)
 			type: 'abandoned',
 			life: rival.life,
 		};
-		info('Player ' + player.id + ' disconnected; ' + rival.id + ' won by points');
+		info('Player ' + player.playerId + ' disconnected; ' + rival.playerId + ' won by points');
 		rival.send(abandoned);
 		self.finish();
 	}
@@ -182,7 +182,7 @@ function meGame(id)
 	{
 		for (var index in players)
 		{
-			if (players[index].id == player.id)
+			if (players[index].playerId == player.playerId)
 			{
 				players.splice(index, 1);
 				return true;
@@ -222,12 +222,12 @@ function meGame(id)
 	self.finish = function()
 	{
 		self.active = false;
-		gameSelector.remove(self.id);
+		gameSelector.remove(self.gameId);
 		for (var index in players)
 		{
 			players[index].endGame();
 		}
-		info('Game ' + self.id + ' finished');
+		info('Game ' + self.gameId + ' finished');
 	}
 
 	/**
@@ -244,22 +244,22 @@ function meGame(id)
 	/**
 	 * Send an update to a player.
 	 */
-	self.sendUpdate = function(player, id)
+	self.sendUpdate = function(player, requestId)
 	{
-		var update = self.world.getUpdate(player.id);
+		var update = self.world.getUpdate(player.playerId);
 		update.type = 'update';
-		update.id = id;
+		update.requestId = requestId;
 		player.send(update);
 	}
 
 	/**
 	 * Send a global update to a player.
 	 */
-	self.sendGlobalUpdate = function(player, id)
+	self.sendGlobalUpdate = function(player, requestId)
 	{
-		var update = self.world.getGlobalUpdate(player.id);
+		var update = self.world.getGlobalUpdate(player.playerId);
 		update.type = 'global';
-		update.id = id;
+		update.requestId = requestId;
 		player.send(update);
 	}
 
@@ -307,8 +307,8 @@ function meGame(id)
 		{
 			return;
 		}
-		computer.installCode(message.contents, player.id);
-		info('Installed code for ' + player.id + ', finishing');
+		computer.installCode(message.contents, player.playerId);
+		info('Installed code for ' + player.playerId + ', finishing');
 		self.finish();
 	}
 
@@ -388,22 +388,22 @@ var gameSelector = new function()
 	/**
 	 * Find any given game, or create if not present.
 	 */
-	self.find = function(id)
+	self.find = function(gameId)
 	{
-		if (!(id in games))
+		if (!(gameId in games))
 		{
-			games[id] = new meGame(id);
-			games[id].autostart();
+			games[gameId] = new meGame(gameId);
+			games[gameId].autostart();
 		}
-		return games[id];
+		return games[gameId];
 	}
 
 	/**
 	 * Remove a game from the list.
 	 */
-	self.remove = function(id)
+	self.remove = function(gameId)
 	{
-		delete games[id];
+		delete games[gameId];
 	}
 
 	/**
@@ -411,9 +411,9 @@ var gameSelector = new function()
 	 */
 	function shortLoop(delay)
 	{
-		for (var id in games)
+		for (var gameId in games)
 		{
-			games[id].shortLoop(delay);
+			games[gameId].shortLoop(delay);
 		}
 	}
 
@@ -423,9 +423,9 @@ var gameSelector = new function()
 	function longLoop(delay)
 	{
 		var count = 0;
-		for (var id in games)
+		for (var gameId in games)
 		{
-			games[id].longLoop(delay);
+			games[gameId].longLoop(delay);
 			count++;
 		}
 		if (count > 0)

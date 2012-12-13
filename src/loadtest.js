@@ -67,23 +67,23 @@ var latency = new function()
 	/**
 	 * Start the request with the given id.
 	 */
-	self.start = function(id)
+	self.start = function(requestId)
 	{
-		requests[id] = new Date().getTime();
+		requests[requestId] = new Date().getTime();
 	}
 
 	/**
 	 * Compute elapsed time and add the measurement.
 	 */
-	self.end = function(id)
+	self.end = function(requestId)
 	{
-		if (!(id in requests))
+		if (!(requestId in requests))
 		{
-			console.error('Message id ' + id + ' not found');
+			console.error('Message id ' + requestId + ' not found');
 			return;
 		}
-		add(new Date().getTime() - requests[id]);
-		delete requests[id];
+		add(new Date().getTime() - requests[requestId]);
+		delete requests[requestId];
 	}
 
 	/**
@@ -194,9 +194,9 @@ function gamePlayer(gameId, playerId)
 			setInterval(requestUpdate, Math.round(1000 / requestsSecond));
 			return;
 		}
-		if (message.id)
+		if (message.requestId)
 		{
-			latency.end(message.id);
+			latency.end(message.requestId);
 		}
 	}
 
@@ -208,11 +208,11 @@ function gamePlayer(gameId, playerId)
 		if (connection.connected)
 		{
 			var update = {
-				id: Math.floor(Math.random() * 0x100000000).toString(16),
+				requestId: Math.floor(Math.random() * 0x100000000).toString(16),
 				type: 'update',
 			};
 			connection.sendUTF(JSON.stringify(update));
-			latency.start(update.id);
+			latency.start(update.requestId);
 		}
 	}
 }

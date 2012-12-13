@@ -109,7 +109,7 @@ wsServer.on('request', function(request) {
 	}
 	var connection = request.accept(null, request.origin);
 	var player = new connectedPlayer({
-		id: playerId,
+		playerId: playerId,
 		connection: connection,
 	});
 	playerSelector.add(player);

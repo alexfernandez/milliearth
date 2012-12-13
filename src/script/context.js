@@ -534,7 +534,7 @@ function scriptingContext(params)
 	function evaluateItIn(sentence)
 	{
 		return evaluateContainer(sentence, function(element) {
-			return (self.it.id == element.id);
+			return (self.it.bodyId == element.bodyId);
 		});
 	}
 

@@ -72,7 +72,7 @@ function autoComputer(robot, script)
 		for (var index in update.objects)
 		{
 			var object = update.objects[index];
-			self.view[object.id] = object;
+			self.view[object.bodyId] = object;
 			if (object.type == 'robot')
 			{
 				object.enemy = true;
@@ -82,11 +82,11 @@ function autoComputer(robot, script)
 		for (var index in update.objects)
 		{
 			var object = update.objects[index];
-			self.cannon[object.id] = object;
+			self.cannon[object.bodyId] = object;
 			var scopeDistance = Math.sqrt(object.position.x * object.position.x + object.position.y * object.position.y);
 			if (scopeDistance < globalParams.scopeWidth && object.position.z > 0)
 			{
-				self.scope[object.id] = object;
+				self.scope[object.bodyId] = object;
 			}
 		}
 	}
@@ -97,7 +97,7 @@ function autoComputer(robot, script)
 	self.pointAt = function(interval, object)
 	{
 		//refresh object
-		var object = self.view[object.id];
+		var object = self.view[object.bodyId];
 		var position = object.position;
 		if (position.z < 0)
 		{
@@ -144,7 +144,7 @@ function autoComputer(robot, script)
 	self.pointCannonAt = function(interval, object)
 	{
 		//refresh object
-		var object = self.cannon[object.id];
+		var object = self.cannon[object.bodyId];
 		if (!object)
 		{
 			// error('Object not found in cannon view');
@@ -196,7 +196,7 @@ function autoComputer(robot, script)
 	self.refineScopeAt = function(interval, object)
 	{
 		//refresh object
-		var object = self.cannon[object.id];
+		var object = self.cannon[object.bodyId];
 		if (!object)
 		{
 			// error('Object not found in cannon view');

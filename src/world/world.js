@@ -39,15 +39,15 @@ var error = log.error;
 /**
  * The world where the game runs.
  */
-var gameWorld = function(id)
+var gameWorld = function(gameId)
 {
 	// self-reference
 	var self = this;
 
 	// attributes
-	self.id = id;
+	self.gameId = gameId;
 	self.milliEarth = new massiveBody({
-		id: 'milliEarth',
+		bodyId: 'milliEarth',
  		world: self,
  		mass: globalParams.meMass,
  		radius: globalParams.meRadius,
@@ -59,22 +59,22 @@ var gameWorld = function(id)
 	/**
 	 * Get an update message for the player with the given id.
 	 */
-	self.getUpdate = function(id)
+	self.getUpdate = function(playerId)
 	{
-		var player = bodies[id];
+		var player = bodies[playerId];
 		if (!player || !player.alive)
 		{
 			return {};
 		}
-		return player.computeViewUpdate(self.bodiesExcept(id));
+		return player.computeViewUpdate(self.bodiesExcept(playerId));
 	}
 
 	/**
 	 * Get global positions update for the player with the given id.
 	 */
-	self.getGlobalUpdate = function(id)
+	self.getGlobalUpdate = function(playerId)
 	{
-		var player = bodies[id];
+		var player = bodies[playerId];
 		if (!player || !player.alive)
 		{
 			return {};
@@ -85,13 +85,13 @@ var gameWorld = function(id)
 	/**
 	 * Add the robot for a new player.
 	 */
-	self.addRobot = function(id)
+	self.addRobot = function(playerId)
 	{
 		var robot = new fighterRobot({
-			id: id,
+			bodyId: playerId,
 			world: self,
 		});
-		bodies[robot.id] = robot;
+		bodies[robot.robotId] = robot;
 		var size = 0;
 		iterate(function(body) {
 			size++;
@@ -119,12 +119,12 @@ var gameWorld = function(id)
 	 */
 	self.addObject = function(object)
 	{
-		if (object.id in bodies)
+		if (object.bodyId in bodies)
 		{
-			error('Error: object ' + object.id + ' already exists');
+			error('Error: object ' + object.bodyId + ' already exists');
 			return;
 		}
-		bodies[object.id] = object;
+		bodies[object.bodyId] = object;
 	}
 
 	/**
@@ -149,8 +149,8 @@ var gameWorld = function(id)
 			body.move(interval);
 			if (!body.alive)
 			{
-				info('Removing ' + body.id);
-				delete bodies[body.id];
+				info('Removing ' + body.bodyId);
+				delete bodies[body.bodyId];
 			}
 		}
 	}
@@ -238,22 +238,22 @@ var gameWorld = function(id)
 	 */
 	function iterate(callback)
 	{
-		for (var id in bodies)
+		for (var bodyId in bodies)
 		{
-			callback(bodies[id]);
+			callback(bodies[bodyId]);
 		}
 	}
 
 	/**
 	 * Return all bodies except the given one.
 	 */
-	self.bodiesExcept = function(id)
+	self.bodiesExcept = function(bodyId)
 	{
 		var except = {};
 		iterate(function(body) {
-			if (body.id != id)
+			if (body.bodyId != bodyId)
 			{
-				except[body.id] = body;
+				except[body.bodyId] = body;
 			}
 		});
 		return except;

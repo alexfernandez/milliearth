@@ -103,9 +103,9 @@ var paintingLayer = function(params)
 		{
 			return;
 		}
-		for (var id in objects)
+		for (var bodyId in objects)
 		{
-			projection.adjustScale(objects[id]);
+			projection.adjustScale(objects[bodyId]);
 		}
 	}
 
@@ -167,9 +167,9 @@ var paintingLayer = function(params)
 	 */
 	function paintObjects (objects)
 	{
-		for (var id in objects)
+		for (var bodyId in objects)
 		{
-			var object = objects[id];
+			var object = objects[bodyId];
 			if (!object.type)
 			{
 				error('Object without type: ' + JSON.stringify(object));

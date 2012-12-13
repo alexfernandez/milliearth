@@ -134,13 +134,13 @@ var clientPlayer = function(canvas)
 	 */
 	self.requestUpdate = function(type)
 	{
-		var id = randomId();
+		var requestId = randomId();
 		serverConnection.send({
 			type: type,
-			id: id,
+			requestId: requestId,
 			events: keymap.getKeys(),
 		});
-		latencyMap[id] = new Date().getTime();
+		latencyMap[requestId] = new Date().getTime();
 	}
 
 	/**
@@ -171,7 +171,7 @@ var clientPlayer = function(canvas)
 			var contents = JSON.stringify(message, null, '\t');
 			optionSelector.display($('<pre>').text(contents));
 		}
-		countUpdate(message.id);
+		countUpdate(message.requestId);
 		canvas.clearCanvas();
 		viewLayer.paintUpdate(message);
 		paintGlobalUpdate();
@@ -210,15 +210,15 @@ var clientPlayer = function(canvas)
 	/**
 	 * Count an update.
 	 */
-	function countUpdate(id)
+	function countUpdate(requestId)
 	{
 		updates ++;
-		if (id in latencyMap)
+		if (requestId in latencyMap)
 		{
-			var lastTime = latencyMap[id];
+			var lastTime = latencyMap[requestId];
 			var newTime = new Date().getTime();
 			latencies += newTime - lastTime;
-			delete latencyMap[id];
+			delete latencyMap[requestId];
 		}
 	}
 

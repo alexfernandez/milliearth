@@ -57,7 +57,7 @@ var rivalList = new function()
 		for (var index in message.rivals)
 		{
 			var rival = message.rivals[index];
-			var box = $('<div class="rival">').html(rival.id);
+			var box = $('<div class="rival">').html(rival.playerId);
 			contents.append(box);
 		}
 		optionSelector.display(contents);

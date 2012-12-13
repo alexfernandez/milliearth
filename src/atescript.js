@@ -204,21 +204,21 @@ function testBasicEnemy()
 	};
 	var basicComputer = {
 		view: {
-			id: enemy,
+			robotId: enemy,
 		},
 		scope: {},
 		map: {
-			id: {
+			robotId: {
 				enemy: false,
 			},
 			od: enemy,
 		},
 		pointCannonAt: function(interval, object) {
-			basicComputer.scope.id = object;
+			basicComputer.scope.robotId = object;
 			return interval;
 		},
 		pointAt: function(interval, object) {
-			basicComputer.scope.id = object;
+			basicComputer.scope.robotId = object;
 			return interval;
 		},
 		refineScopeAt: function(interval, object) {
