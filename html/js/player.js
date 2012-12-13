@@ -114,6 +114,7 @@ var clientPlayer = function(canvas)
 	 */
 	self.disconnect = function()
 	{
+		$('#status').text('Disconnected from server');
 		self.end();
 	}
 
@@ -122,6 +123,7 @@ var clientPlayer = function(canvas)
 	 */
 	self.end = function()
 	{
+		$('#message').text('Simulation ended');
 		if (!running)
 		{
 			return;
@@ -247,6 +249,7 @@ var clientPlayer = function(canvas)
 	{
 		if (!running)
 		{
+			$('#status').text('Not running');
 			return;
 		}
 		$('#status').text(updates + ' updates per second');
