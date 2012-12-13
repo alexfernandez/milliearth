@@ -89,6 +89,16 @@ var clientPlayer = function(canvas)
 	}
 
 	/**
+	 * Connect to the game.
+	 */
+	self.connect = function()
+	{
+		serverConnection.send({
+			type: 'fight',
+		});
+	}
+
+	/**
 	 * Start the game.
 	 */
 	self.start = function()
@@ -100,9 +110,9 @@ var clientPlayer = function(canvas)
 	}
 
 	/**
-	 * End the game.
+	 * Disconnect from the game.
 	 */
-	self.end = function()
+	self.disconnect = function()
 	{
 		if (!running)
 		{
@@ -252,6 +262,22 @@ var clientPlayer = function(canvas)
 	self.error = function(message)
 	{
 		$('#message').text('Server error: ' + message.message);
+	}
+
+	/**
+	 * Receive the code from the server.
+	 */
+	self.code = function(message)
+	{
+		codeEditor.showCode(message);
+	}
+
+	/**
+	 * Receive the list of rivals from the server.
+	 */
+	self.rivals = function(message)
+	{
+		rivalList.receiveRivals(message);
 	}
 }
 

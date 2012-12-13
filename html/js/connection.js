@@ -31,14 +31,15 @@ var serverConnection = new function()
 	// attributes
 	var websocket = null;
 	var initialized = false;
-	self.dispatcher = null;
+	self.player = null;
 
 	/**
 	 * Connect using a websocket with game id and player id.
 	 */
-	self.connect = function(gameId, playerId, callback)
+	self.connect = function(player, callback)
 	{
-		var wsUrl = 'ws://' + location.host + '/serve?game=' + gameId + '&player=' + playerId;
+		self.player = player;
+		var wsUrl = 'ws://' + location.host + '/serve?player=' + player.playerId;
 		debug('Connecting to ' + wsUrl);
 		websocket = new WebSocket(wsUrl);
 		websocket.onopen = getOpener(callback);
@@ -61,6 +62,7 @@ var serverConnection = new function()
 			{
 				callback();
 			}
+			self.player.connect();
 		};
 	}
 
@@ -85,24 +87,29 @@ var serverConnection = new function()
 	/**
 	 * Receive a server message.
 	 */
-	function receive(message)
+	function receive(rawMessage)
 	{
 		// check it is valid JSON
 		try
 		{
-			var json = JSON.parse(message.data);
+			var message = JSON.parse(rawMessage.data);
 		}
 		catch (e)
 		{
-			error('This doesn\'t look like a valid JSON: ', message.data);
+			error('This doesn\'t look like a valid JSON: ', rawMessage.data);
 			return;
 		}
-		if (!json.type)
+		if (!message.type)
 		{
-			error('Missing message type: ' + json);
+			error('Missing message type: ' + message);
 			return;
 		}
-		self.dispatcher.dispatch(json);
+		if (self.player[message.type])
+		{
+			self.player[message.type](message);
+			return;
+		}
+		error('Invalid message type ' + message.type);
 	}
 
 	/**
@@ -145,7 +152,7 @@ var serverConnection = new function()
 		websocket = null;
 		pending.close();
 		$('#connect').val('Connect');
-		self.dispatcher.disconnect();
+		self.player.disconnect();
 	}
 }
 

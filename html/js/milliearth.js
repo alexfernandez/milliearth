@@ -94,32 +94,7 @@ var milliEarth = new function()
 	 */
 	self.connect = function(callback)
 	{
-		var gameId = randomId();
-		serverConnection.dispatcher = self;
-		serverConnection.connect(gameId, player.playerId, callback);
-	}
-
-	/**
-	 * Dispatch a message from the server.
-	 */
-	self.dispatch = function(json)
-	{
-		if (json.type == 'code')
-		{
-			codeEditor.showCode(json);
-			return;
-		}
-		if (json.type == 'rivals')
-		{
-			rivalList.receiveRivals(json);
-			return;
-		}
-		if (player[json.type])
-		{
-			player[json.type](json);
-			return;
-		}
-		error('Invalid message type ' + json.type);
+		serverConnection.connect(player, callback);
 	}
 
 	/**
@@ -128,7 +103,6 @@ var milliEarth = new function()
 	self.disconnect = function()
 	{
 		serverConnection.disconnect();
-		player.end();
 	}
 }
 
