@@ -56,6 +56,9 @@ canvas {
 .error {
 	color: #c00000;
 }
+.heading {
+	font-weight: bold;
+}
 .rival {
 	display: inline-block;
 	border: 1px solid #ccc;

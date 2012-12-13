@@ -49,11 +49,11 @@ var rivalList = new function()
 		var contents = $('<div>');
 		if (message.rivals.length == 0)
 		{
-			contents.append($('<h3>').html('No rivals'));
+			contents.append($('<div class="heading">').html('No rivals'));
 			optionSelector.display(contents);
 			return;
 		}
-		var contents = $('<div>').append($('<h3>').html('Rivals'));
+		var contents = $('<div>').append($('<div class="heading">').html('Rivals'));
 		for (var index in message.rivals)
 		{
 			var rival = message.rivals[index];
