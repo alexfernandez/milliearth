@@ -33,8 +33,8 @@ var extend = util.extend;
 var concurrencyLock = util.concurrencyLock;
 var log = require('./util/log.js');
 var debug = log.debug;
-var info = log.info;
 var error = log.error;
+var success = log.success;
 
 
 /**
