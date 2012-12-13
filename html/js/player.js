@@ -46,47 +46,18 @@ var clientPlayer = new function()
 	var latencyMap = {};
 	// canvas and layers
 	var canvas = $('#simulation');
-	var viewLayer = createViewLayer();
-	var globalLayer = createGlobalLayer();
+	self.viewLayer = null;
+	self.globalLayer = null;
 	// player id sent to the server: random
 	self.playerId = randomId();
 
-
 	/**
-	 * Create the view layer.
+	 * Initialize the views.
 	 */
-	function createViewLayer()
+	self.init = function(viewLayer, globalLayer)
 	{
-		var width = canvas.width();
-		var height = canvas.height();
-		var viewParams = {
-			canvas: canvas,
-			name: 'view',
-			origin: new vector(width / 2, height / 2, 0),
-			scale: 4/5 * height,
-			opacity: 1.0,
-		};
-		return new paintingLayer(viewParams);
-	}
-
-	function createGlobalLayer()
-	{
-		var width = canvas.width();
-		var height = canvas.height();
-		var globalWidth = height / 3;
-		var margin = 20;
-		var globalParams = {
-			canvas: canvas,
-			name: 'global',
-			origin: new vector(width - globalWidth / 2 - margin, globalWidth / 2 + margin, 0),
-			scale: 1/3 * globalWidth / 6312,
-			planar: true,
-			start: new planarPoint(width - globalWidth - margin, margin),
-			end: new planarPoint(width - margin, globalWidth + margin),
-			autoscale: true,
-			opacity: 0.5,
-		};
-		return new paintingLayer(globalParams);
+		self.viewLayer = viewLayer;
+		self.globalLayer = globalLayer;
 	}
 
 	/**
@@ -193,8 +164,8 @@ var clientPlayer = new function()
 			optionSelector.display($('<pre>').text(contents));
 		}
 		countUpdate(message.requestId);
-		canvas.clearCanvas();
-		viewLayer.paintUpdate(message);
+		self.viewLayer.clearCanvas();
+		self.viewLayer.paintUpdate(message);
 		paintGlobalUpdate();
 	}
 
@@ -203,7 +174,7 @@ var clientPlayer = new function()
 	 */
 	self.win = function(message)
 	{
-		viewLayer.alert('Player wins! :)');
+		self.viewLayer.alert('Player wins! :)');
 	}
 
 	/**
@@ -211,7 +182,7 @@ var clientPlayer = new function()
 	 */
 	self.lose = function(message)
 	{
-		viewLayer.alert('Player loses :(');
+		self.viewLayer.alert('Player loses :(');
 	}
 
 	/**
@@ -223,9 +194,9 @@ var clientPlayer = new function()
 		{
 			return;
 		}
-		globalLayer.paintUpdate(globalMessage);
-		globalLayer.paintText('height:', globalMessage.height, 'm');
-		globalLayer.paintText('speed:', globalMessage.speed, 'm/s');
+		self.globalLayer.paintUpdate(globalMessage);
+		self.globalLayer.paintText('height:', globalMessage.height, 'm');
+		self.globalLayer.paintText('speed:', globalMessage.speed, 'm/s');
 	}
 
 	/**

@@ -566,5 +566,13 @@ var paintingLayer = function(params)
 			y2: cy - dy,
 		});
 	}
+
+	/**
+	 * Clear the whole canvas.
+	 */
+	self.clearCanvas = function()
+	{
+		canvas.clearCanvas();
+	}
 }
 
