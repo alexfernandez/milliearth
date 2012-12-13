@@ -24,6 +24,7 @@
  * Requirements.
  */
 var autoComputer = require('./computer.js').autoComputer;
+var gameSelector = require('./game.js').gameSelector;
 var util = require('./util/util.js');
 var parser = util.parser;
 var extend = util.extend;

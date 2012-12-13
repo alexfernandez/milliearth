@@ -28,6 +28,7 @@ var gameWorld = require('./world/world.js').gameWorld;
 var util = require('./util/util.js');
 var parser = util.parser;
 var extend = util.extend;
+var randomId = util.randomId;
 var highResolutionTimer = util.highResolutionTimer;
 var log = require('./util/log.js');
 var debug = log.debug;
