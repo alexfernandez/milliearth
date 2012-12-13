@@ -58,7 +58,7 @@ var rivalList = new function()
 	{
 		var contents = $('<div>');
 		var nameHolder = $('<div id="nameHolder">');
-		nameHolder.html('Your name: ' + getPlayerName());
+		addNameInput(nameHolder, 'Name: ');
 		contents.append(nameHolder);
 		if (message.rivals.length == 0)
 		{
@@ -80,11 +80,12 @@ var rivalList = new function()
 	/**
 	 * Add the inputs to enter name.
 	 */
-	function addNameInput(element)
+	function addNameInput(element, message)
 	{
-		contents.append($('<div class="heading">').html('Please set your name: '));
-		contents.append($('<input id="playerName">'));
-		$('#playerName').change(readPlayerName);
+		element.append($('<span>').html('Please set your name: '));
+		var input = $('<input id="playerName">');
+		input.change(readPlayerName);
+		element.append(input);
 	}
 
 	/**
@@ -120,7 +121,7 @@ var rivalList = new function()
 	function editPlayerName()
 	{
 		$('#nameHolder').empty();
-		addNameInput($('#nameHolder').val());
+		addNameInput($('#nameHolder'));
 	}
 }
 
