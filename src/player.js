@@ -289,9 +289,9 @@ function autoPlayer(params)
 	 */
 	function getFilename(params)
 	{
-		if ('playerId' in params)
+		if ('scriptId' in params)
 		{
-			return 'custom-' + params.playerId + '.8s';
+			return 'custom-' + params.scriptId + '.8s';
 		}
 		return 'basic-enemy.8s';
 	}
