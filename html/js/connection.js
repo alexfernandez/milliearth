@@ -67,10 +67,10 @@ var serverConnection = new function()
 	/**
 	 * Error on the websocket.
 	 */
-	self.error = function(message)
+	self.error = function(event)
 	{
-		error(message);
-		$('#status').text('Error');
+		error('Connection error: ' + event);
+		$('#status').text('Connection error');
 	}
 
 	/**
