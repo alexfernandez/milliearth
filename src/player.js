@@ -308,9 +308,17 @@ var playerSelector = new function()
 	// attributes
 	var players = {};
 
-	self.add = function(player)
+	/**
+	 * Add a new human player to the server.
+	 */
+	self.add = function(playerId, connection)
 	{
+		var player = new connectedPlayer({
+			playerId: playerId,
+			connection: connection,
+		});
 		players[player.playerId] = player;
+		return player;
 	}
 
 	/**
@@ -331,7 +339,6 @@ var playerSelector = new function()
 	}
 }
 
-module.exports.connectedPlayer = connectedPlayer;
 module.exports.autoPlayer = autoPlayer;
 module.exports.playerSelector = playerSelector;
 

@@ -36,9 +36,7 @@ var fs = require('fs');
 var globalParams = require('./params.js').globalParams;
 var isNumber = require('./vector.js').isNumber;
 var gameSelector = require('./game.js').gameSelector;
-var player = require('./player.js');
-var playerSelector = player.playerSelector;
-var connectedPlayer = player.connectedPlayer;
+var playerSelector = require('./player.js').playerSelector;
 var log = require('./util/log.js');
 var debug = log.debug;
 var info = log.info;
@@ -108,11 +106,7 @@ wsServer.on('request', function(request) {
 		return;
 	}
 	var connection = request.accept(null, request.origin);
-	var player = new connectedPlayer({
-		playerId: playerId,
-		connection: connection,
-	});
-	playerSelector.add(player);
+	var player = playerSelector.add(playerId, connection);
 	var game = gameSelector.find(gameId);
 	game.add(player);
 	info('Connection from ' + connection.remoteAddress + ' accepted');
