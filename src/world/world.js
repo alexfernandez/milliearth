@@ -97,7 +97,7 @@ var gameWorld = function(gameId)
 			bodyId: playerId,
 			world: self,
 		});
-		bodies[robot.robotId] = robot;
+		bodies[robot.bodyId] = robot;
 		var size = 0;
 		iterate(function(body) {
 			size++;
@@ -117,6 +117,7 @@ var gameWorld = function(gameId)
 				new vector(-10, distance + 2, 0),
 				new vector(0, 1, 0));
 		}
+		info('Added robot for ' + playerId);
 		return robot;
 	}
 
