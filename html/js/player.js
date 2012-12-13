@@ -114,6 +114,14 @@ var clientPlayer = function(canvas)
 	 */
 	self.disconnect = function()
 	{
+		self.end();
+	}
+
+	/**
+	 * End the game.
+	 */
+	self.end = function()
+	{
 		if (!running)
 		{
 			return;
