@@ -73,7 +73,6 @@ var rivalList = new function()
 			contents.append(box);
 		}
 		optionSelector.display(contents);
-		$('#nameHolder').click(editPlayerName);
 	}
 
 	/**
@@ -131,15 +130,6 @@ var rivalList = new function()
 		debug('Setting name: ' + name);
 		localStorage['playerName'] = name;
 		self.requestRivals();
-	}
-
-	/**
-	 * Set the player name to be edited.
-	 */
-	function editPlayerName()
-	{
-		$('#nameHolder').empty();
-		addNameInput($('#nameHolder'));
 	}
 }
 
