@@ -53,6 +53,10 @@ var keymap = new function()
 	 */
 	self.keydown = function(event)
 	{
+		if ($(event.target).is('input, textarea, select'))
+		{
+			return true;
+		}
 		var keycode = event.which;
 		$('#keycode').text(keycode);
 		if (!(keycode in eventMap))
