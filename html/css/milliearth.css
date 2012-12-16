@@ -68,4 +68,7 @@ canvas {
 .free {
 	background-color: #dfd;
 }
+#nameStatus {
+	margin-left: 0.5em;
+}
 

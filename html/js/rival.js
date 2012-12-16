@@ -103,6 +103,7 @@ var rivalList = new function()
 		input.val(getPlayerName);
 		input.change(readPlayerName);
 		element.append(input);
+		element.append($('<span id="nameStatus">').html('?'));
 	}
 
 	/**
