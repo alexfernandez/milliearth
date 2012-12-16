@@ -73,6 +73,7 @@ var rivalList = new function()
 			contents.append(box);
 		}
 		optionSelector.display(contents);
+		$('#nameStatus').text('✓');
 	}
 
 	/**
@@ -102,8 +103,11 @@ var rivalList = new function()
 		var input = $('<input id="playerName">');
 		input.val(getPlayerName);
 		input.change(readPlayerName);
+		input.focus(function() {
+			$('#nameStatus').text('?');
+		});
 		element.append(input);
-		element.append($('<span id="nameStatus">').html('?'));
+		element.append($('<span>').attr('id', 'nameStatus').html('?'));
 	}
 
 	/**
