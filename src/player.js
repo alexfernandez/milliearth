@@ -230,6 +230,7 @@ function connectedPlayer(params)
 			self.game.remove(self);
 			self.game = null;
 		}
+		playerSelector.remove(self.playerId);
 	}
 
 	/**
@@ -373,6 +374,14 @@ var playerSelector = new function()
 		});
 		players[player.playerId] = player;
 		return player;
+	}
+
+	/**
+	 * Remove a human player from the server.
+	 */
+	self.remove = function(playerId)
+	{
+		delete players[playerId];
 	}
 
 	/**
