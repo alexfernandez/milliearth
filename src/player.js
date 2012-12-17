@@ -187,9 +187,17 @@ function connectedPlayer(params)
 		var rival = null;
 		if (message.playerId)
 		{
+			rival = playerSelector.getFreeRival(message.playerId, self.playerId);
+			if (rival == null)
+			{
+				self.error('Invalid rival ' + message.playerId);
+				return;
+			}
 		}
 		else if (message.scriptId)
 		{
+			self.error('Script selection not implemented yet.');
+			return;
 		}
 		else
 		{
@@ -375,7 +383,7 @@ var playerSelector = new function()
 		var rivals = [];
 		for (var rivalId in players)
 		{
-			var rival = getValidRival(rivalId, playerId);
+			var rival = getRivalDescription(rivalId, playerId);
 			if (rival)
 			{
 				rivals.push(rival);
@@ -385,16 +393,13 @@ var playerSelector = new function()
 	}
 
 	/**
-	 * Check out if the player makes a valid rival; if so, return it.
+	 * Check out if the player makes a valid rival; if so, return a message describing it
+	 * and if it is free.
 	 */
-	function getValidRival(rivalId, playerId)
+	function getRivalDescription(rivalId, playerId)
 	{
-		if (rivalId == playerId)
-		{
-			return null;
-		}
-		var rival = players[rivalId];
-		if (!rival.name)
+		var rival = getRival(rivalId, playerId);
+		if (!rival)
 		{
 			return null;
 		}
@@ -408,7 +413,43 @@ var playerSelector = new function()
 			name: rival.name,
 			free: free,
 		};
+	}
 
+	/**
+	 * Check out if the player makes a valid rival and is free; if so, return it.
+	 */
+	self.getFreeRival = function(rivalId, playerId)
+	{
+		var rival = getRival(rivalId, playerId);
+		if (!rival)
+		{
+			error('Rival ' + rivalId + ' is invalid');
+			return null;
+		}
+		if (rival.game)
+		{
+			error('Rival ' + rivalId + ' not free');
+			return null;
+		}
+		return rival;
+	}
+
+	/**
+	 * Get a rival. If it does not exist, is self or has no name, return null.
+	 */
+	function getRival(rivalId, playerId)
+	{
+		if (rivalId == playerId)
+		{
+			return null;
+		}
+		var rival = players[rivalId];
+		info('Rival ' + rivalId + ': ' + rival);
+		if (!rival.name)
+		{
+			return null;
+		}
+		return rival;
 	}
 }
 
