@@ -56,6 +56,7 @@ var rivalList = new function()
 	 */
 	self.receiveRivals = function(message)
 	{
+		debug('Showing rivals');
 		var contents = $('<div>');
 		var nameHolder = $('<div id="nameHolder">');
 		addNameInput(nameHolder, 'Name: ');
@@ -63,14 +64,15 @@ var rivalList = new function()
 		if (message.rivals.length == 0)
 		{
 			contents.append($('<div class="heading">').html('No rivals'));
-			optionSelector.display(contents);
-			return;
 		}
-		contents.append($('<div class="heading">').html('Rivals'));
-		for (var index in message.rivals)
+		else
 		{
-			var box = createRivalBox(message.rivals[index]);
-			contents.append(box);
+			contents.append($('<div class="heading">').html('Rivals'));
+			for (var index in message.rivals)
+			{
+				var box = createRivalBox(message.rivals[index]);
+				contents.append(box);
+			}
 		}
 		optionSelector.display(contents);
 		$('#nameStatus').text('✓');
