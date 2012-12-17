@@ -90,6 +90,9 @@ var rivalList = new function()
 		if (rival.free)
 		{
 			box.addClass('free');
+			box.click(function() {
+				clientPlayer.fightRival(rival.playerId);
+			});
 		}
 		return box;
 	}

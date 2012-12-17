@@ -68,6 +68,17 @@ var clientPlayer = new function()
 	}
 
 	/**
+	 * Connect to the game against a given rival.
+	 */
+	self.fightRival = function(playerId)
+	{
+		serverConnection.send({
+			type: 'fight',
+			playerId: playerId,
+		});
+	}
+
+	/**
 	 * Start the game.
 	 */
 	self.start = function()
