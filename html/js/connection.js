@@ -53,7 +53,7 @@ var serverConnection = new function()
 	function getPlayerId()
 	{
 		// have a single player id per browser; commented for tests.
-		//if (!localStorage['playerId'])
+		if (!localStorage['playerId'])
 		{
 			localStorage['playerId'] = randomId();
 		}
