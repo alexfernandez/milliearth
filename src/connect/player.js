@@ -104,7 +104,10 @@ function connectedPlayer(params)
 		}
 		if (message.type == 'getCode')
 		{
-			self.sendCode(self);
+			self.send({
+				type: 'code',
+				contents: autoSelector.getCode(message),
+			});
 			return;
 		}
 		if (message.type == 'install')

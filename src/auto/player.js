@@ -53,25 +53,9 @@ function autoPlayer(params)
 	 */
 	self.postStart = function(game)
 	{
-		var script = getFilename(params);
-		self.computer = new autoComputer(self.robot, script);
+		var scriptId = params.scriptId;
+		self.computer = new autoComputer(self.robot, scriptId);
 		engine = self.computer.getEngine();
-	}
-
-	/**
-	 * Get the current code for the computer.
-	 */
-	self.getCode = function()
-	{
-		return engine.get();
-	}
-
-	/**
-	 * Set the code for the engine.
-	 */
-	self.installCode = function(code, playerId, callback)
-	{
-		engine.writeScript('custom-' + playerId + '.8s', code, callback);
 	}
 
 	/**
@@ -82,18 +66,6 @@ function autoPlayer(params)
 		var interval = delay / 1000;
 		self.computer.update(interval, self.game.world.bodiesExcept(self.playerId));
 		engine.run(interval);
-	}
-
-	/**
-	 * Get the correct filename for the given params.
-	 */
-	function getFilename(params)
-	{
-		if ('scriptId' in params)
-		{
-			return 'custom-' + params.scriptId + '.8s';
-		}
-		return 'basic-enemy.8s';
 	}
 }
 
@@ -200,8 +172,37 @@ var autoSelector = new function()
 	{
 		var player = new autoPlayer({
 			playerId: 'computer1',
+			scriptId: 'basic-enemy.8s',
 		});
 		return player;
+	}
+
+	/**
+	 * Get the current code for the computer.
+	 */
+	self.getCode = function()
+	{
+		return engine.get();
+	}
+
+	/**
+	 * Set the code for the engine.
+	 */
+	self.installCode = function(code, playerId, callback)
+	{
+		engine.writeScript('custom-' + playerId + '.8s', code, callback);
+	}
+
+	/**
+	 * Get the correct filename for the given params.
+	 */
+	function getFilename(params)
+	{
+		if ('scriptId' in params)
+		{
+			return 'custom-' + params.scriptId + '.8s';
+		}
+		return 'basic-enemy.8s';
 	}
 }
 
