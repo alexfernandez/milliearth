@@ -40,7 +40,6 @@ var scriptingParams = new function()
 
 	// attributes;
 	self.terminators = /[\;\,\.\:]/;
-	self.number = /\d+/;
 }
 
 /**

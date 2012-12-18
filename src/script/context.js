@@ -27,7 +27,6 @@
 var globalParams = require('../params.js').globalParams;
 var parse = require('./parse.js');
 var parsePosition = parse.parsePosition;
-var scriptingParams = parse.scriptingParams;
 var scriptingSentence = parse.scriptingSentence;
 var storage = parse.storage;
 var util = require('../util/util.js');
@@ -269,7 +268,7 @@ function scriptingContext(params)
 	 */
 	function isNumber(token)
 	{
-		return scriptingParams.number.test(token);
+		return /\d+/.test(token);
 	}
 
 	/**
