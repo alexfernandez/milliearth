@@ -24,14 +24,15 @@
  * Requirements.
  */
 var fs = require('fs');
-var parsePosition = require('./script/parse.js').parsePosition;
-var scriptingParams = require('./script/parse.js').scriptingParams;
-var scriptingSentence = require('./script/parse.js').scriptingSentence;
-var scriptingContext = require('./script/context.js').scriptingContext;
-var util = require('./util/util.js');
+var parse = require('./parse.js');
+var parsePosition = parse.parsePosition;
+var scriptingParams = parse.scriptingParams;
+var scriptingSentence = parse.scriptingSentence;
+var scriptingContext = require('./context.js').scriptingContext;
+var util = require('../util/util.js');
 var extend = util.extend;
 var concurrencyLock = util.concurrencyLock;
-var log = require('./util/log.js');
+var log = require('../util/log.js');
 var debug = log.debug;
 var error = log.error;
 var success = log.success;

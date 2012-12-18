@@ -24,10 +24,11 @@
 /**
  * Requirements.
  */
-var atescriptTest = require('./atescript.js').test;
+var atescriptTest = require('./auto/atescript.js').test;
 var vectorTest = require('./vector.js').test;
 var quaternionTest = require('./quaternion.js').test;
-require('./util/log.js').debugMode = true;
+var activateDebugMode = require('./util/log.js').activateDebugMode;
+activateDebugMode();
 
 
 /**

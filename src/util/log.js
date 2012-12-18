@@ -32,6 +32,14 @@ function inBrowser()
 var debugMode = inBrowser();
 
 /**
+ * Activate the debug mode.
+ */
+function activateDebugMode()
+{
+	debugMode = true;
+}
+
+/**
  * Pad a number to the given digits.
  */
 function pad(n, digits)
@@ -116,7 +124,7 @@ function success(message)
 	console.log('\u001b[32m' + isoDate() + ' ' + message + '\u001b[0m');
 }
 
-module.exports.debugMode = debugMode;
+module.exports.activateDebugMode = activateDebugMode;
 module.exports.debug = debug;
 module.exports.info = info;
 module.exports.error = error;
