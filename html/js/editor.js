@@ -37,7 +37,7 @@ var codeEditor = new function()
 	 */
 	self.display = function(element)
 	{
-		element.append($('<div class="heading">').html('Scripts:'));
+		element.append($('<div class="heading">').html('Scripts'));
 		element.append($('<div id="scriptList">'));
 		element.append($('<div class="heading">').html('Code Editor'));
 		var edit = $('<textarea>').attr('id', 'editor').attr('name', 'code');
@@ -71,19 +71,23 @@ var codeEditor = new function()
 		{
 			var script = message.scripts[index];
 			var element = $('<span class="script">').html(script.scriptId);
-			// element.click(function() { alert('clicked');});
+			element.click( function() {
+				var scriptId = script.scriptId;
+				self.requestCode(scriptId);
+			});
 			$('#scriptList').append(element);
 		}
 	}
 
 	/**
-	 * Request the code for a computer player.
+	 * Request the code for a given script.
 	 */
-	self.requestCode = function()
+	self.requestCode = function(scriptId)
 	{
-		debug('Requesting code');
+		debug('Requesting code for ' + scriptId);
 		serverConnection.send({
 			type: 'getCode',
+			scriptId: scriptId,
 		});
 	}
 
