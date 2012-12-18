@@ -61,8 +61,10 @@ var globalParams = new function()
 	this.markDistance = 100;
 	// half-width of the speed marks, m
 	this.markHalfWidth = 2;
-	// degrees of turn per second, radians
+	// turning speed, rad/s
 	this.turningAngle = Math.PI / 4;
+	// pointing at target speed, rad/s
+	this.pointingAngle = 0.25 * this.turningAngle;
 	// number of projectiles available
 	this.projectiles = 20;
 	// mass of projectile, kg

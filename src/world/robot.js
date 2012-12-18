@@ -382,7 +382,7 @@ function fighterRobot(params)
 	 */
 	self.pointLeft = function(interval)
 	{
-		cannon.yaw(globalParams.turningAngle * interval);
+		cannon.yaw(globalParams.pointingAngle * interval);
 	}
 
 	/**
@@ -390,7 +390,7 @@ function fighterRobot(params)
 	 */
 	self.pointRight = function(interval)
 	{
-		cannon.yaw(-globalParams.turningAngle * interval);
+		cannon.yaw(-globalParams.pointingAngle * interval);
 	}
 
 	/**
@@ -398,7 +398,7 @@ function fighterRobot(params)
 	 */
 	self.pointUp = function(interval)
 	{
-		cannon.pitch(-globalParams.turningAngle * interval);
+		cannon.pitch(-globalParams.pointingAngle * interval);
 	}
 
 	/**
@@ -406,7 +406,7 @@ function fighterRobot(params)
 	 */
 	self.pointDown = function(interval)
 	{
-		cannon.pitch(globalParams.turningAngle * interval);
+		cannon.pitch(globalParams.pointingAngle * interval);
 	}
 
 	/**
