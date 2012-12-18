@@ -94,9 +94,9 @@ var optionSelector = new function()
 	}
 
 	/**
-	 * Show the current code in the content.
+	 * Show scripts and edit them.
 	 */
-	self.showCode = function()
+	self.showScripts = function()
 	{
 		codeEditor.display($('#content'));
 	}

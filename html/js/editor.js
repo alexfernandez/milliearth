@@ -49,13 +49,24 @@ var codeEditor = new function()
 	}
 
 	/**
+	 * Request all available scripts from the server.
+	 */
+	self.requestScripts = function()
+	{
+		debug('Requesting scripts');
+		serverConnection.send({
+			type: 'scripts',
+		});
+	}
+
+	/**
 	 * Request the code for a computer player.
 	 */
 	self.requestCode = function()
 	{
 		debug('Requesting code');
 		serverConnection.send({
-			type: 'code',
+			type: 'getCode',
 		});
 	}
 

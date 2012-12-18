@@ -94,6 +94,13 @@ function connectedPlayer(params)
 			self.fight(message);
 			return;
 		}
+		if (message.type == 'scripts')
+		{
+			self.send({
+				type: 'scripts',
+				scripts: autoSelector.getScripts(),
+			});
+		}
 		if (message.type == 'code')
 		{
 			self.sendCode(self);
