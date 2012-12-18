@@ -77,7 +77,7 @@ function connectedPlayer(params)
 			return;
 		}
 		debug('Player ' + self.playerId + ' sent a message ' + message.type);
-		if (message.type == 'rivals')
+		if (message.type == 'getRivals')
 		{
 			if (message.name)
 			{
@@ -94,7 +94,7 @@ function connectedPlayer(params)
 			self.fight(message);
 			return;
 		}
-		if (message.type == 'scripts')
+		if (message.type == 'getScripts')
 		{
 			self.send({
 				type: 'scripts',
@@ -102,7 +102,7 @@ function connectedPlayer(params)
 			});
 			return;
 		}
-		if (message.type == 'code')
+		if (message.type == 'getCode')
 		{
 			self.sendCode(self);
 			return;

@@ -57,7 +57,7 @@ var codeEditor = new function()
 	{
 		debug('Requesting scripts');
 		serverConnection.send({
-			type: 'scripts',
+			type: 'getScripts',
 		});
 	}
 

@@ -46,7 +46,7 @@ var rivalList = new function()
 			return;
 		}
 		serverConnection.send({
-			type: 'rivals',
+			type: 'getRivals',
 			name: name,
 		});
 	}
