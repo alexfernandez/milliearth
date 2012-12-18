@@ -31,6 +31,7 @@ var module = {exports: {}};
  */
 function require(file)
 {
+	file = file.replace('..', '.');
 	if (typeof debug != 'undefined')
 	{
 		debug('requiring ' + file);
