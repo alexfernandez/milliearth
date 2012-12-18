@@ -114,7 +114,7 @@ var autoSelector = new function()
 	 */
 	function readDirectory(directory)
 	{
-		fs.readdir(directory, function(err, files) {
+		fs.readdir(scriptDir + directory, function(err, files) {
 			if (err)
 			{
 				error(err.message);
@@ -123,7 +123,7 @@ var autoSelector = new function()
 			for (var index in files)
 			{
 				var file = files[index];
-				fs.stat(directory + file, statsCreator(file));
+				fs.stat(scriptDir + directory + file, statsCreator(directory + file));
 			}
 		});
 	}
@@ -150,7 +150,8 @@ var autoSelector = new function()
 			}
 			if (stats.isDirectory())
 			{
-				readDirectory(file);
+				info('Loading dir: ' + file);
+				readDirectory(file + '/');
 			}
 		}
 	}
@@ -160,7 +161,7 @@ var autoSelector = new function()
 	 */
 	function loadScripts()
 	{
-		readDirectory(scriptDir);
+		readDirectory('');
 	}
 	loadScripts();
 
