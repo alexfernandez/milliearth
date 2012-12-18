@@ -23,7 +23,7 @@
 /**
  * Requirements.
  */
-var vectorModule = require('./vector.js');
+var vectorModule = require('../math/vector.js');
 var round = vectorModule.round;
 var vector = vectorModule.vector;
 var util = require('../util/util.js');
