@@ -29,7 +29,9 @@ var util = require('../util/util.js');
 var extend = util.extend;
 var log = require('../util/log.js');
 var debug = log.debug;
+var info = log.info;
 var error = log.error;
+var fs = require('fs');
 
 
 /**
@@ -105,6 +107,62 @@ var autoSelector = new function()
 
 	// attributes
 	var scripts = {};
+	var scriptDir = './script/';
+
+	/**
+	 * Read all scripts in the given directory.
+	 */
+	function readDirectory(directory)
+	{
+		fs.readdir(directory, function(err, files) {
+			if (err)
+			{
+				error(err.message);
+				return;
+			}
+			for (var index in files)
+			{
+				var file = files[index];
+				fs.stat(directory + file, statsCreator(file));
+			}
+		});
+	}
+
+	/**
+	 * Create a function that reads the stats for a file and adds the script if correct.
+	 */
+	function statsCreator(file)
+	{
+		return function(err, stats)
+		{
+			if (err)
+			{
+				error(err.message);
+				return;
+			}
+			if (stats.isFile())
+			{
+				info('Loaded script: ' + file);
+				scripts[file] = {
+					scriptId: file,
+				};
+				return;
+			}
+			if (stats.isDirectory())
+			{
+				readDirectory(file);
+			}
+		}
+	}
+
+	/**
+	 * Load all scripts.
+	 */
+	function loadScripts()
+	{
+		readDirectory(scriptDir);
+	}
+	loadScripts();
 
 	/**
 	 * Add a new script to the server.
