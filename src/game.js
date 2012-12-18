@@ -97,17 +97,6 @@ function meGame(gameId)
 	 */
 	self.message = function(player, message)
 	{
-		if (message.type == 'code')
-		{
-			self.sendCode(player);
-			return;
-		}
-		if (message.type == 'install')
-		{
-			self.installCode(player, message);
-			return;
-		}
-		// the remaining messages are only valid if the game is active
 		if (!self.active)
 		{
 			player.error('Game not started');
@@ -259,60 +248,6 @@ function meGame(gameId)
 		{
 			players[index].send(message);
 		}
-	}
-
-	/**
-	 * Send the computer code to the given player.
-	 */
-	self.sendCode = function(player)
-	{
-		var computer = findComputer();
-		if (!computer)
-		{
-			info('No computer opponent; cannot fetch code');
-			return;
-		}
-		var message = {
-			type: 'code',
-			contents: computer.getCode(),
-		};
-		player.send(message);
-	}
-
-	/**
-	 * Receive the computer code, install on computer players.
-	 */
-	self.installCode = function(player, message)
-	{
-		if (!message.contents)
-		{
-			error('Empty code received');
-			return;
-		}
-		var computer = findComputer();
-		if (!computer)
-		{
-			return;
-		}
-		computer.installCode(message.contents, player.playerId);
-		info('Installed code for ' + player.playerId + ', finishing');
-		self.finish();
-	}
-
-	/**
-	 * Find a computer player.
-	 */
-	function findComputer()
-	{
-		for (var index in players)
-		{
-			var player = players[index];
-			if (player.computer)
-			{
-				return player;
-			}
-		}
-		return null;
 	}
 
 	/**
