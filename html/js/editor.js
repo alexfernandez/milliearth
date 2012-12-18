@@ -39,7 +39,7 @@ var codeEditor = new function()
 	{
 		element.append($('<div>Code Editor</div>'));
 		var edit = $('<textarea>').attr('id', 'editor').attr('name', 'code');
-		edit.attr('placeholder', 'Fetching code from server').attr('rows', '20').attr('cols', '80');
+		edit.attr('placeholder', 'Fetching code from server').attr('rows', '20').attr('cols', '60');
 		var send = $('<input type="button" id="sendCode" value="Send code">');
 		element.append(edit);
 		element.append($('<br>'));
