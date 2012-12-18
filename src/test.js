@@ -25,8 +25,8 @@
  * Requirements.
  */
 var atescriptTest = require('./script/atescript.js').test;
-var vectorTest = require('./vector.js').test;
-var quaternionTest = require('./quaternion.js').test;
+var vectorTest = require('./math/vector.js').test;
+var quaternionTest = require('./math/quaternion.js').test;
 var activateDebugMode = require('./util/log.js').activateDebugMode;
 activateDebugMode();
 

@@ -23,7 +23,7 @@
 /**
  * Requirements.
  */
-var log = require('./util/log.js');
+var log = require('../util/log.js');
 var debug = log.debug;
 var info = log.info;
 var error = log.error;

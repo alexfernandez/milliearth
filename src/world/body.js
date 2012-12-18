@@ -24,8 +24,8 @@
  * Requirements.
  */
 var globalParams = require('../params.js').globalParams;
-var vector = require('../vector.js').vector;
-var quaternion = require('../quaternion.js');
+var vector = require('../math/vector.js').vector;
+var quaternion = require('../math/quaternion.js');
 var coordinateSystem = quaternion.coordinateSystem;
 var dependentSystem = quaternion.dependentSystem;
 var util = require('../util/util.js');

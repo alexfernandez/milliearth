@@ -24,7 +24,7 @@
  * Requirements.
  */
 var globalParams = require('../params.js').globalParams;
-var vector = require('../vector.js').vector;
+var vector = require('../math/vector.js').vector;
 var massiveBody = require('./body.js').massiveBody;
 var fighterRobot = require('./robot.js').fighterRobot;
 var util = require('../util/util.js');

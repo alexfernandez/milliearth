@@ -23,11 +23,11 @@
 /**
  * Requirements.
  */
-var util = require('./util/util.js');
-var extend = util.extend;
 var round = require('./vector.js').round;
 var vector = require('./vector.js').vector;
-var log = require('./util/log.js');
+var util = require('../util/util.js');
+var extend = util.extend;
+var log = require('../util/log.js');
 var error = log.error;
 var success = log.success;
 
