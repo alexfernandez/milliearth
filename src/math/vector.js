@@ -23,6 +23,7 @@
 /**
  * Requirements.
  */
+var isNumber = require('../util/util.js').isNumber;
 var log = require('../util/log.js');
 var debug = log.debug;
 var info = log.info;
@@ -30,13 +31,6 @@ var error = log.error;
 var success = log.success;
 
 
-/**
- * Find out if a value is a number.
- */
-function isNumber(n)
-{
-	return !isNaN(parseFloat(n)) && isFinite(n);
-}
 /**
  * Round a value to print easily.
  */
@@ -352,7 +346,6 @@ function vectorTest()
 }
 
 
-module.exports.isNumber = isNumber;
 module.exports.round = round;
 module.exports.planarPoint = planarPoint;
 module.exports.vector = vector;

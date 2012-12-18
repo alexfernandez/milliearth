@@ -143,7 +143,6 @@ var highResolutionTimer = function(delay, callback)
 	setTimeout(delayed, delay);
 }
 
-
 /**
  * Generate a random id in base 36 with length 8.
  */
@@ -157,6 +156,14 @@ function randomId()
 	}
 	return result;
 
+}
+
+/**
+ * Find out if a value is a number.
+ */
+function isNumber(n)
+{
+	return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
 /**
@@ -188,4 +195,5 @@ module.exports.concurrencyLock = concurrencyLock;
 module.exports.highResolutionTimer = highResolutionTimer;
 module.exports.randomId = randomId;
 module.exports.extend = extend;
+module.exports.isNumber = isNumber;
 
