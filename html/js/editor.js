@@ -37,14 +37,16 @@ var codeEditor = new function()
 	 */
 	self.display = function(element)
 	{
-		element.append($('<div>Code Editor</div>'));
+		element.append($('<div class="heading">').html('Scripts:'));
+		element.append($('<div id="scriptList">'));
+		element.append($('<div class="heading">').html('Code Editor'));
 		var edit = $('<textarea>').attr('id', 'editor').attr('name', 'code');
-		edit.attr('placeholder', 'Fetching code from server').attr('rows', '20').attr('cols', '60');
+		edit.attr('placeholder', 'Select a script').attr('rows', '20').attr('cols', '60');
 		var send = $('<input type="button" id="sendCode" value="Send code">');
 		element.append(edit);
 		element.append($('<br>'));
 		element.append(send);
-		self.requestCode();
+		self.requestScripts();
 		$('#sendCode').click(self.sendCode);
 	}
 
@@ -57,6 +59,21 @@ var codeEditor = new function()
 		serverConnection.send({
 			type: 'scripts',
 		});
+	}
+
+	/**
+	 * Receive the list of scripts from the server.
+	 */
+	self.receiveScripts = function(message)
+	{
+		debug('Receiving scripts');
+		for (var index in message.scripts)
+		{
+			var script = message.scripts[index];
+			var element = $('<span class="script">').html(script.scriptId);
+			// element.click(function() { alert('clicked');});
+			$('#scriptList').append(element);
+		}
 	}
 
 	/**

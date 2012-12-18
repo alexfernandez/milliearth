@@ -270,5 +270,13 @@ var clientPlayer = new function()
 	{
 		rivalList.receiveRivals(message);
 	}
+
+	/**
+	 * Receive the list of scripts from the server.
+	 */
+	self.scripts = function(message)
+	{
+		codeEditor.receiveScripts(message);
+	}
 }
 

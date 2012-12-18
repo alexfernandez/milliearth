@@ -100,6 +100,7 @@ function connectedPlayer(params)
 				type: 'scripts',
 				scripts: autoSelector.getScripts(),
 			});
+			return;
 		}
 		if (message.type == 'code')
 		{
