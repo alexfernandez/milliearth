@@ -23,8 +23,9 @@
 /**
  * Requirements.
  */
-var round = require('./vector.js').round;
-var vector = require('./vector.js').vector;
+var vectorModule = require('./vector.js');
+var round = vectorModule.round;
+var vector = vectorModule.vector;
 var util = require('../util/util.js');
 var extend = util.extend;
 var log = require('../util/log.js');
