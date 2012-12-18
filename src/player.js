@@ -23,7 +23,7 @@
 /**
  * Requirements.
  */
-var autoComputer = require('./computer.js').autoComputer;
+var autoComputer = require('./robot/computer.js').autoComputer;
 var gameSelector = require('./game.js').gameSelector;
 var util = require('./util/util.js');
 var parser = util.parser;
@@ -173,12 +173,12 @@ function connectedPlayer(params)
 		}
 		if (message.type == 'code')
 		{
-			self.sendCode(player);
+			self.sendCode(self);
 			return;
 		}
 		if (message.type == 'install')
 		{
-			self.installCode(player, message);
+			self.installCode(self, message);
 			return;
 		}
 		if (!self.game)
@@ -232,6 +232,7 @@ function connectedPlayer(params)
 	 */
 	function findComputer()
 	{
+		var players = [];
 		for (var index in players)
 		{
 			var player = players[index];

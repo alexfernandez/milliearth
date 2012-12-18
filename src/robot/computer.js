@@ -23,9 +23,9 @@
 /**
  * Requirements.
  */
-var globalParams = require('./params.js').globalParams;
-var scriptingEngine = require('./atescript.js').scriptingEngine;
-var log = require('./util/log.js');
+var globalParams = require('../params.js').globalParams;
+var scriptingEngine = require('../atescript.js').scriptingEngine;
+var log = require('../util/log.js');
 var debug = log.debug;
 var info = log.info;
 var error = log.error;
