@@ -132,7 +132,6 @@ function scriptingContext(params)
 			return;
 		}
 		var lines = interval * globalParams.instructionsPerSecond;
-		debug('Preparing to run: ' + lines + ' in ' + self);
 		var run = 0;
 		while (run < lines && !self.finished() && stack.interval > 0)
 		{

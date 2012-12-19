@@ -156,6 +156,18 @@ function parsePosition(text)
 	extend(new storage(text), self);
 
 	/**
+	 * Get the current char.
+	 */
+	self.current = function()
+	{
+		if (self.position == self.contents.length)
+		{
+			return '';
+		}
+		return self.contents.slice(self.position, self.position + 1);
+	}
+
+	/**
 	 * Skip any blank characters at pos.
 	 */
 	self.skipBlank = function()
@@ -227,11 +239,7 @@ function parsePosition(text)
 			result += '…';
 		}
 		result += self.contents.slice(start, self.position);
-		if (self.position == end)
-		{
-			return result + ' <';
-		}
-		result += '> ' + self.contents.slice(self.position, self.position + 1) + ' <';
+		result += '> ' + self.current() + ' <';
 		result += self.contents.slice(self.position + 1, end);
 		if (end < self.contents.length)
 		{

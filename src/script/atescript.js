@@ -69,7 +69,6 @@ function scriptingEngine(params)
 		var sentence = new scriptingSentence();
 		while (!pos.finished())
 		{
-			debug('Parsing ' + pos);
 			var t = pos.parseToken();
 			if (t == '#')
 			{
@@ -87,7 +86,6 @@ function scriptingEngine(params)
 			}
 		}
 		self.ready = true;
-		debug('Finished preparing script: ' + context);
 		if (context.isEmpty())
 		{
 			error('Empty script');
