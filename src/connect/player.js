@@ -104,10 +104,9 @@ function connectedPlayer(params)
 		}
 		if (message.type == 'getCode')
 		{
-			self.send({
-				type: 'code',
-				contents: autoSelector.getCode(message),
-			});
+			var response = autoSelector.getScript(message);
+			response.type = 'code';
+			self.send(response);
 			return;
 		}
 		if (message.type == 'install')
@@ -121,24 +120,6 @@ function connectedPlayer(params)
 			return;
 		}
 		self.game.message(self, message);
-	}
-
-	/**
-	 * Send the computer code to the given player.
-	 */
-	self.sendCode = function(player)
-	{
-		var computer = findComputer();
-		if (!computer)
-		{
-			info('No computer opponent; cannot fetch code');
-			return;
-		}
-		var message = {
-			type: 'code',
-			contents: computer.getCode(),
-		};
-		player.send(message);
 	}
 
 	/**

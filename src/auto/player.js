@@ -114,10 +114,7 @@ var autoSelector = new function()
 			}
 			if (stats.isFile())
 			{
-				info('Loaded script: ' + file);
-				scripts[file] = {
-					scriptId: file,
-				};
+				fs.readFile(scriptDir + file, readerCreator(file));
 				return;
 			}
 			if (stats.isDirectory())
@@ -125,6 +122,21 @@ var autoSelector = new function()
 				info('Loading dir: ' + file);
 				readDirectory(file + '/');
 			}
+		}
+	}
+
+	/**
+	 Create a function that reads the whole file and adds it to the current scripts.
+	 */
+	function readerCreator(file)
+	{
+		return function(err, contents)
+		{
+			scripts[file] = {
+				scriptId: file,
+				code: contents,
+			};
+			info('Loaded script: ' + file);
 		}
 	}
 
@@ -178,11 +190,19 @@ var autoSelector = new function()
 	}
 
 	/**
-	 * Get the current code for the computer.
+	 * Get the code for the script.
 	 */
-	self.getCode = function()
+	self.getScript = function(message)
 	{
-		return engine.get();
+		if (!message.scriptId)
+		{
+			return { error: 'No script id' };
+		}
+		if (!(message.scriptId in scripts))
+		{
+			return { error: 'Invalid script id' };
+		}
+		return scripts[message.scriptId];
 	}
 
 	/**
