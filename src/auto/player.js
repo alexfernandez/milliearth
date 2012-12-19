@@ -130,11 +130,11 @@ var autoSelector = new function()
 	 */
 	function readerCreator(file)
 	{
-		return function(err, contents)
+		return function(err, data)
 		{
 			scripts[file] = {
 				scriptId: file,
-				code: contents,
+				code: data.toString(),
 			};
 			info('Loaded script: ' + file);
 		}

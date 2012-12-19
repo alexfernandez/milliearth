@@ -96,7 +96,7 @@ var codeEditor = new function()
 	 */
 	self.showCode = function(message)
 	{
-		$('#editor').val(message.contents);
+		$('#editor').val(message.code);
 	}
 
 	/**
