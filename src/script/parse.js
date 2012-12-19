@@ -129,6 +129,14 @@ function storage(contents)
 	}
 
 	/**
+	 * Find out if the storage is empty.
+	 */
+	self.isEmpty = function()
+	{
+		return (self.contents.length == 0);
+	}
+
+	/**
 	 * Printable representation.
 	 */
 	self.toString = function()

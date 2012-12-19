@@ -69,6 +69,7 @@ function scriptingEngine(params)
 		var sentence = new scriptingSentence();
 		while (!pos.finished())
 		{
+			debug('Parsing ' + pos);
 			var t = pos.parseToken();
 			if (t == '#')
 			{
@@ -86,6 +87,11 @@ function scriptingEngine(params)
 			}
 		}
 		self.ready = true;
+		debug('Finished preparing script: ' + context);
+		if (context.isEmpty())
+		{
+			error('Empty script');
+		}
 		// run any pending interval
 		run(0);
 	}
@@ -107,14 +113,21 @@ function scriptingEngine(params)
 	 */
 	function run(interval)
 	{
-		intervalPending += interval;
+		debug('Running ' + interval);
+		if (interval)
+		{
+			intervalPending += interval;
+		}
 		if (!self.ready)
 		{
+			debug('Not ready');
 			return;
 		}
 		if (!semaphor.check(self))
 		{
-			// semaphor closed
+			// semaphor closed; wait for 1 ms
+			debug('Semaphor closed');
+			setTimeout(run, 1);
 			return;
 		}
 		if (context.finished())
@@ -122,9 +135,9 @@ function scriptingEngine(params)
 			debug('Context finished');
 			context.restart();
 		}
-		info('Running ' + interval);
-		linesRun += context.run(intervalPending);
-		intervalPending = 0;
+		var intervalToRun = intervalPending;
+		linesRun += context.run(intervalToRun);
+		intervalPending += intervalToRun;
 		semaphor.release();
 		runCallbacks();
 	}
@@ -134,6 +147,7 @@ function scriptingEngine(params)
 	 */
 	function runCallbacks()
 	{
+		debug('Running callbacks ' + callbacks.length);
 		var callback = callbacks.shift();
 		while (callback)
 		{
