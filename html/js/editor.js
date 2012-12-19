@@ -71,11 +71,20 @@ var codeEditor = new function()
 		debug('Receiving scripts');
 		for (var index in message.scripts)
 		{
-			var script = message.scripts[index];
-			var element = $('<span class="script">').html(script.scriptId);
-			element.click(receiverCreator(script.scriptId));
+			var scriptId = message.scripts[index].scriptId;
+			var element = $('<span id="' + getScriptId(scriptId) + '" class="script">').html(scriptId);
+			element.click(receiverCreator(scriptId));
 			$('#scriptList').append(element);
 		}
+	}
+
+	/**
+	 * Get the HTML id of the script element.
+	 */
+	function getScriptId(scriptId)
+	{
+		var id = scriptId.replace('/', '-').substringUpTo('.');
+		return 'script-' + id;
 	}
 
 	/**
@@ -106,6 +115,8 @@ var codeEditor = new function()
 	 */
 	self.showCode = function(message)
 	{
+		$('.script').removeClass('selected');
+		$('#' + getScriptId(message.scriptId)).addClass('selected');
 		$('#scriptId').val(message.scriptId);
 		$('#editor').val(message.code);
 	}

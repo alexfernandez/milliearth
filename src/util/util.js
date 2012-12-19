@@ -48,6 +48,32 @@ String.prototype.contains = function(str)
 };
 
 /**
+ * Return the piece of string until the argument is found.
+ * 'hi.there'.substringUpTo('.') => 'hi'
+ */
+String.prototype.substringUpTo = function(str)
+{
+	if (!this.contains(str))
+	{
+		return this;
+	}
+	return this.slice(0, this.indexOf(str));
+}
+
+/**
+ * Return the piece of string starting with the argument; empty string if not found.
+ * 'hi.there'.substringFrom('.') => 'there'
+ */
+String.prototype.substringFrom = function(str)
+{
+	if (!this.contains(str))
+	{
+		return '';
+	}
+	return this.slice(this.indexOf(str) + 1);
+}
+
+/**
  * Parser for JSON.
  */
 var parser = new function()
