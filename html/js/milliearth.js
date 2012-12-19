@@ -117,18 +117,23 @@ var milliEarth = new function()
 	}
 
 	/**
-	 * Manage a click on the canvas: reconnect if disconnected.
+	 * Manage a click on the canvas: restart the game if connected.
 	 */
 	function clickCanvas()
 	{
 		if (!serverConnection.isConnected())
 		{
-			self.connect();
+			return;
 		}
+		if (clientPlayer.isPlaying())
+		{
+			return;
+		}
+		clientPlayer.connect();
 	}
 
 	/**
-	 * Connect using a websocket using a random game id.
+	 * Connect using a websocket.
 	 */
 	self.connect = function(callback)
 	{

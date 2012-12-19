@@ -293,5 +293,13 @@ var clientPlayer = new function()
 	{
 		codeEditor.receiveScripts(message);
 	}
+
+	/**
+	 * Find out if a game is in progress.
+	 */
+	self.isPlaying = function()
+	{
+		return running;
+	}
 }
 
