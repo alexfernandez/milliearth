@@ -111,7 +111,6 @@ function scriptingEngine(params)
 	 */
 	function run(interval)
 	{
-		debug('Running ' + interval);
 		if (interval)
 		{
 			intervalPending += interval;
@@ -145,7 +144,6 @@ function scriptingEngine(params)
 	 */
 	function runCallbacks()
 	{
-		debug('Running callbacks ' + callbacks.length);
 		var callback = callbacks.shift();
 		while (callback)
 		{
@@ -229,9 +227,11 @@ function testBasicEnemy()
 		},
 
 	};
+	var scriptId = 'basic-enemy.8s';
 	var engine = new scriptingEngine({
+		scriptId: scriptId,
+		code: fs.readFileSync('script/' + scriptId),
 		computer: basicComputer,
-		file: 'basic-enemy.8s',
 	});
 	var iterations = 0;
 	var expected = 9;

@@ -162,7 +162,6 @@ function scriptingContext(params)
 			}
 			return;
 		}
-		debug('Running: ' + sentence);
 		var token = sentence.currentSkip();
 		if (token == 'if')
 		{
