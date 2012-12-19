@@ -256,6 +256,7 @@ function connectedPlayer(params)
 	{
 		self.send({
 			type: 'start',
+			gameId: game.gameId,
 			players: game.getPlayerIds(),
 		});
 	}
