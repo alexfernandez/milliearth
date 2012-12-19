@@ -28,6 +28,7 @@ var util = require('../util/util.js');
 var extend = util.extend;
 var log = require('../util/log.js');
 var error = log.error;
+var debug = log.debug;
 
 
 /**
@@ -202,6 +203,33 @@ function parsePosition(text)
 			w += self.currentSkip();
 		}
 		return w;
+	}
+
+	/**
+	 * Printable representation, with context.
+	 */
+	self.toString = function()
+	{
+		var interval = 20;
+		var start = Math.max(0, self.position - interval);
+		var end = Math.min(self.contents.length, self.position + interval);
+		var result = '';
+		if (start > 0)
+		{
+			result += '…';
+		}
+		result += self.contents.slice(start, self.position);
+		if (self.position == end)
+		{
+			return result + ' <';
+		}
+		result += '> ' + self.contents.slice(self.position, self.position + 1) + ' <';
+		result += self.contents.slice(self.position + 1, end);
+		if (end < self.contents.length)
+		{
+			result += '…';
+		}
+		return result;
 	}
 }
 
