@@ -55,7 +55,6 @@ function autoPlayer(params)
 	{
 		var scriptId = params.scriptId;
 		self.computer = new autoComputer(self.robot, scriptId);
-		engine = self.computer.getEngine();
 	}
 
 	/**
@@ -65,7 +64,6 @@ function autoPlayer(params)
 	{
 		var interval = delay / 1000;
 		self.computer.update(interval, self.game.world.bodiesExcept(self.playerId));
-		engine.run(interval);
 	}
 }
 

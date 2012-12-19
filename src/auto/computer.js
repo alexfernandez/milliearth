@@ -52,14 +52,6 @@ function autoComputer(robot, script)
 	self.speed = 0;
 
 	/**
-	 * Get the engine.
-	 */
-	self.getEngine = function()
-	{
-		return engine;
-	}
-
-	/**
 	 * Run an update of the outside world.
 	 */
 	self.update = function(interval, bodies)
@@ -89,6 +81,7 @@ function autoComputer(robot, script)
 				self.scope[object.bodyId] = object;
 			}
 		}
+		engine.run(interval);
 	}
 
 	/**
