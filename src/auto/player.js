@@ -53,8 +53,8 @@ function autoPlayer(params)
 	 */
 	self.postStart = function(game)
 	{
-		var scriptId = params.scriptId;
-		self.computer = new autoComputer(self.robot, scriptId);
+		params.robot = self.robot;
+		self.computer = new autoComputer(params);
 	}
 
 	/**
@@ -178,13 +178,18 @@ var autoSelector = new function()
 	/**
 	 * Get an auto player. If it does not exist, return null.
 	 */
-	self.getAuto = function()
+	self.getAuto = function(scriptId)
 	{
-		var player = new autoPlayer({
-			playerId: 'computer1',
-			scriptId: 'basic-enemy.8s',
-		});
-		return player;
+		scriptId = scriptId || 'basic-enemy.8s';
+		if (!(scriptId in scripts))
+		{
+			error('Invalid script id ' + scriptId);
+			return null;
+		}
+		var script = scripts[scriptId];
+		var params = JSON.parse(JSON.stringify(script));
+		params.playerId = 'computer1';
+		return new autoPlayer(params);
 	}
 
 	/**

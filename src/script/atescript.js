@@ -34,6 +34,7 @@ var extend = util.extend;
 var concurrencyLock = util.concurrencyLock;
 var log = require('../util/log.js');
 var debug = log.debug;
+var info = log.info;
 var error = log.error;
 var success = log.success;
 
@@ -47,7 +48,6 @@ function scriptingEngine(params)
 	var self = this;
 
 	// attributes
-	self.file = params.file;
 	self.ready = false;
 	self.text = null;
 	var computer = params.computer;
@@ -57,39 +57,7 @@ function scriptingEngine(params)
 	var semaphor = new concurrencyLock();
 	var context = new scriptingContext(params);
 	var dir = 'script/';
-
-	readScript(self.file);
-
-	/**
-	 * Read a script file and interpret it.
-	 */
-	function readScript(file)
-	{
-		fs.readFile(dir + file, function(err, data) {
-			if (err)
-			{
-				error('Invalid script file ' + file);
-				return;
-			}
-			prepare(data.toString());
-		});
-	}
-
-	/**
-	 * Write a script to a file.
-	 */
-	self.writeScript = function(name, text, callback)
-	{
-		fs.writeFile(dir + name, text, callback);
-	}
-
-	/**
-	 * Return the current code running in the engine.
-	 */
-	self.get = function()
-	{
-		return self.text;
-	}
+	prepare(params.code);
 
 	/**
 	 * Prepare a script text for interpretation.
@@ -119,11 +87,11 @@ function scriptingEngine(params)
 		}
 		self.ready = true;
 		// run any pending interval
-		self.run(0);
+		run(0);
 	}
 
 	/**
-	 * Run the script for a number of seconds.
+	 * Run the script for a number of seconds, with callback.
 	 */
 	self.run = function(interval, callback)
 	{
@@ -131,6 +99,14 @@ function scriptingEngine(params)
 		{
 			callbacks.push(callback);
 		}
+		run(interval);
+	}
+
+	/**
+	 * Run without a callback.
+	 */
+	function run(interval)
+	{
 		intervalPending += interval;
 		if (!self.ready)
 		{
@@ -146,8 +122,8 @@ function scriptingEngine(params)
 			debug('Context finished');
 			context.restart();
 		}
-		var run = context.run(intervalPending, callback);
-		linesRun += run;
+		info('Running ' + interval);
+		linesRun += context.run(intervalPending);
 		intervalPending = 0;
 		semaphor.release();
 		runCallbacks();
@@ -174,8 +150,10 @@ module.exports.scriptingEngine = scriptingEngine;
  */
 function testArithmetic()
 {
+	var scriptId = 'test/test-arithmetic.8s';
 	var engine = new scriptingEngine({
-		file: 'test/test-arithmetic.8s',
+		scriptId: scriptId,
+		code: fs.readFileSync('script/' + scriptId),
 		computer: {},
 	});
 	engine.run(0.1, function(computer) {
@@ -187,6 +165,7 @@ function testArithmetic()
 		if (computer.x != 10)
 		{
 			error('x should be 10, not ' + computer.x);
+			return;
 		}
 		success('Scripting arithmetic: OK');
 	});
@@ -277,11 +256,9 @@ function testBasicEnemy()
 }
 
 
-
 module.exports.test = function()
 {
 	testArithmetic();
 	testBasicEnemy();
 }
-
 

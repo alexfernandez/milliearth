@@ -33,18 +33,18 @@ var error = log.error;
 
 /**
  * A computer that controls an auto player.
+ * Params: scriptId, robot.
  * Any attributes and functions here can be used by scripts, so be careful!
  */
-function autoComputer(robot, script)
+function autoComputer(params)
 {
 	// self-reference
 	var self = this;
 
 	// attributes
-	var engine = new scriptingEngine({
-		file: script,
-		computer: self,
-	});
+	params.computer = self;
+	var engine = new scriptingEngine(params);
+	var robot = params.robot;
 	self.view = {};
 	self.cannon = {};
 	self.scope = {};
