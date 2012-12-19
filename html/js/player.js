@@ -79,6 +79,17 @@ var clientPlayer = new function()
 	}
 
 	/**
+	 * Fight an auto enemy with the given script.
+	 */
+	self.fightScript = function(scriptId)
+	{
+		serverConnection.send({
+			type: 'fight',
+			scriptId: scriptId,
+		});
+	}
+
+	/**
 	 * Start the game.
 	 */
 	self.start = function()

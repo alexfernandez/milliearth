@@ -39,6 +39,7 @@ var codeEditor = new function()
 	{
 		element.append($('<div class="heading">').html('Scripts'));
 		element.append($('<div id="scriptList">'));
+		element.append($('<input id="script-fight" type="button" value="Fight" disabled>'));
 		element.append($('<div class="heading">').html('Code Editor'));
 		var edit = $('<textarea>').attr('id', 'editor').attr('name', 'code');
 		edit.attr('placeholder', 'Select a script').attr('rows', '20').attr('cols', '60');
@@ -117,6 +118,9 @@ var codeEditor = new function()
 	{
 		$('.script').removeClass('selected');
 		$('#' + getScriptId(message.scriptId)).addClass('selected');
+		$('#script-fight').removeAttr('disabled').click(function() {
+			clientPlayer.fightScript(message.scriptId);
+		});
 		$('#scriptId').val(message.scriptId);
 		$('#editor').val(message.code);
 	}
