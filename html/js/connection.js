@@ -73,7 +73,7 @@ var serverConnection = new function()
 			{
 				callback();
 			}
-			clientPlayer.connect();
+			clientPlayer.fight();
 		};
 	}
 
@@ -163,7 +163,7 @@ var serverConnection = new function()
 		websocket = null;
 		pending.close();
 		$('#connect').val('Connect');
-		clientPlayer.disconnect();
+		clientPlayer.end();
 	}
 }
 

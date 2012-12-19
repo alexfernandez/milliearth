@@ -58,9 +58,9 @@ var clientPlayer = new function()
 	}
 
 	/**
-	 * Connect to the game.
+	 * Request a fight against the default rival.
 	 */
-	self.connect = function()
+	self.fight = function()
 	{
 		serverConnection.send({
 			type: 'fight',
@@ -68,7 +68,7 @@ var clientPlayer = new function()
 	}
 
 	/**
-	 * Connect to the game against a given rival.
+	 * Request a fight against a given human rival.
 	 */
 	self.fightRival = function(playerId)
 	{
@@ -79,7 +79,7 @@ var clientPlayer = new function()
 	}
 
 	/**
-	 * Fight an auto enemy with the given script.
+	 * Request a fight against an auto enemy with the given script.
 	 */
 	self.fightScript = function(scriptId)
 	{
@@ -90,7 +90,7 @@ var clientPlayer = new function()
 	}
 
 	/**
-	 * Start the game.
+	 * Start the game, sent by the server.
 	 */
 	self.start = function()
 	{
@@ -105,19 +105,11 @@ var clientPlayer = new function()
 	}
 
 	/**
-	 * Disconnect from the game.
-	 */
-	self.disconnect = function()
-	{
-		$('#status').text('Disconnected from server');
-		self.end();
-	}
-
-	/**
 	 * End the game.
 	 */
 	self.end = function()
 	{
+		$('#status').text('Game ended');
 		$('#message').text('Simulation ended');
 		if (!running)
 		{

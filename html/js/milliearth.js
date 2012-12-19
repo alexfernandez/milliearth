@@ -129,7 +129,7 @@ var milliEarth = new function()
 		{
 			return;
 		}
-		clientPlayer.connect();
+		clientPlayer.fight();
 	}
 
 	/**
