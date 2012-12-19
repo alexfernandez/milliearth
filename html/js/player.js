@@ -94,6 +94,10 @@ var clientPlayer = new function()
 	 */
 	self.start = function()
 	{
+		if (running)
+		{
+			self.end();
+		}
 		$('#message').text('Simulation started!');
 		updateIntervalId = setInterval(self.requestSightUpdate, updateInterval);
 		globalIntervalId = setInterval(self.requestGlobalUpdate, globalInterval);
