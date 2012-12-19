@@ -32,8 +32,6 @@ var storage = parse.storage;
 var util = require('../util/util.js');
 var extend = util.extend;
 var log = require('../util/log.js');
-var debug = log.debug;
-var error = log.error;
 
 
 /**
@@ -110,7 +108,7 @@ function scriptingContext(params)
 		var context = stack.current();
 		if (!context)
 		{
-			error('All blocks closed; cannot add ' + sentence);
+			log.error('All blocks closed; cannot add ' + sentence);
 			return;
 		}
 		context.add(sentence);
@@ -138,7 +136,7 @@ function scriptingContext(params)
 			self.runSentence();
 			run++;
 		}
-		debug('Run ' + run + ' lines');
+		log.debug('Run ' + run + ' lines');
 		return run;
 	}
 
@@ -189,7 +187,7 @@ function scriptingContext(params)
 		}
 		else
 		{
-			error('Invalid token ' + token + ' in sentence ' + sentence + '; skipping');
+			log.error('Invalid token ' + token + ' in sentence ' + sentence + '; skipping');
 		}
 		self.skip();
 	}
@@ -252,12 +250,12 @@ function scriptingContext(params)
 			}
 			else
 			{
-				error('Invalid token ' + token + ' in value within ' + sentence);
+				log.error('Invalid token ' + token + ' in value within ' + sentence);
 			}
 		}
 		if (value === null)
 		{
-			error('No value');
+			log.error('No value');
 		}
 		return value;
 	}
@@ -285,7 +283,7 @@ function scriptingContext(params)
 	{
 		if (!token)
 		{
-			error('Empty token');
+			log.error('Empty token');
 			return false;
 		}
 		if (computer.hasOwnProperty(token))
@@ -307,7 +305,7 @@ function scriptingContext(params)
 			var delay = callback(stack.interval, parameter);
 			if (!delay && delay !== 0)
 			{
-				error('Invalid delay for command ' + command + ': ' + delay);
+				log.error('Invalid delay for command ' + command + ': ' + delay);
 			}
 			stack.interval -= delay;
 			return;
@@ -318,7 +316,7 @@ function scriptingContext(params)
 			command += trailing.charAt(0).toUpperCase() + trailing.slice(1);
 			return doCommand(command, sentence);
 		}
-		error('Invalid command ' + command);
+		log.error('Invalid command ' + command);
 	}
 
 	/**
@@ -351,7 +349,7 @@ function scriptingContext(params)
 			}
 			else
 			{
-				error('Invalid parameter ' + token);
+				log.error('Invalid parameter ' + token);
 			}
 		}
 		return parameter;
@@ -381,7 +379,7 @@ function scriptingContext(params)
 	{
 		if (!sentence.checkSkip(':'))
 		{
-			error('Invalid repeat sentence ' + sentence);
+			log.error('Invalid repeat sentence ' + sentence);
 			return false;
 		}
 		marked = self.position + 1;
@@ -417,7 +415,7 @@ function scriptingContext(params)
 	{
 		if (!marked)
 		{
-			error('Invalid mark');
+			log.error('Invalid mark');
 			return;
 		}
 		for (var i = marked; i <= self.position; i++)
@@ -446,7 +444,7 @@ function scriptingContext(params)
 		// attribute comparisons
 		if (!(computer.hasOwnProperty(subject)))
 		{
-			error('Invalid attribute ' + subject);
+			log.error('Invalid attribute ' + subject);
 			return false;
 		}
 		var attribute = computer[subject];
@@ -462,7 +460,7 @@ function scriptingContext(params)
 		{
 			return evaluateBiggerThan(attribute, sentence);
 		}
-		error('Invalid particle ' + particle);
+		log.error('Invalid particle ' + particle);
 		return false;
 	}
 
@@ -490,7 +488,7 @@ function scriptingContext(params)
 		var container = computer[containerAttribute];
 		if (!container)
 		{
-			error('Invalid container attribute ' + containerAttribute);
+			log.error('Invalid container attribute ' + containerAttribute);
 			return false;
 		}
 		for (var key in container)
@@ -511,7 +509,7 @@ function scriptingContext(params)
 	{
 		if (!self.it)
 		{
-			error('Invalid reference to it');
+			log.error('Invalid reference to it');
 			return;
 		}
 		if (!sentence.checkSkip('is'))
