@@ -30,6 +30,7 @@ var optionSelector = new function()
 
 	// attributes
 	self.debugShown = false;
+	var milliEarthOption = 'milliEarthOption';
 
 	/**
 	 * Initialize the options.
@@ -37,9 +38,9 @@ var optionSelector = new function()
 	self.init = function()
 	{
 		$('.option').each(initOption);
-		if (!localStorage['milliEarthOption'])
+		if (!localStorage[milliEarthOption])
 		{
-			localStorage['milliEarthOption'] = $('.option').attr('id');
+			localStorage[milliEarthOption] = $('.option').attr('id');
 		}
 	}
 
@@ -66,7 +67,7 @@ var optionSelector = new function()
 		var name = 'show' + option.charAt(0).toUpperCase() + option.slice(1);
 		var callback = self[name];
 		callback();
-		localStorage['milliEarthOption'] = option;
+		localStorage[milliEarthOption] = option;
 	}
 
 	/**
@@ -74,7 +75,7 @@ var optionSelector = new function()
 	 */
 	self.selectLast = function()
 	{
-		self.select(localStorage['milliEarthOption']);
+		self.select(localStorage[milliEarthOption]);
 	}
 
 	/**
