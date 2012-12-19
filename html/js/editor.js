@@ -73,11 +73,19 @@ var codeEditor = new function()
 		{
 			var script = message.scripts[index];
 			var element = $('<span class="script">').html(script.scriptId);
-			element.click( function() {
-				var scriptId = script.scriptId;
-				self.requestCode(scriptId);
-			});
+			element.click(receiverCreator(script.scriptId));
 			$('#scriptList').append(element);
+		}
+	}
+
+	/**
+	 * Create a function that receives the script id.
+	 */
+	function receiverCreator(scriptId)
+	{
+		return function()
+		{
+			self.requestCode(scriptId);
 		}
 	}
 
