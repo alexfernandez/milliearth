@@ -176,8 +176,12 @@ function connectedPlayer(params)
 		}
 		else if (message.scriptId)
 		{
-			self.error('Script selection not implemented yet.');
-			return;
+			rival = autoSelector.getAuto(message.scriptId);
+			if (rival == null)
+			{
+				self.error('Invalid script ' + message.scriptId);
+				return;
+			}
 		}
 		else
 		{
