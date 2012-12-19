@@ -41,7 +41,6 @@ var log = require('./util/log.js');
 var debug = log.debug;
 var info = log.info;
 var error = log.error;
-var debugMode = log.debugMode;
 
 /**
  * Globals.
@@ -63,7 +62,8 @@ function processArguments(args)
 		var arg = args.shift();
 		if (arg == '-d')
 		{
-			debugMode = true;
+			log.activateDebugMode();
+			debug('Debug mode on');
 		}
 		else if (isNumber(arg))
 		{
