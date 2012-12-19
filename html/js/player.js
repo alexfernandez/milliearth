@@ -32,13 +32,12 @@ var clientPlayer = new function()
 	var running = false;
 	// interval between updates in milliseconds
 	var updateInterval = 50;
-	// id to clear interval
+	// ids to clear intervals
 	var updateIntervalId;
+	var globalIntervalId;
 	// interval between global update
 	var globalInterval = 1000;
 	var globalMessage = null;
-	// id to clear global interval
-	var globalIntervalId;
 	// number of updates per second
 	var updates = 0;
 	// latency total and map
@@ -47,6 +46,8 @@ var clientPlayer = new function()
 	// canvas and layers
 	self.viewLayer = null;
 	self.globalLayer = null;
+	// local storage
+	var lastScriptId = null;
 
 	/**
 	 * Initialize the views.
@@ -62,9 +63,14 @@ var clientPlayer = new function()
 	 */
 	self.fight = function()
 	{
-		serverConnection.send({
+		var fight = {
 			type: 'fight',
-		});
+		};
+		if (lastScriptId)
+		{
+			fight.scriptId = lastScriptId;
+		}
+		serverConnection.send(fight);
 	}
 
 	/**
@@ -83,6 +89,7 @@ var clientPlayer = new function()
 	 */
 	self.fightScript = function(scriptId)
 	{
+		lastScriptId = scriptId;
 		serverConnection.send({
 			type: 'fight',
 			scriptId: scriptId,
