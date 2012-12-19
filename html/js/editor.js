@@ -42,9 +42,11 @@ var codeEditor = new function()
 		element.append($('<div class="heading">').html('Code Editor'));
 		var edit = $('<textarea>').attr('id', 'editor').attr('name', 'code');
 		edit.attr('placeholder', 'Select a script').attr('rows', '20').attr('cols', '60');
+		var scriptId = $('<input id="scriptId" type="text" placeholder="script name">');
 		var send = $('<input type="button" id="sendCode" value="Send code">');
 		element.append(edit);
 		element.append($('<br>'));
+		element.append(scriptId);
 		element.append(send);
 		self.requestScripts();
 		$('#sendCode').click(self.sendCode);
@@ -96,6 +98,7 @@ var codeEditor = new function()
 	 */
 	self.showCode = function(message)
 	{
+		$('#scriptId').val(message.scriptId);
 		$('#editor').val(message.code);
 	}
 
