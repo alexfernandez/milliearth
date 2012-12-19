@@ -30,7 +30,7 @@ var rivalList = new function()
 
 	// attributes
 	var list = [];
-	var playerName = 'playerName';
+	var storedPlayerName = 'playerName';
 
 	/**
 	 * Request a list of rivals from the server.
@@ -121,11 +121,11 @@ var rivalList = new function()
 	 */
 	function getPlayerName()
 	{
-		if (!localStorage[playerName])
+		if (!localStorage[storedPlayerName])
 		{
 			return null;
 		}
-		return localStorage[playerName];
+		return localStorage[storedPlayerName];
 	}
 
 	/**
@@ -139,7 +139,7 @@ var rivalList = new function()
 			return;
 		}
 		debug('Setting name: ' + name);
-		localStorage[playerName] = name;
+		localStorage[storedPlayerName] = name;
 		self.requestRivals();
 	}
 }

@@ -31,7 +31,7 @@ var serverConnection = new function()
 	// attributes
 	var websocket = null;
 	var initialized = false;
-	var playerId = 'playerId';
+	var storedPlayerId = 'playerId';
 
 	/**
 	 * Connect with the given callback.
@@ -54,11 +54,11 @@ var serverConnection = new function()
 	function getPlayerId()
 	{
 		// have a single player id per browser; commented for tests.
-		if (!localStorage[playerId])
+		if (!localStorage[storedPlayerId])
 		{
-			localStorage[playerId] = randomId();
+			localStorage[storedPlayerId] = randomId();
 		}
-		return localStorage[playerId];
+		return localStorage[storedPlayerId];
 	}
 
 	/**
