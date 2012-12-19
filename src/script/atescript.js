@@ -134,7 +134,7 @@ function scriptingEngine(params)
 		}
 		var intervalToRun = intervalPending;
 		linesRun += context.run(intervalToRun);
-		intervalPending += intervalToRun;
+		intervalPending -= intervalToRun;
 		semaphor.release();
 		runCallbacks();
 	}
