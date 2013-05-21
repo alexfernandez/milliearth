@@ -70,7 +70,7 @@ String.prototype.substringFrom = function(str)
 	{
 		return '';
 	}
-	return this.slice(this.indexOf(str) + 1);
+	return this.slice(this.indexOf(str) + str.length);
 }
 
 /**
