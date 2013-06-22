@@ -69,7 +69,7 @@ var latency = new function()
 	 */
 	self.start = function(requestId)
 	{
-		requests[requestId] = new Date().getTime();
+		requests[requestId] = Date.now();
 	}
 
 	/**
@@ -82,7 +82,7 @@ var latency = new function()
 			console.error('Message id ' + requestId + ' not found');
 			return;
 		}
-		add(new Date().getTime() - requests[requestId]);
+		add(Date.now() - requests[requestId]);
 		delete requests[requestId];
 	}
 
@@ -158,7 +158,7 @@ function gamePlayer(gameId, playerId)
 				}
 				if (lastCall)
 				{
-					var newCall = new Date().getTime();
+					var newCall = Date.now();
 					latency.add(newCall - lastCall);
 					entry += ', latency: ' + (newCall - lastCall);
 					lastCall = null;

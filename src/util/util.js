@@ -141,7 +141,7 @@ var highResolutionTimer = function(delay, callback)
 
 	// attributes
 	var counter = 0;
-	var start = new Date().getTime();
+	var start = Date.now();
 
 	/**
 	 * Delayed running of the callback.
@@ -150,7 +150,7 @@ var highResolutionTimer = function(delay, callback)
 	{
 		callback(delay);
 		counter ++;
-		var diff = (new Date().getTime() - start) - counter * delay;
+		var diff = (Date.now() - start) - counter * delay;
 		setTimeout(delayed, delay - diff);
 	}
 
@@ -159,7 +159,7 @@ var highResolutionTimer = function(delay, callback)
 	 */
 	self.traceDrift = function()
 	{
-		var diff = new Date().getTime() - start;
+		var diff = Date.now() - start;
 		var drift = diff / delay - counter;
 		log.d('Seconds: ' + Math.round(diff / 1000) + ', counter: ' + counter + ', drift: ' + drift);
 	}

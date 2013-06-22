@@ -116,7 +116,7 @@ var keymap = new function()
 		{
 			self.keyup({
 				which: keycode,
-				timeStamp: new Date().getTime(),
+				timeStamp: Date.now(),
 			});
 		}
 	}
@@ -126,7 +126,7 @@ var keymap = new function()
 	 */
 	self.getKeys = function()
 	{
-		var end = new Date().getTime();
+		var end = Date.now();
 		var recordedEvents = {};
 		for (var keycode in keysPressed)
 		{
