@@ -58,7 +58,7 @@ String.prototype.substringUpTo = function(str)
 		return this;
 	}
 	return this.slice(0, this.indexOf(str));
-}
+};
 
 /**
  * Return the piece of string starting with the argument; empty string if not found.
@@ -71,12 +71,12 @@ String.prototype.substringFrom = function(str)
 		return '';
 	}
 	return this.slice(this.indexOf(str) + str.length);
-}
+};
 
 /**
  * Parser for JSON.
  */
-var parser = new function()
+exports.parser = new function()
 {
 	// self-reference
 	var self = this;
@@ -101,7 +101,7 @@ var parser = new function()
 /**
  * Lock to avoid two processes at the same time.
  */
-var concurrencyLock = function()
+exports.concurrencyLock = function()
 {
 	// self-reference
 	var self = this;
@@ -134,7 +134,7 @@ var concurrencyLock = function()
 /**
  * A high resolution timer.
  */
-var highResolutionTimer = function(delay, callback)
+exports.highResolutionTimer = function(delay, callback)
 {
 	// self-reference
 	var self = this;
@@ -216,9 +216,6 @@ function extend(parent, child)
 	}
 }
 
-module.exports.parser = parser;
-module.exports.concurrencyLock = concurrencyLock;
-module.exports.highResolutionTimer = highResolutionTimer;
 module.exports.randomId = randomId;
 module.exports.extend = extend;
 module.exports.isNumber = isNumber;
