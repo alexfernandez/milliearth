@@ -23,7 +23,7 @@
 /**
  * Connection to the server.
  */
-var serverConnection = new function()
+var ServerConnection = function()
 {
 	// self-reference
 	var self = this;
@@ -46,7 +46,7 @@ var serverConnection = new function()
 		websocket.onmessage = receive;
 		websocket.onclose = closed;
 		$('#connect').val('Disconnect');
-	}
+	};
 
 	/**
 	 * Get the player id, always the same.
@@ -85,7 +85,7 @@ var serverConnection = new function()
 	{
 		error('Connection error: ' + event);
 		$('#status').text('Connection error');
-	}
+	};
 
 	/**
 	 * The websocket closes.
@@ -102,9 +102,10 @@ var serverConnection = new function()
 	function receive(rawMessage)
 	{
 		// check it is valid JSON
+		var message;
 		try
 		{
-			var message = JSON.parse(rawMessage.data);
+			message = JSON.parse(rawMessage.data);
 		}
 		catch (e)
 		{
@@ -129,7 +130,7 @@ var serverConnection = new function()
 	 */
 	self.send = function(message)
 	{
-		if (websocket == null)
+		if (!websocket)
 		{
 			error('No connection');
 			return;
@@ -140,22 +141,22 @@ var serverConnection = new function()
 			return;
 		}
 		websocket.send(JSON.stringify(message));
-	}
+	};
 
 	/**
 	 * Find out if the connection is open or not.
 	 */
 	self.isConnected = function()
 	{
-		return (websocket != null);
-	}
+		return (websocket !== null);
+	};
 
 	/**
 	 * Disconnect from the server.
 	 */
 	self.disconnect = function()
 	{
-		if (websocket == null)
+		if (!websocket)
 		{
 			// already disconnected
 			return;
@@ -165,6 +166,8 @@ var serverConnection = new function()
 		pending.close();
 		$('#connect').val('Connect');
 		clientPlayer.end();
-	}
-}
+	};
+};
+
+var serverConnection = new ServerConnection();
 

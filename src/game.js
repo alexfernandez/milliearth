@@ -23,11 +23,8 @@
 /**
  * Requirements.
  */
-var globalParams = require('./params.js').globalParams;
 var gameWorld = require('./world/world.js').gameWorld;
 var util = require('./util/util.js');
-var parser = util.parser;
-var extend = util.extend;
 var randomId = util.randomId;
 var highResolutionTimer = util.highResolutionTimer;
 var log = require('./util/log.js');
@@ -39,7 +36,7 @@ var error = log.error;
 /**
  * A game object
  */
-function meGame(gameId)
+var MeGame = function(gameId)
 {
 	// self-reference
 	var self = this;
@@ -64,7 +61,7 @@ function meGame(gameId)
 			self.start();
 		}
 		info('Player ' + player.playerId + ' joined the game ' + self.gameId + '; ' + players.length + ' connected');
-	}
+	};
 
 	/**
 	 * Start the game officially.
@@ -77,7 +74,7 @@ function meGame(gameId)
 		}
 		self.active = true;
 		debug('Game ' + self.gameId + ' started!');
-	}
+	};
 
 	/**
 	 * Get the ids of every player.
@@ -90,7 +87,7 @@ function meGame(gameId)
 			playerIds.push(players[index].playerId);
 		}
 		return playerIds;
-	}
+	};
 
 	/**
 	 * One of the players has sent a message.
@@ -115,7 +112,7 @@ function meGame(gameId)
 			return;
 		}
 		player.error('Unknown message type ' + message.type);
-	}
+	};
 
 	/**
 	 * Remove a player from the game.
@@ -131,10 +128,10 @@ function meGame(gameId)
 			error('Could not remove ' + player.playerId + ' from players list');
 			return;
 		}
-		if (players.length == 0)
+		if (players.length === 0)
 		{
 			error('nobody left!?');
-			return
+			return;
 		}
 		if (players.length > 1)
 		{
@@ -149,7 +146,7 @@ function meGame(gameId)
 		info('Player ' + player.playerId + ' disconnected; ' + rival.playerId + ' won by points');
 		rival.send(abandoned);
 		self.finish();
-	}
+	};
 
 	/**
 	 * Remove a player from the list.
@@ -178,7 +175,7 @@ function meGame(gameId)
 		player.send(lose);
 		player.endGame();
 		removeFromList(player);
-	}
+	};
 
 	/**
 	 * Tell a player that they won, finish.
@@ -190,7 +187,7 @@ function meGame(gameId)
 		};
 		player.send(win);
 		self.finish();
-	}
+	};
 
 	/**
 	 * Finish the current game.
@@ -198,13 +195,13 @@ function meGame(gameId)
 	self.finish = function()
 	{
 		self.active = false;
-		gameSelector.remove(self.gameId);
+		exports.gameSelector.remove(self.gameId);
 		for (var index in players)
 		{
 			players[index].endGame();
 		}
 		info('Game ' + self.gameId + ' finished');
-	}
+	};
 
 	/**
 	 * Process client-side events.
@@ -215,7 +212,7 @@ function meGame(gameId)
 		{
 			player.event(name, events[name]);
 		}
-	}
+	};
 
 	/**
 	 * Send an update to a player.
@@ -226,7 +223,7 @@ function meGame(gameId)
 		update.type = 'update';
 		update.requestId = requestId;
 		player.send(update);
-	}
+	};
 
 	/**
 	 * Send a global update to a player.
@@ -237,7 +234,7 @@ function meGame(gameId)
 		update.type = 'global';
 		update.requestId = requestId;
 		player.send(update);
-	}
+	};
 
 	/**
 	 * Broadcast a message to all players.
@@ -248,7 +245,7 @@ function meGame(gameId)
 		{
 			players[index].send(message);
 		}
-	}
+	};
 
 	/**
 	 * Do a short loop on the world.
@@ -277,25 +274,25 @@ function meGame(gameId)
 		{
 			self.sendWon(players[0]);
 		}
-	}
+	};
 
 	/**
 	 * Run a long loop of the world.
 	 */
-	self.longLoop = function(delay)
+	self.longLoop = function()
 	{
 		if (!self.active)
 		{
 			return;
 		}
-	}
-}
+	};
+};
 
 
 /**
  * Selector for games.
  */
-var gameSelector = new function()
+var GameSelector = function()
 {
 	// self-reference
 	var self = this;
@@ -313,9 +310,9 @@ var gameSelector = new function()
 	self.create = function()
 	{
 		var gameId = randomId();
-		games[gameId] = new meGame(gameId);
+		games[gameId] = new MeGame(gameId);
 		return games[gameId];
-	}
+	};
 
 	/**
 	 * Find any given game, or create if not present.
@@ -328,7 +325,7 @@ var gameSelector = new function()
 			return null;
 		}
 		return games[gameId];
-	}
+	};
 
 	/**
 	 * Remove a game from the list.
@@ -336,7 +333,7 @@ var gameSelector = new function()
 	self.remove = function(gameId)
 	{
 		delete games[gameId];
-	}
+	};
 
 	/**
 	 * Short loop all worlds.
@@ -366,10 +363,10 @@ var gameSelector = new function()
 		}
 	}
 
-	var shortTimer = new highResolutionTimer(shortDelay, shortLoop);
-	var longTimer = new highResolutionTimer(longDelay, longLoop);
-}
+	new highResolutionTimer(shortDelay, shortLoop);
+	new highResolutionTimer(longDelay, longLoop);
+};
 
-module.exports.gameSelector = gameSelector;
+exports.gameSelector = new GameSelector();
 
 
