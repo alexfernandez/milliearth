@@ -16,4 +16,5 @@ npm-debug.log
 *.swp
 *.pem
 connect.sh
+password*
 
