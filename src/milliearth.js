@@ -21,14 +21,7 @@
  */
 
 
-/**
- * Constants.
- */
-process.title = 'milliearth';
-
-/**
- * Requirements.
- */
+// requires
 var webSocketServer = require('websocket').server;
 var http = require('http');
 var urlParser = require('url');
@@ -41,9 +34,7 @@ var debug = log.debug;
 var info = log.info;
 var error = log.error;
 
-/**
- * Globals.
- */
+// globals
 var port = globalParams.port;
 processArguments(process.argv.slice(2));
 var server = http.createServer(serve).listen(port, function() {
