@@ -1,6 +1,6 @@
 {
 	"name": "milliearth",
-	"version": "0.2",
+	"version": "0.0.2",
 	"description": "MilliEarth: a virtual game with its own language",
 	"homepage": "https://milliearth.org",
 	"contributors": ["Alex Fernández <alexfernandeznpm@gmail.com>"],
