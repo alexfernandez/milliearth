@@ -35,7 +35,6 @@ var urlParser = require('url');
 var fs = require('fs');
 var globalParams = require('./params.js').globalParams;
 var isNumber = require('./util/util.js').isNumber;
-var gameSelector = require('./game.js').gameSelector;
 var playerSelector = require('./connect/player.js').playerSelector;
 var log = require('./util/log.js');
 var debug = log.debug;
@@ -47,7 +46,6 @@ var error = log.error;
  */
 var port = globalParams.port;
 processArguments(process.argv.slice(2));
-var clients = [];
 var server = http.createServer(serve).listen(port, function() {
 	info('Server running at http://127.0.0.1:' + port + '/');
 });
@@ -107,7 +105,7 @@ wsServer.on('request', function(request) {
 		return;
 	}
 	var connection = request.accept(null, request.origin);
-	var player = playerSelector.add(playerId, connection);
+	playerSelector.add(playerId, connection);
 	info('Connection from ' + connection.remoteAddress + ' accepted');
 });
 
@@ -119,9 +117,9 @@ function serve(request, response)
 	var url = urlParser.parse(request.url, true);
 	if (url.pathname == '/')
 	{
-		serve_home(request, response);
+		serveHome(request, response);
 		return;
-	};
+	}
 	if (url.pathname == '/serve')
 	{
 		// will serve websocket
@@ -130,29 +128,29 @@ function serve(request, response)
 	// avoid going out of the home dir
 	if (url.pathname.contains('..'))
 	{
-		serve_file(404, 'not_found.html', response);
+		serveFile(404, 'not_found.html', response);
 		return;
 	}
 	if (url.pathname.startsWith('/src/'))
 	{
-		serve_file(200, '..' + url.pathname, response);
+		serveFile(200, '..' + url.pathname, response);
 		return;
 	}
-	serve_file(200, url.pathname, response);
+	serveFile(200, url.pathname, response);
 }
 
 /**
  * Serve the home page.
  */
-function serve_home(request, response)
+function serveHome(request, response)
 {
-	serve_file(200, 'index.html', response);
+	serveFile(200, 'index.html', response);
 }
 
 /*
  * Serve a file.
  */
-function serve_file(status, file, response)
+function serveFile(status, file, response)
 {
 	fs.readFile('html/' + file, function(err, data) {
 		if (err)
