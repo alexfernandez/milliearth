@@ -1,0 +1,27 @@
+{
+	"name": "milliearth",
+	"version": "0.2",
+	"description": "MilliEarth: a virtual game with its own language",
+	"homepage": "https://milliearth.org",
+	"contributors": ["Alex Fernández <alexfernandeznpm@gmail.com>"],
+	"license": "GPL",
+	"main": "src/milliearth.js",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/alexfernandez/milliearth"
+	},
+	"dependencies": {
+		"websocket": "*"
+	},
+	"keywords" : ["simulation", "3D", "game"],
+	"engines": {
+		"node": "*"
+	},
+	"bin": {
+		"milliearth": "bin/milliearth.js"
+	},
+	"scripts": {
+		"test": "node test.js"
+	},
+	"private": false
+}
