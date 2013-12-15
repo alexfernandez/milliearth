@@ -26,59 +26,34 @@ var webSocketServer = require('websocket').server;
 var http = require('http');
 var urlParser = require('url');
 var fs = require('fs');
-var globalParams = require('./params.js').globalParams;
-var isNumber = require('./util/util.js').isNumber;
 var playerSelector = require('./connect/player.js').playerSelector;
 var log = require('./util/log.js');
 var debug = log.debug;
 var info = log.info;
 var error = log.error;
 
-// globals
-var port = globalParams.port;
-processArguments(process.argv.slice(2));
-var server = http.createServer(serve).listen(port, function() {
-	info('Server running at http://127.0.0.1:' + port + '/');
-});
 
 /**
- * Process command line arguments.
+ * Start the server.
  */
-function processArguments(args)
+exports.start = function(port)
 {
-	while (args.length > 0)
-	{
-		var arg = args.shift();
-		if (arg == '-d')
-		{
-			log.activateDebugMode();
-			debug('Debug mode on');
-		}
-		else if (isNumber(arg))
-		{
-			port = arg;
-		}
-		else
-		{
-			error('Usage: milliearth [-d] [port]');
-			return;
-		}
-	}
-}
-
-/**
- * WebSocket server
- */
-var wsServer = new webSocketServer({
-	// WebSocket server is tied to a HTTP server
-	httpServer: server
-});
+	var server = http.createServer(serve).listen(port, function() {
+		info('Server running at http://127.0.0.1:' + port + '/');
+	});
+	var wsServer = new webSocketServer({
+		// WebSocket server is tied to a HTTP server
+		httpServer: server
+	});
+	wsServer.on('request', wsServe);
+};
 
 /**
  *  This callback function is called every time someone
  *   tries to connect to the WebSocket server
  */
-wsServer.on('request', function(request) {
+function wsServe(request)
+{
 	var url = urlParser.parse(request.resource, true);
 	debug('Connection to ' + url.pathname);
 	if (url.pathname != '/serve')
@@ -98,7 +73,7 @@ wsServer.on('request', function(request) {
 	var connection = request.accept(null, request.origin);
 	playerSelector.add(playerId, connection);
 	info('Connection from ' + connection.remoteAddress + ' accepted');
-});
+}
 
 /**
  * Serve contents.
