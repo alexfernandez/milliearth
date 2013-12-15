@@ -21,7 +21,7 @@
 		"milliearth": "bin/milliearth.js"
 	},
 	"scripts": {
-		"test": "node test.js"
+		"test": "node src/test.js"
 	},
 	"private": false
 }
