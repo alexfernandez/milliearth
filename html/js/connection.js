@@ -32,13 +32,14 @@ var ServerConnection = function()
 	var websocket = null;
 	var initialized = false;
 	var storedPlayerId = 'playerId';
+	var server = location.host;
 
 	/**
 	 * Connect with the given callback.
 	 */
 	self.connect = function(callback)
 	{
-		var wsUrl = 'ws://' + location.host + '/serve?player=' + getPlayerId();
+		var wsUrl = 'ws://' + server + '/serve?player=' + getPlayerId();
 		debug('Connecting to ' + wsUrl);
 		websocket = new WebSocket(wsUrl);
 		websocket.onopen = getOpener(callback);
@@ -68,7 +69,7 @@ var ServerConnection = function()
 	function getOpener(callback)
 	{
 		return function() {
-			$('#message').text('Connected to ' + location.host);
+			$('#message').text('Connected to ' + server);
 			initialized = true;
 			if (callback)
 			{

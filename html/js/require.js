@@ -25,6 +25,7 @@
  * Global to hold the exported values.
  */
 var module = {exports: {}};
+var exports = {};
 
 /**
  * Adapt the require to import from the browser.
